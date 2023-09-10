@@ -22,7 +22,7 @@ repos:
     rev: v0.790
     hooks:
       - id: mypy
-        args: [--strict]
+        args: [--strict, --implicit-reexport]
         exclude: ^(tests/)
   - repo: https://github.com/pycqa/flake8
     rev: 6.1.0

@@ -5,7 +5,7 @@ import numpy as np  # type: ignore
 import pyro  # type: ignore
 import torch
 from pyro.infer import SVI, Predictive, Trace_ELBO  # type: ignore
-from torch.cuda import empty_cache  # type: ignore
+from torch.cuda import empty_cache
 from tqdm import tqdm  # type: ignore
 
 
