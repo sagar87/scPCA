@@ -64,7 +64,6 @@ class SVIBaseHandler:
         seed: Optional[int] = None,
         num_epochs: int = 30000,
         log_freq: int = 10,
-        to_numpy: bool = True,
         optimizer_kwargs: Dict[str, Any] = {"lr": 1e-2},
         scheduler_kwargs: Dict[str, Any] = {"factor": 0.99},
         loss_kwargs: Dict[str, Any] = {"num_particles": 1},
@@ -97,11 +96,10 @@ class SVIBaseHandler:
         self.num_epochs = num_epochs
 
         self.loss = None
-        self.to_numpy = to_numpy
         self.best_elbo: Optional[float] = None
         self.steps = 0
 
-    def _update_state(self, loss: Union[List[float], NDArray[np.float32]]) -> None:
+    def _update_state(self, loss: NDArray[np.float32]) -> None:
         """
         Update the state of the handler with the given loss.
 
@@ -110,8 +108,6 @@ class SVIBaseHandler:
         loss :
             Loss values to update the state with.
         """
-        if isinstance(loss, list):
-            loss = np.asarray(loss)
         self.loss = loss if self.loss is None else np.concatenate([self.loss, loss])
 
     def _to_numpy(self, posterior: Dict[str, torch.Tensor]) -> Dict[str, NDArray[np.float32]]:
@@ -322,5 +318,5 @@ class SVIBaseHandler:
             return_sites=return_sites,
         )
         posterior = predictive(*args, **kwargs)
-        self.posterior = self._to_numpy(posterior) if self.to_numpy else posterior
+        self.posterior = self._to_numpy(posterior)
         empty_cache()

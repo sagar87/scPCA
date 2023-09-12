@@ -28,7 +28,6 @@ class SVILocalHandler(SVIBaseHandler):
         seed: Optional[int] = None,
         num_epochs: int = 30000,
         log_freq: int = 10,
-        to_numpy: bool = True,
         optimizer_kwargs: Dict[str, Any] = {"lr": 1e-2},
         scheduler_kwargs: Dict[str, Any] = {"factor": 0.99},
         loss_kwargs: Dict[str, Any] = {"num_particles": 1},
@@ -45,7 +44,6 @@ class SVILocalHandler(SVIBaseHandler):
             seed=seed,
             num_epochs=num_epochs,
             log_freq=log_freq,
-            to_numpy=to_numpy,
             optimizer_kwargs=optimizer_kwargs,
             scheduler_kwargs=scheduler_kwargs,
             loss_kwargs=loss_kwargs,
@@ -69,7 +67,7 @@ class SVILocalHandler(SVIBaseHandler):
         )
 
         posterior = predictive(*args, **kwargs)
-        self.posterior: Dict[str, NDArray[np.float32]] = self._to_numpy(posterior) if self.to_numpy else posterior
+        self.posterior: Dict[str, NDArray[np.float32]] = self._to_numpy(posterior)
         empty_cache()
 
     def predict_global_variable(self, var: str, num_samples: int = 25) -> NDArray[np.float32]:
