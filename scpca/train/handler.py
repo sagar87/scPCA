@@ -64,7 +64,6 @@ class SVIBaseHandler:
         seed: Optional[int] = None,
         num_epochs: int = 30000,
         log_freq: int = 10,
-        checkpoint_freq: int = -1,
         to_numpy: bool = True,
         optimizer_kwargs: Dict[str, Any] = {"lr": 1e-2},
         scheduler_kwargs: Dict[str, Any] = {"factor": 0.99},
@@ -92,11 +91,9 @@ class SVIBaseHandler:
 
         self.svi = self._init_svi()
         self.log_freq = log_freq
-        self.checkpoint_freq = checkpoint_freq
         self.learning_rates: DefaultDict[str, List[float]] = defaultdict(list)
         self.gradient_norms: DefaultDict[str, List[float]] = defaultdict(list)
 
-        self.checkpoints: Dict[str, torch.Tensor] = {}
         self.num_epochs = num_epochs
 
         self.loss = None
@@ -241,9 +238,6 @@ class SVIBaseHandler:
                     if i > 0:
                         delta = previous_elbo - current_elbo
                     previous_elbo = current_elbo
-
-                if self.checkpoint_freq > 0 and i % self.checkpoint_freq == 0:
-                    self.checkpoints[i] = pyro.get_param_store().get_state()
 
                 if self.scheduler:
                     if issubclass(
