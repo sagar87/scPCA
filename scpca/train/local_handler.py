@@ -1,8 +1,9 @@
 from typing import Any, Callable, Dict, List, Optional, Union
 
-import numpy as np  # type: ignore
+import numpy as np
 import pyro  # type: ignore
 import torch
+from numpy.typing import NDArray
 from pyro.infer import Predictive, Trace_ELBO  # type: ignore
 from torch.cuda import empty_cache
 from tqdm import tqdm  # type: ignore
@@ -70,10 +71,10 @@ class SVILocalHandler(SVIBaseHandler):
         )
 
         posterior = predictive(*args, **kwargs)
-        self.posterior = self._to_numpy(posterior) if self.to_numpy else posterior
+        self.posterior: Dict[str, NDArray[np.float32]] = self._to_numpy(posterior) if self.to_numpy else posterior
         empty_cache()
 
-    def predict_global_variable(self, var: str, num_samples: int = 25) -> np.ndarray:
+    def predict_global_variable(self, var: str, num_samples: int = 25) -> NDArray[np.float32]:
         """
         Sample global variables from the posterior.
 
@@ -95,7 +96,7 @@ class SVILocalHandler(SVIBaseHandler):
         num_samples: int = 25,
         num_split: int = 2048,
         obs_dim: int = 1,
-    ) -> np.ndarray:
+    ) -> NDArray[np.float32]:
         """
         Sample local variables from the posterior. In order to
         avoid memory issues, the sampling is performed in batches.

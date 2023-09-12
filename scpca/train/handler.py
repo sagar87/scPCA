@@ -1,9 +1,10 @@
 from collections import defaultdict
 from typing import Any, Callable, DefaultDict, Dict, List, Optional, Union
 
-import numpy as np  # type: ignore
+import numpy as np
 import pyro  # type: ignore
 import torch
+from numpy.typing import NDArray
 from pyro.infer import SVI, Predictive, Trace_ELBO  # type: ignore
 from torch.cuda import empty_cache
 from tqdm import tqdm  # type: ignore
@@ -100,10 +101,10 @@ class SVIBaseHandler:
 
         self.loss = None
         self.to_numpy = to_numpy
-        self.best_elbo = None
+        self.best_elbo: Optional[float] = None
         self.steps = 0
 
-    def _update_state(self, loss: Union[List[float], np.ndarray]) -> None:
+    def _update_state(self, loss: Union[List[float], NDArray[np.float32]]) -> None:
         """
         Update the state of the handler with the given loss.
 
@@ -116,7 +117,7 @@ class SVIBaseHandler:
             loss = np.asarray(loss)
         self.loss = loss if self.loss is None else np.concatenate([self.loss, loss])
 
-    def _to_numpy(self, posterior: Dict[str, np.ndarray]) -> Dict[str, np.ndarray]:
+    def _to_numpy(self, posterior: Dict[str, torch.Tensor]) -> Dict[str, NDArray[np.float32]]:
         """
         Convert the posterior distribution to a numpy array.
 
@@ -196,7 +197,7 @@ class SVIBaseHandler:
         for name, value in pyro.get_param_store().named_parameters():
             value.register_hook(lambda g, name=name: self.gradient_norms[name].append(g.norm().item()))
 
-    def _fit(self, *args: torch.Tensor, **kwargs: torch.Tensor) -> np.ndarray:
+    def _fit(self, *args: torch.Tensor, **kwargs: torch.Tensor) -> NDArray[np.float32]:
         """
         Fit the model with the given arguments.
 
@@ -266,7 +267,7 @@ class SVIBaseHandler:
         # update max elbo
         self.best_elbo = best_elbo
 
-        return losses
+        return np.asarray(losses)
 
     def fit(
         self, num_epochs: Optional[int] = None, lr: Optional[float] = None, *args: torch.Tensor, **kwargs: torch.Tensor
