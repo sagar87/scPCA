@@ -2,7 +2,7 @@ from typing import Optional
 
 import numpy as np
 from anndata import AnnData  # type: ignore
-from numpy.types import NDArray  # type: ignore
+from numpy.typing import NDArray
 from scipy.sparse import issparse  # type: ignore
 
 
@@ -52,4 +52,4 @@ def get_rna_counts(adata: AnnData, layers_key: Optional[str] = None) -> NDArray[
     if issparse(X):
         X = X.toarray()
 
-    return X.astype(np.float32)
+    return np.asarray(X).astype(np.float32)

@@ -2,7 +2,7 @@ from collections import OrderedDict
 from typing import Dict, NamedTuple
 
 import numpy as np
-from numpy.types import NDArray  # type: ignore
+from numpy.typing import NDArray
 from patsy.design_info import DesignMatrix  # type: ignore
 
 
@@ -10,7 +10,7 @@ class StateMapping(NamedTuple):
     mapping: Dict[str, int]
     reverse: Dict[int, str]
     encoding: NDArray[np.float32]
-    index: NDArray[np.float32]
+    idx: NDArray[np.int64]
     columns: Dict[int, str]
     states: Dict[str, int]
     sparse: Dict[str, int]

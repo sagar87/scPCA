@@ -107,10 +107,10 @@ class scPCA:
         X_size = np.log(X.sum(axis=1, keepdims=True))
 
         design: NDArray[np.float32] = np.asarray(self.design_states.encoding).astype(np.float32)
-        design_idx = self.design_states.index
+        design_idx = self.design_states.idx
 
         batch: NDArray[np.float32] = np.asarray(self.intercept_states.encoding).astype(np.float32)
-        batch_idx = self.intercept_states.index
+        batch_idx = self.intercept_states.idx
 
         num_genes = X.shape[1]
         num_cells = X.shape[0]
@@ -190,15 +190,15 @@ class scPCA:
         self.handler.fit(*args, **kwargs)
 
     def _meta_to_anndata(self, model_key: str) -> None:
-        res = {}
+        res: Dict[str, Any] = {}
         res["design"] = self.design_states.sparse
         res["intercept"] = self.intercept_states.sparse
 
-        res["design_index"] = self.design_states.index
-        res["intercept_index"] = self.intercept_states.index
+        res["design_index"] = self.design_states.idx
+        res["intercept_index"] = self.intercept_states.idx
 
         res["loss"] = self.handler.loss
-        res["model"] = {"num_factors": self.num_factors, "seed": self.seed, **self.model_kwargs}  # type: ignore
+        res["model"] = {"num_factors": self.num_factors, "seed": self.seed, **self.model_kwargs}
 
         self.adata.uns[f"{model_key}"] = res
 
