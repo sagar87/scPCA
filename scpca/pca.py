@@ -63,9 +63,6 @@ class scPCA:
             "β_rna_sd": 0.01,
             "β_rna_mean": 3.0,
             "fixed_beta": True,
-            "intercept": True,
-            "batch_beta": False,
-            "horseshoe": False,
         },
         training_kwargs: Dict[str, Any] = SUBSAMPLE,
     ):
@@ -155,42 +152,14 @@ class scPCA:
             Handler for training the model.
         """
         train_model = partial(
-            scpca_model,
-            subsampling=self.subsampling,
-            minibatches=False,
-            device=self.device,
-            **self.data,
-            **self.model_kwargs,
+            scpca_model, subsampling=self.subsampling, device=self.device, **self.data, **self.model_kwargs
         )
-
         train_guide = partial(
-            scpca_guide,
-            subsampling=self.subsampling,
-            minibatches=False,
-            device=self.device,
-            **self.data,
-            **self.model_kwargs,
+            scpca_guide, subsampling=self.subsampling, device=self.device, **self.data, **self.model_kwargs
         )
-
         idx = self.data.pop("idx")
-
-        predict_model = partial(
-            scpca_model,
-            subsampling=0,
-            minibatches=True,
-            device=self.device,
-            **self.data,
-            **self.model_kwargs,
-        )
-
-        predict_guide = partial(
-            scpca_guide,
-            subsampling=0,
-            minibatches=True,
-            device=self.device,
-            **self.data,
-            **self.model_kwargs,
-        )
+        predict_model = partial(scpca_model, subsampling=0, device=self.device, **self.data, **self.model_kwargs)
+        predict_guide = partial(scpca_guide, subsampling=0, device=self.device, **self.data, **self.model_kwargs)
 
         return SVILocalHandler(
             model=train_model,
@@ -404,7 +373,6 @@ class dPCA(scPCA):
             dpca_model,
             num_factors=self.num_factors,
             subsampling=self.subsampling,
-            minibatches=False,
             device=self.device,
             **self.data,
             **self.model_kwargs,
@@ -414,7 +382,6 @@ class dPCA(scPCA):
             dpca_guide,
             num_factors=self.num_factors,
             subsampling=self.subsampling,
-            minibatches=False,
             device=self.device,
             **self.data,
             **self.model_kwargs,
@@ -426,7 +393,6 @@ class dPCA(scPCA):
             dpca_model,
             num_factors=self.num_factors,
             subsampling=0,
-            minibatches=True,
             device=self.device,
             **self.data,
             **self.model_kwargs,
@@ -436,7 +402,6 @@ class dPCA(scPCA):
             dpca_guide,
             num_factors=self.num_factors,
             subsampling=0,
-            minibatches=True,
             device=self.device,
             **self.data,
             **self.model_kwargs,
