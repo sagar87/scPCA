@@ -154,7 +154,11 @@ class scPCA:
 
     def _setup_handler(self) -> SVILocalHandler:
         """
-        Sets up the handler for training the model.
+        Set up the handler for training the scPCA model.
+
+        Returns
+        -------
+            Handler for training the model.
         """
         train_model = partial(
             scpca_model,
@@ -204,9 +208,27 @@ class scPCA:
         )
 
     def fit(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Fit the scPCA model to the data.
+
+        Parameters
+        ----------
+        *args :
+            Positional arguments for the fit method.
+        **kwargs :
+            Keyword arguments for the fit method.
+        """
         self.handler.fit(*args, **kwargs)
 
     def _meta_to_anndata(self, model_key: str) -> None:
+        """
+        Store meta information in the AnnData object.
+
+        Parameters
+        ----------
+        model_key :
+            Key to store the model in the AnnData object.
+        """
         res: Dict[str, Any] = {}
         res["design"] = self.design_states.sparse
         res["intercept"] = self.intercept_states.sparse
@@ -220,6 +242,17 @@ class scPCA:
         self.adata.uns[f"{model_key}"] = res
 
     def posterior_to_anndata(self, model_key: str, num_samples: int = 25) -> None:
+        """
+        Store the posterior samples in the AnnData object.
+
+        Parameters
+        ----------
+        model_key :
+            Key to store the model in the AnnData object.
+        num_samples :
+            Number of samples to draw from the posterior. Default is 25.
+        """
+
         self._meta_to_anndata(model_key)
         adata = self.adata
 
@@ -247,6 +280,18 @@ class scPCA:
         adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable("z", num_samples=num_samples).swapaxes(0, 1)
 
     def mean_to_anndata(self, model_key: str, num_samples: int = 25, num_split: int = 2048) -> None:
+        """
+        Store the posterior mean estimates in the AnnData object.
+
+        Parameters
+        ----------
+        model_key :k
+            Key to store the model in the AnnData object.
+        num_samples :
+            Number of samples to draw from the posterior. Default is 25.
+        num_split :
+            Number of splits for the data. Default is 2048.
+        """
         self._meta_to_anndata(model_key)
         adata = self.adata
 
@@ -271,35 +316,32 @@ class scPCA:
 
 class dPCA(scPCA):
     """
-    dPCA model.
+    Design Principal Component Analysis (dPCA) model.
 
 
     Parameters
     ----------
-    adata: anndata.AnnData
-        Anndata object with the single-cell data.
-    num_factors: int (default: 15)
-        Number of factors to fit.
-    layers_key: str or None (default: None)
-        Key to extract single-cell count matrix from adata.layers. If layers_key is None,
-        scPCA will try to extract the count matrix from the adata.X.
-    batch_formula: str or None (default: None)
-        R style formula to extract batch information from adata.obs. If batch_formula is None,
-        scPCA assumes a single batch. Usually `batch_column - 1`.
-    design_formula: str or None (default: None)
-        R style formula to construct the design matrix from adata.obs. If design_formula is None,
-        scPCA fits a normal PCA.
-    subsampling: int (default: 4096)
-        Number of cells to subsample for training. A larger number will result in a more accurate
-        computation of the gradients, but will also increase the training time and memory usage.
-    device: torch.device (default: torch.device("cuda" if torch.cuda.is_available() else "cpu"))
-        Device to run the model on. A GPU is highly recommended.
-    model_key: str (default: "scpca")
-        Key to store the model in the AnnData object.
-    model_kwargs: dict
-        Model parameters. See sccca.model.model for more details.
-    training_kwargs: dict
-        Training parameters. See sccca.handler for more details.
+    adata :
+        Anndata object containing the single-cell data.
+    num_factors :
+        Number of factors to fit. Default is 15.
+    layers_key :
+        Key to extract single-cell count matrix from adata.layers. If None, scPCA will
+        try to extract the count matrix from adata.X. Default is None.
+    batch_formula :
+        R style formula to extract batch information from adata.obs. If None, scPCA
+        assumes a single batch. Default is None.
+    design_formula :
+        R style formula to construct the design matrix from adata.obs. If None, scPCA
+        fits a normal PCA. Default is None.
+    subsampling :
+        Number of cells to subsample for training. Default is 4096.
+    device :
+        Device to run the model on. A GPU is recommended. Default is GPU if available, else CPU.
+    model_kwargs :
+        Additional keyword arguments for the model. Default values are provided.
+    training_kwargs :
+        Additional keyword arguments for training. Default is SUBSAMPLE.
     """
 
     def __init__(
