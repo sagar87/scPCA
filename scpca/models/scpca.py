@@ -1,14 +1,7 @@
 import pyro  # type: ignore
 import torch
 from pyro import deterministic, param, plate, sample
-from pyro.distributions import (  # type: ignore
-    Exponential,
-    Gamma,
-    GammaPoisson,
-    HalfCauchy,
-    InverseGamma,
-    Normal,
-)
+from pyro.distributions import Exponential, Gamma, GammaPoisson, Normal  # type: ignore
 from pyro.distributions import TransformedDistribution as TD
 from pyro.distributions.constraints import positive  # type: ignore
 from pyro.distributions.transforms import ExpTransform  # type: ignore
@@ -34,7 +27,6 @@ def scpca_model(
     β_rna_sd: float = 0.01,
     W_fac_sd: float = 1.0,
     z_sd: float = 0.1,
-    horseshoe: bool = False,
     fixed_beta: bool = False,
 ) -> None:
     gene_plate = plate("genes", num_genes)
@@ -48,13 +40,13 @@ def scpca_model(
     else:
         cell_plate = plate("cells", num_cells, subsample=idx)
 
-    # factor matrices
-    if horseshoe:
-        with pyro.plate("modality", 2):
-            tau = pyro.sample("tau", HalfCauchy(ones(1, device=device)))
-
+    # rescale
     normed_design = design * design.sum(1, keepdim=True) ** -0.5
     normed_batch = batch * batch.sum(1, keepdim=True) ** -0.5
+
+    # convert to concentration and rates
+    β_rna_conc = β_rna_mean**2 / β_rna_sd**2
+    β_rna_rate = β_rna_mean / β_rna_sd**2
 
     with group_plate:
         W_fac = sample(
@@ -65,26 +57,8 @@ def scpca_model(
             ).to_event(2),
         )
 
-        if horseshoe:  # turns on sparsity priors
-            W_del = sample("W_del", HalfCauchy(ones(1, device=device)))
-            W_lam = sample("W_lam", HalfCauchy(ones(num_genes, device=device)).to_event(1))
-            W_c = sample(
-                "W_c",
-                InverseGamma(
-                    0.5 * ones(num_genes, device=device),
-                    0.5 * ones(num_genes, device=device),
-                ).to_event(1),
-            )
-
-            # print(W_tau.shape, W_lam.shape, W_fac.shape)
-            W_gamma = tau[0] * W_del.reshape(-1, 1) * W_lam
-            W_fac = deterministic("W_horse", W_fac * (torch.sqrt(W_c) * W_gamma) / torch.sqrt(W_c + W_gamma**2))
-
     with batch_plate:
         W_add = sample("W_add", Normal(zeros(num_genes, device=device), ones(num_genes, device=device)).to_event(1))
-
-    β_rna_conc = β_rna_mean**2 / β_rna_sd**2
-    β_rna_rate = β_rna_mean / β_rna_sd**2
 
     if fixed_beta:
         with gene_plate:
@@ -113,11 +87,6 @@ def scpca_model(
 
         # construct bases for each column of in D
         W_lin = pyro.deterministic("W_lin", (normed_design.unsqueeze(2).unsqueeze(3) * W_fac.unsqueeze(0)).sum(1))
-
-        # W_nrm = torch.linalg.norm(W_lin, dim=2, keepdims=True)
-        # W_vec = pyro.deterministic("W_vec", W_lin / W_nrm)
-        # z_vec = pyro.deterministic("z_vec", z * W_nrm[design_indicator].squeeze())
-
         Wz = einsum("cf,bfp->bcp", z, W_lin)
         intercept_rna = intercept_mat @ W_add
         offset_rna = pyro.deterministic("offset_rna", X_size[ind] + intercept_rna)
@@ -146,7 +115,6 @@ def scpca_guide(
     β_rna_sd: float = 0.1,
     W_fac_sd: float = 1.0,
     z_sd: float = 1.0,
-    horseshoe: bool = False,
     fixed_beta: bool = False,
 ) -> None:
     gene_plate = plate("genes", num_genes)
@@ -168,32 +136,8 @@ def scpca_guide(
         constraint=positive,
     )
 
-    if horseshoe:
-        tau_loc = param("tau_loc", zeros(2, device=device))
-        tau_scale = param("tau_scale", 0.1 * ones(2, device=device), constraint=positive)
-
-        with pyro.plate("modality", 2):
-            sample(
-                "tau",
-                TD(Normal(tau_loc, tau_scale), ExpTransform()),
-            )
-
-        W_del_loc = param("W_del_loc", zeros(num_factors, device=device))
-        W_del_scale = param("W_del_scale", 0.1 * ones(num_factors, device=device), constraint=positive)
-
-        W_lam_loc = param("W_lam_loc", zeros((num_factors, num_genes), device=device))
-        W_lam_scale = param("W_lam_scale", 0.1 * ones((num_factors, num_genes), device=device), constraint=positive)
-
-        W_c_loc = param("W_c_loc", zeros((num_factors, num_genes), device=device))
-        W_c_scale = param("W_c_scale", 0.1 * ones((num_factors, num_genes), device=device), constraint=positive)
-
     with group_plate:
         sample("W_fac", Normal(W_fac_loc, W_fac_scale).to_event(2))
-
-        if horseshoe:
-            sample("W_del", TD(Normal(W_del_loc, W_del_scale), ExpTransform()))
-            sample("W_lam", TD(Normal(W_lam_loc, W_lam_scale), ExpTransform()).to_event(1))
-            sample("W_c", TD(Normal(W_c_loc, W_c_scale), ExpTransform()).to_event(1))
 
     # intercept terms
     W_add_loc = param("W_add_loc", zeros((num_batches, num_genes), device=device))
