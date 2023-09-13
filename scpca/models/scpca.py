@@ -99,57 +99,34 @@ def scpca_model(
             α_rna_inv = sample("α_rna_inv", Exponential(β_rna))
             α_rna = deterministic("α_rna", (1 / α_rna_inv).T)
 
-    if subsampling > 0 or minibatches:
-        with cell_plate as ind:
-            z = sample(
-                "z",
-                Normal(
-                    zeros(num_factors, device=device),
-                    z_sd * ones(num_factors, device=device),
-                ).to_event(1),
-            )
+    with cell_plate as ind:
+        z = sample(
+            "z",
+            Normal(
+                zeros(num_factors, device=device),
+                z_sd * ones(num_factors, device=device),
+            ).to_event(1),
+        )
 
-            intercept_mat = normed_batch[batch_idx[ind]]
-            design_indicator = design_idx[ind]
-            cell_indicator = torch.arange(ind.shape[0])
+        intercept_mat = normed_batch[batch_idx[ind]]
+        design_indicator = design_idx[ind]
+        cell_indicator = torch.arange(ind.shape[0])
 
-            # construct bases for each column of in D
-            W_lin = pyro.deterministic("W_lin", (normed_design.unsqueeze(2).unsqueeze(3) * W_fac.unsqueeze(0)).sum(1))
+        # construct bases for each column of in D
+        W_lin = pyro.deterministic("W_lin", (normed_design.unsqueeze(2).unsqueeze(3) * W_fac.unsqueeze(0)).sum(1))
 
-            # W_nrm = torch.linalg.norm(W_lin, dim=2, keepdims=True)
-            # W_vec = pyro.deterministic("W_vec", W_lin / W_nrm)
-            # z_vec = pyro.deterministic("z_vec", z * W_nrm[design_indicator].squeeze())
+        # W_nrm = torch.linalg.norm(W_lin, dim=2, keepdims=True)
+        # W_vec = pyro.deterministic("W_vec", W_lin / W_nrm)
+        # z_vec = pyro.deterministic("z_vec", z * W_nrm[design_indicator].squeeze())
 
-            Wz = einsum("cf,bfp->bcp", z, W_lin)
-            intercept_rna = intercept_mat @ W_add
-            offset_rna = pyro.deterministic("offset_rna", X_size[ind] + intercept_rna)
+        Wz = einsum("cf,bfp->bcp", z, W_lin)
+        intercept_rna = intercept_mat @ W_add
+        offset_rna = pyro.deterministic("offset_rna", X_size[ind] + intercept_rna)
 
-            μ_rna = deterministic("μ_rna", exp(offset_rna + Wz[design_indicator, cell_indicator]))
-            α_rna_bat = α_rna
-            deterministic("σ_rna", μ_rna**2 / α_rna_bat * (1 + α_rna_bat / μ_rna))
-            sample("rna", GammaPoisson(α_rna_bat, α_rna_bat / μ_rna).to_event(1), obs=X[ind])
-    else:
-        with cell_plate:
-            z = sample(
-                "z",
-                Normal(
-                    zeros(num_factors, device=device),
-                    0.1 * ones(num_factors, device=device),
-                ).to_event(1),
-            )
-
-            μ_rna = deterministic(
-                "μ_rna",
-                exp(
-                    (
-                        batch.T.unsqueeze(-1)
-                        * (X_size.unsqueeze(0) + W_add.unsqueeze(1) + einsum("cf,bfp->bcp", z, W_fac.unsqueeze(0)))
-                    ).sum(0)
-                ),
-            )
-
-            α_rna_bat = α_rna
-            sample("rna", GammaPoisson(α_rna_bat, α_rna_bat / μ_rna).to_event(1), obs=X)
+        μ_rna = deterministic("μ_rna", exp(offset_rna + Wz[design_indicator, cell_indicator]))
+        α_rna_bat = α_rna
+        deterministic("σ_rna", μ_rna**2 / α_rna_bat * (1 + α_rna_bat / μ_rna))
+        sample("rna", GammaPoisson(α_rna_bat, α_rna_bat / μ_rna).to_event(1), obs=X[ind])
 
 
 def scpca_guide(
