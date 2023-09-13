@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Any, Dict, Literal, Optional, Union
+from typing import Any, Dict, Literal, Optional, Sequence, Union
 
 import numpy as np
 import torch
@@ -9,7 +9,7 @@ from patsy import dmatrix  # type: ignore
 from torch.types import Device
 
 from .models import dpca_guide, dpca_model, scpca_guide, scpca_model
-from .train import SUBSAMPLE, SVILocalHandler
+from .train import SUBSAMPLE, SVILocalHandler, _to_torch
 from .utils import get_rna_counts, get_states
 
 
@@ -91,21 +91,6 @@ class scPCA:
         self.data = self._setup_data()
         self.handler = self._setup_handler()
 
-    def _to_torch(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Convert numpy arrays of a dictionary to torch tensors.
-
-        Parameters
-        ----------
-        data :
-            Dictionary containing numpy arrays.
-
-        Returns
-        -------
-            Dictionary with numpy arrays converted to torch tensors.
-        """
-        return {k: torch.tensor(v, device=self.device) if isinstance(v, np.ndarray) else v for k, v in data.items()}
-
     def _setup_data(self) -> Dict[str, Union[torch.Tensor, int, None]]:
         """
         Prepare the data for the scPCA model.
@@ -139,7 +124,7 @@ class scPCA:
             num_genes=num_genes,
             num_cells=num_cells,
         )
-        return self._to_torch(data)
+        return _to_torch(data, self.device)
 
     def _setup_handler(self) -> SVILocalHandler:
         """
@@ -202,7 +187,9 @@ class scPCA:
 
         self.adata.uns[f"{model_key}"] = res
 
-    def posterior_to_anndata(self, model_key: str, num_samples: int = 25) -> None:
+    def posterior_to_anndata(
+        self, model_key: str, num_samples: int = 25, variables: Sequence[str] = ["W", "Z"]
+    ) -> None:
         """
         Store the posterior samples in the AnnData object.
 
@@ -217,12 +204,21 @@ class scPCA:
         self._meta_to_anndata(model_key)
         adata = self.adata
 
-        adata.varm[f"{model_key}_W_rna"] = (
-            self.handler.predict_global_variable("W_lin", num_samples=num_samples).T.swapaxes(-1, -3).swapaxes(-1, -2)
-        )
-        adata.varm[f"{model_key}_V_rna"] = self.handler.predict_global_variable(
-            "W_add", num_samples=num_samples
-        ).T.swapaxes(-1, -2)
+        for var in variables:
+            if var == "W":
+                adata.varm[f"W_{model_key}"] = (
+                    self.handler.predict_global_variable("W_lin", num_samples=num_samples)
+                    .T.swapaxes(-1, -3)
+                    .swapaxes(-1, -2)
+                )
+            if var == "V":
+                adata.varm[f"V_{model_key}"] = self.handler.predict_global_variable(
+                    "W_add", num_samples=num_samples
+                ).T.swapaxes(-1, -2)
+            if var == "Z":
+                adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable(
+                    "z", num_samples=num_samples
+                ).swapaxes(0, 1)
 
         α_rna = self.handler.predict_global_variable("α_rna", num_samples=num_samples).T
 
@@ -238,9 +234,9 @@ class scPCA:
 
         adata.varm[f"{model_key}_σ_rna"] = σ_rna.swapaxes(-1, -2)
 
-        adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable("z", num_samples=num_samples).swapaxes(0, 1)
-
-    def mean_to_anndata(self, model_key: str, num_samples: int = 25, num_split: int = 2048) -> None:
+    def mean_to_anndata(
+        self, model_key: str, num_samples: int = 25, num_split: int = 2048, variables: Sequence[str] = ["W", "Z"]
+    ) -> None:
         """
         Store the posterior mean estimates in the AnnData object.
 
@@ -255,27 +251,34 @@ class scPCA:
         """
         self._meta_to_anndata(model_key)
         adata = self.adata
+        for var in variables:
+            if var == "W":
+                adata.varm[f"W_{model_key}"] = (
+                    self.handler.predict_global_variable("W_lin", num_samples=num_samples).mean(0).T
+                )
+            if var == "V":
+                adata.varm[f"V_{model_key}"] = (
+                    self.handler.predict_global_variable("W_add", num_samples=num_samples).mean(0).T
+                )
+            if var == "μ":
+                adata.layers[f"μ_{model_key}"] = self.handler.predict_local_variable(
+                    "μ_rna", num_samples=num_samples, num_split=num_split
+                ).mean(0)
+            if var == "Z":
+                adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable(
+                    "z", num_samples=num_samples, num_split=num_split
+                ).mean(0)
+            if var == "α":
+                adata.varm[f"α_{model_key}"] = self.handler.predict_global_variable("α_rna").mean(0).T
+            if var == "σ":
+                adata.varm[f"σ_{model_key}"] = self.handler.predict_global_variable("σ_rna").mean(0).T
 
-        adata.layers[f"{model_key}_μ_rna"] = self.handler.predict_local_variable(
-            "μ_rna", num_samples=num_samples, num_split=num_split
-        ).mean(0)
-        adata.layers[f"{model_key}_offset_rna"] = self.handler.predict_local_variable(
-            "offset_rna", num_samples=num_samples, num_split=num_split
-        ).mean(0)
-        adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable(
-            "z", num_samples=num_samples, num_split=num_split
-        ).mean(0)
-        adata.varm[f"{model_key}_W_rna"] = (
-            self.handler.predict_global_variable("W_lin", num_samples=num_samples).mean(0).T
-        )
-        adata.varm[f"{model_key}_V_rna"] = (
-            self.handler.predict_global_variable("W_add", num_samples=num_samples).mean(0).T
-        )
-        adata.varm[f"{model_key}_α_rna"] = self.handler.predict_global_variable("α_rna").mean(0).T
-        adata.varm[f"{model_key}_σ_rna"] = self.handler.predict_global_variable("σ_rna").mean(0).T
+        # adata.layers[f"{model_key}_offset_rna"] = self.handler.predict_local_variable(
+        #     "offset_rna", num_samples=num_samples, num_split=num_split
+        # ).mean(0)
 
 
-class dPCA(scPCA):
+class dPCA:
     """
     Design Principal Component Analysis (dPCA) model.
 
@@ -361,7 +364,7 @@ class dPCA(scPCA):
             idx=idx,
             num_obs=num_obs,
         )
-        return self._to_torch(data)
+        return _to_torch(data, self.device)
 
     def _setup_handler(self) -> SVILocalHandler:
         """

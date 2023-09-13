@@ -7,7 +7,24 @@ import torch
 from numpy.typing import NDArray
 from pyro.infer import SVI, Predictive, Trace_ELBO  # type: ignore
 from torch.cuda import empty_cache
+from torch.types import Device
 from tqdm import tqdm  # type: ignore
+
+
+def _to_torch(data: Dict[str, Any], device: Device) -> Dict[str, Any]:
+    """
+    Convert numpy arrays of a dictionary to torch tensors.
+
+    Parameters
+    ----------
+    data :
+        Dictionary containing numpy arrays.
+
+    Returns
+    -------
+        Dictionary with numpy arrays converted to torch tensors.
+    """
+    return {k: torch.tensor(v, device=device) if isinstance(v, np.ndarray) else v for k, v in data.items()}
 
 
 class SVIBaseHandler:
