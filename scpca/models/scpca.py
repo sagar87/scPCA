@@ -13,9 +13,9 @@ def scpca_model(
     X: Tensor,
     X_size: Tensor,
     design: Tensor,
-    batch: Tensor,
+    intercept: Tensor,
     design_idx: Tensor,
-    batch_idx: Tensor,
+    intercept_idx: Tensor,
     idx: Tensor,
     num_genes: int,
     num_cells: int,
@@ -34,7 +34,7 @@ def scpca_model(
         cell_plate = plate("cells", num_cells, subsample=idx)
 
     gene_plate = plate("genes", num_genes)
-    num_intercepts = batch.shape[1]
+    num_intercepts = intercept.shape[1]
     intercept_plate = plate("intercept", num_intercepts)
 
     num_states = design.shape[1]
@@ -42,7 +42,7 @@ def scpca_model(
 
     # rescale
     normed_design = design * design.sum(1, keepdim=True) ** -0.5
-    normed_batch = batch * batch.sum(1, keepdim=True) ** -0.5
+    normed_batch = intercept * intercept.sum(1, keepdim=True) ** -0.5
 
     # convert to concentration and rates
     β_rna_conc = β_rna_mean**2 / β_rna_sd**2
@@ -81,7 +81,7 @@ def scpca_model(
             ).to_event(1),
         )
 
-        intercept_mat = normed_batch[batch_idx[ind]]
+        intercept_mat = normed_batch[intercept_idx[ind]]
         design_indicator = design_idx[ind]
         cell_indicator = torch.arange(ind.shape[0])
 
@@ -100,9 +100,9 @@ def scpca_guide(
     X: Tensor,
     X_size: Tensor,
     design: Tensor,
-    batch: Tensor,
+    intercept: Tensor,
     design_idx: Tensor,
-    batch_idx: Tensor,
+    intercept_idx: Tensor,
     idx: Tensor,
     num_genes: int,
     num_cells: int,
@@ -117,7 +117,7 @@ def scpca_guide(
 ) -> None:
     gene_plate = plate("genes", num_genes)
 
-    num_intercepts = batch.shape[1]
+    num_intercepts = intercept.shape[1]
     intercept_plate = plate("intercept", num_intercepts)
 
     # design matrix

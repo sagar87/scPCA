@@ -120,12 +120,11 @@ class scPCA:
         design: NDArray[np.float32] = np.asarray(self.design_states.encoding).astype(np.float32)
         design_idx = self.design_states.idx
 
-        batch: NDArray[np.float32] = np.asarray(self.intercept_states.encoding).astype(np.float32)
-        batch_idx = self.intercept_states.idx
+        intercept: NDArray[np.float32] = np.asarray(self.intercept_states.encoding).astype(np.float32)
+        intercept_idx = self.intercept_states.idx
 
         num_genes = X.shape[1]
         num_cells = X.shape[0]
-        num_batches = batch.shape[1]
         idx = np.arange(num_cells)
 
         data = dict(
@@ -133,12 +132,11 @@ class scPCA:
             X=X,
             X_size=X_size,
             design=design,
-            batch=batch,
+            intercept=intercept,
             design_idx=design_idx,
-            batch_idx=batch_idx,
+            intercept_idx=intercept_idx,
             idx=idx,
             num_genes=num_genes,
-            num_batches=num_batches,
             num_cells=num_cells,
         )
         return self._to_torch(data)
