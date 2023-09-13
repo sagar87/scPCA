@@ -12,19 +12,19 @@ from pyro.distributions import (  # type: ignore
 )
 from pyro.distributions.constraints import less_than, positive  # type: ignore
 from pyro.distributions.transforms import ExpTransform  # type: ignore
-from torch import einsum, exp, ones, tensor, zeros
+from torch import Tensor, einsum, exp, ones, tensor, zeros
 
 
 def scpca_model(
-    X: torch.Tensor,
-    Y: torch.Tensor,
-    X_size: torch.Tensor,
-    Y_size: torch.Tensor,
-    design: torch.Tensor,
-    batch: torch.Tensor,
-    design_idx: torch.Tensor,
-    batch_idx: torch.Tensor,
-    idx: torch.Tensor,
+    X: Tensor,
+    Y: Tensor,
+    X_size: Tensor,
+    Y_size: Tensor,
+    design: Tensor,
+    batch: Tensor,
+    design_idx: Tensor,
+    batch_idx: Tensor,
+    idx: Tensor,
     num_genes: int,
     num_proteins: int,
     num_batches: int,
@@ -321,15 +321,15 @@ def scpca_model(
 
 
 def scpca_guide(
-    X: torch.Tensor,
-    Y: torch.Tensor,
-    X_size: torch.Tensor,
-    Y_size: torch.Tensor,
-    design: torch.Tensor,
-    batch: torch.Tensor,
-    design_idx: torch.Tensor,
-    batch_idx: torch.Tensor,
-    idx: torch.Tensor,
+    X: Tensor,
+    Y: Tensor,
+    X_size: Tensor,
+    Y_size: Tensor,
+    design: Tensor,
+    batch: Tensor,
+    design_idx: Tensor,
+    batch_idx: Tensor,
+    idx: Tensor,
     num_genes: int,
     num_proteins: int,
     num_batches: int,
