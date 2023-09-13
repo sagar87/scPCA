@@ -10,7 +10,7 @@ from torch.types import Device
 
 from .models import dpca_guide, dpca_model, scpca_guide, scpca_model
 from .train import SUBSAMPLE, SVILocalHandler, _to_torch
-from .utils import get_rna_counts, get_states
+from .utils import _get_rna_counts, get_states
 
 
 class scPCA:
@@ -99,7 +99,7 @@ class scPCA:
         -------
             Dictionary containing tensors and other relevant information for the model.
         """
-        X = get_rna_counts(self.adata, self.layers_key)
+        X = _get_rna_counts(self.adata, self.layers_key)
         X_size = np.log(X.sum(axis=1, keepdims=True))
 
         design: NDArray[np.float32] = np.asarray(self.design_states.encoding).astype(np.float32)
@@ -363,7 +363,7 @@ class dPCA:
         """
         Sets up the data.
         """
-        X = get_rna_counts(self.adata, self.layers_key)
+        X = _get_rna_counts(self.adata, self.layers_key)
         intercept_design: NDArray[np.float32] = np.asarray(self.intercept_matrix).astype(np.float32)
         loading_design: NDArray[np.float32] = np.asarray(self.design_matrix).astype(np.float32)
 
