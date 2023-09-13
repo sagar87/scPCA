@@ -13,6 +13,7 @@ from pyro.distributions import TransformedDistribution as TD
 from pyro.distributions.constraints import positive  # type: ignore
 from pyro.distributions.transforms import ExpTransform  # type: ignore
 from torch import Tensor, einsum, exp, ones, tensor, zeros
+from torch.types import Device
 
 
 def scpca_model(
@@ -27,7 +28,7 @@ def scpca_model(
     num_batches: int,
     num_cells: int,
     num_factors: int,
-    device: torch.device,
+    device: Device,
     subsampling: int = 0,
     β_rna_mean: float = 3.0,
     β_rna_sd: float = 0.01,
@@ -183,7 +184,7 @@ def scpca_guide(
     num_batches: int,
     num_cells: int,
     num_factors: int,
-    device: torch.device,
+    device: Device,
     subsampling: int = 0,
     β_rna_mean: float = 3.0,
     β_rna_sd: float = 0.1,
