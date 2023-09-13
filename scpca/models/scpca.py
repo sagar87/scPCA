@@ -92,9 +92,8 @@ def scpca_model(
         offset_rna = pyro.deterministic("offset_rna", X_size[ind] + intercept_rna)
 
         μ_rna = deterministic("μ_rna", exp(offset_rna + Wz[design_indicator, cell_indicator]))
-        α_rna_bat = α_rna
-        deterministic("σ_rna", μ_rna**2 / α_rna_bat * (1 + α_rna_bat / μ_rna))
-        sample("rna", GammaPoisson(α_rna_bat, α_rna_bat / μ_rna).to_event(1), obs=X[ind])
+        deterministic("σ_rna", μ_rna**2 / α_rna * (1 + α_rna / μ_rna))
+        sample("rna", GammaPoisson(α_rna, α_rna / μ_rna).to_event(1), obs=X[ind])
 
 
 def scpca_guide(
