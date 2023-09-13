@@ -269,30 +269,14 @@ def scpca_guide(
         sample("W_fac", Normal(W_fac_loc, W_fac_scale).to_event(2))
 
         if horseshoe:
-            sample(
-                "W_del",
-                TD(Normal(W_del_loc, W_del_scale), ExpTransform()),
-            )
-            sample(
-                "W_lam",
-                TD(Normal(W_lam_loc, W_lam_scale), ExpTransform()).to_event(1),
-            )
-            sample(
-                "W_c",
-                TD(Normal(W_c_loc, W_c_scale), ExpTransform()).to_event(1),
-            )
+            sample("W_del", TD(Normal(W_del_loc, W_del_scale), ExpTransform()))
+            sample("W_lam", TD(Normal(W_lam_loc, W_lam_scale), ExpTransform()).to_event(1))
+            sample("W_c", TD(Normal(W_c_loc, W_c_scale), ExpTransform()).to_event(1))
 
     # intercept terms
     if intercept:
-        W_add_loc = param(
-            "W_add_loc",
-            zeros((num_batches, num_genes), device=device),
-        )
-        W_add_scale = param(
-            "W_add_scale",
-            0.1 * ones((num_batches, num_genes), device=device),
-            constraint=positive,
-        )
+        W_add_loc = param("W_add_loc", zeros((num_batches, num_genes), device=device))
+        W_add_scale = param("W_add_scale", 0.1 * ones((num_batches, num_genes), device=device), constraint=positive)
 
         with batch_plate:
             sample("W_add", Normal(W_add_loc, W_add_scale).to_event(1))
