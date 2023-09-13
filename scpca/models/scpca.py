@@ -36,7 +36,6 @@ def scpca_model(
     z_sd: float = 0.1,
     horseshoe: bool = False,
     fixed_beta: bool = False,
-    minibatches: bool = False,
 ) -> None:
     gene_plate = plate("genes", num_genes)
     batch_plate = plate("batches", num_batches)
@@ -149,7 +148,6 @@ def scpca_guide(
     z_sd: float = 1.0,
     horseshoe: bool = False,
     fixed_beta: bool = False,
-    minibatches: bool = False,
 ) -> None:
     gene_plate = plate("genes", num_genes)
     batch_plate = plate("batches", num_batches)
