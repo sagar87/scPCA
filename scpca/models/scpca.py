@@ -81,29 +81,20 @@ def scpca_model(
 
             # print(W_tau.shape, W_lam.shape, W_fac.shape)
             W_gamma = tau[0] * W_del.reshape(-1, 1) * W_lam
-            W_fac = deterministic(
-                "W_horse",
-                W_fac * (torch.sqrt(W_c) * W_gamma) / torch.sqrt(W_c + W_gamma**2),
-            )
+            W_fac = deterministic("W_horse", W_fac * (torch.sqrt(W_c) * W_gamma) / torch.sqrt(W_c + W_gamma**2))
 
     if intercept:
         with batch_plate:
-            W_add = sample(
-                "W_add",
-                Normal(zeros(num_genes, device=device), ones(num_genes, device=device)).to_event(1),
-            )
+            W_add = sample("W_add", Normal(zeros(num_genes, device=device), ones(num_genes, device=device)).to_event(1))
     else:
         W_add = torch.zeros((num_batches, num_genes), device=device)
 
-    β_rna_conc = (β_rna_mean**2 / β_rna_sd**2,)
-    β_rna_rate = (β_rna_mean / β_rna_sd**2,)
+    β_rna_conc = β_rna_mean**2 / β_rna_sd**2
+    β_rna_rate = β_rna_mean / β_rna_sd**2
 
     if batch_beta:
         with batch_plate:
-            β_rna = sample(
-                "β_rna",
-                Gamma(tensor(β_rna_conc, device=device), tensor(β_rna_rate, device=device)),
-            )
+            β_rna = sample("β_rna", Gamma(tensor(β_rna_conc, device=device), tensor(β_rna_rate, device=device)))
 
         with gene_plate:
             α_rna_inv = sample("α_rna_inv", Exponential(β_rna).to_event(1))
@@ -115,10 +106,7 @@ def scpca_model(
             α_rna = deterministic("α_rna", (1 / α_rna_inv).T)
 
     else:
-        β_rna = sample(
-            "β_rna",
-            Gamma(tensor(β_rna_conc, device=device), tensor(β_rna_rate, device=device)),
-        )
+        β_rna = sample("β_rna", Gamma(tensor(β_rna_conc, device=device), tensor(β_rna_rate, device=device)))
 
         with gene_plate:
             α_rna_inv = sample("α_rna_inv", Exponential(β_rna))
@@ -158,11 +146,7 @@ def scpca_model(
 
             deterministic("σ_rna", μ_rna**2 / α_rna_bat * (1 + α_rna_bat / μ_rna))
 
-            sample(
-                "rna",
-                GammaPoisson(α_rna_bat, α_rna_bat / μ_rna).to_event(1),
-                obs=X[ind],
-            )
+            sample("rna", GammaPoisson(α_rna_bat, α_rna_bat / μ_rna).to_event(1), obs=X[ind])
     else:
         with cell_plate:
             z = sample(
