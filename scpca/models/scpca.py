@@ -36,7 +36,6 @@ def scpca_model(
     horseshoe: bool = False,
     batch_beta: bool = False,
     fixed_beta: bool = False,
-    intercept: bool = True,
     minibatches: bool = False,
 ) -> None:
     gene_plate = plate("genes", num_genes)
@@ -82,11 +81,8 @@ def scpca_model(
             W_gamma = tau[0] * W_del.reshape(-1, 1) * W_lam
             W_fac = deterministic("W_horse", W_fac * (torch.sqrt(W_c) * W_gamma) / torch.sqrt(W_c + W_gamma**2))
 
-    if intercept:
-        with batch_plate:
-            W_add = sample("W_add", Normal(zeros(num_genes, device=device), ones(num_genes, device=device)).to_event(1))
-    else:
-        W_add = torch.zeros((num_batches, num_genes), device=device)
+    with batch_plate:
+        W_add = sample("W_add", Normal(zeros(num_genes, device=device), ones(num_genes, device=device)).to_event(1))
 
     β_rna_conc = β_rna_mean**2 / β_rna_sd**2
     β_rna_rate = β_rna_mean / β_rna_sd**2
@@ -196,7 +192,6 @@ def scpca_guide(
     horseshoe: bool = False,
     batch_beta: bool = False,
     fixed_beta: bool = False,
-    intercept: bool = True,
     minibatches: bool = False,
 ) -> None:
     gene_plate = plate("genes", num_genes)
@@ -246,12 +241,11 @@ def scpca_guide(
             sample("W_c", TD(Normal(W_c_loc, W_c_scale), ExpTransform()).to_event(1))
 
     # intercept terms
-    if intercept:
-        W_add_loc = param("W_add_loc", zeros((num_batches, num_genes), device=device))
-        W_add_scale = param("W_add_scale", 0.1 * ones((num_batches, num_genes), device=device), constraint=positive)
+    W_add_loc = param("W_add_loc", zeros((num_batches, num_genes), device=device))
+    W_add_scale = param("W_add_scale", 0.1 * ones((num_batches, num_genes), device=device), constraint=positive)
 
-        with batch_plate:
-            sample("W_add", Normal(W_add_loc, W_add_scale).to_event(1))
+    with batch_plate:
+        sample("W_add", Normal(W_add_loc, W_add_scale).to_event(1))
 
     # account for batches in beta
     if batch_beta:
