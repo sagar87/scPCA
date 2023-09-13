@@ -199,6 +199,10 @@ class scPCA:
             Key to store the model in the AnnData object.
         num_samples :
             Number of samples to draw from the posterior. Default is 25.
+        variables :
+            List of variables for which the posterior mean estimates should be stored.
+            Possible values include "W", "V", "μ", "Z", "α", "σ", and "offset".
+            Default is ["W", "Z"].
         """
 
         self._meta_to_anndata(model_key)
@@ -220,34 +224,43 @@ class scPCA:
                     "z", num_samples=num_samples
                 ).swapaxes(0, 1)
 
-        α_rna = self.handler.predict_global_variable("α_rna", num_samples=num_samples).T
+            if var == "α":
+                α_rna = self.handler.predict_global_variable("α_rna", num_samples=num_samples).T
+                if α_rna.ndim == 2:
+                    α_rna = np.expand_dims(α_rna, 1)
+                adata.varm[f"{model_key}_α_rna"] = α_rna.swapaxes(-1, -2)
 
-        if α_rna.ndim == 2:
-            α_rna = np.expand_dims(α_rna, 1)
-
-        adata.varm[f"{model_key}_α_rna"] = α_rna.swapaxes(-1, -2)
-
-        σ_rna = self.handler.predict_global_variable("σ_rna", num_samples=num_samples).T
-
-        if σ_rna.ndim == 2:
-            σ_rna = np.expand_dims(σ_rna, 1)
-
-        adata.varm[f"{model_key}_σ_rna"] = σ_rna.swapaxes(-1, -2)
+            if var == "σ":
+                σ_rna = self.handler.predict_global_variable("σ_rna", num_samples=num_samples).T
+                if σ_rna.ndim == 2:
+                    σ_rna = np.expand_dims(σ_rna, 1)
+                adata.varm[f"{model_key}_σ_rna"] = σ_rna.swapaxes(-1, -2)
 
     def mean_to_anndata(
         self, model_key: str, num_samples: int = 25, num_split: int = 2048, variables: Sequence[str] = ["W", "Z"]
     ) -> None:
         """
-        Store the posterior mean estimates in the AnnData object.
+        Store the posterior mean estimates in the AnnData object for specified variables.
+
+        This method retrieves the posterior mean estimates for the given variables and stores them in the AnnData object.
+        The variables can include weights ("W"), loadings ("V"), means ("μ"), latent factors ("Z"), among others.
 
         Parameters
         ----------
         model_key :
-            Key to store the model in the AnnData object.
+            Key to store the model results in the AnnData object.
         num_samples :
             Number of samples to draw from the posterior. Default is 25.
         num_split :
             Number of splits for the data. Default is 2048.
+        variables :
+            List of variables for which the posterior mean estimates should be stored.
+            Possible values include "W", "V", "μ", "Z", "α", "σ", and "offset".
+            Default is ["W", "Z"].
+
+        Returns
+        -------
+            The results are stored in the provided AnnData object.
         """
         self._meta_to_anndata(model_key)
         adata = self.adata
@@ -272,10 +285,10 @@ class scPCA:
                 adata.varm[f"α_{model_key}"] = self.handler.predict_global_variable("α_rna").mean(0).T
             if var == "σ":
                 adata.varm[f"σ_{model_key}"] = self.handler.predict_global_variable("σ_rna").mean(0).T
-
-        # adata.layers[f"{model_key}_offset_rna"] = self.handler.predict_local_variable(
-        #     "offset_rna", num_samples=num_samples, num_split=num_split
-        # ).mean(0)
+            if var == "offset":
+                adata.layers[f"offset_{model_key}"] = self.handler.predict_local_variable(
+                    "offset_rna", num_samples=num_samples, num_split=num_split
+                ).mean(0)
 
 
 class dPCA:
