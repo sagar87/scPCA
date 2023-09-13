@@ -35,7 +35,6 @@ def scpca_model(
     W_fac_sd: float = 1.0,
     z_sd: float = 0.1,
     horseshoe: bool = False,
-    batch_beta: bool = False,
     fixed_beta: bool = False,
     minibatches: bool = False,
 ) -> None:
@@ -88,15 +87,7 @@ def scpca_model(
     β_rna_conc = β_rna_mean**2 / β_rna_sd**2
     β_rna_rate = β_rna_mean / β_rna_sd**2
 
-    if batch_beta:
-        with batch_plate:
-            β_rna = sample("β_rna", Gamma(tensor(β_rna_conc, device=device), tensor(β_rna_rate, device=device)))
-
-        with gene_plate:
-            α_rna_inv = sample("α_rna_inv", Exponential(β_rna).to_event(1))
-            α_rna = deterministic("α_rna", (1 / α_rna_inv).T)
-
-    elif fixed_beta:
+    if fixed_beta:
         with gene_plate:
             α_rna_inv = sample("α_rna_inv", Exponential(tensor(β_rna_mean, device=device)))
             α_rna = deterministic("α_rna", (1 / α_rna_inv).T)
@@ -134,14 +125,8 @@ def scpca_model(
             offset_rna = pyro.deterministic("offset_rna", X_size[ind] + intercept_rna)
 
             μ_rna = deterministic("μ_rna", exp(offset_rna + Wz[design_indicator, cell_indicator]))
-
-            if batch_beta:
-                α_rna_bat = intercept_mat @ α_rna
-            else:
-                α_rna_bat = α_rna
-
+            α_rna_bat = α_rna
             deterministic("σ_rna", μ_rna**2 / α_rna_bat * (1 + α_rna_bat / μ_rna))
-
             sample("rna", GammaPoisson(α_rna_bat, α_rna_bat / μ_rna).to_event(1), obs=X[ind])
     else:
         with cell_plate:
@@ -163,12 +148,7 @@ def scpca_model(
                 ),
             )
 
-            if batch_beta:
-                α_rna_bat = batch @ α_rna
-
-            else:
-                α_rna_bat = α_rna
-
+            α_rna_bat = α_rna
             sample("rna", GammaPoisson(α_rna_bat, α_rna_bat / μ_rna).to_event(1), obs=X)
 
 
@@ -191,7 +171,6 @@ def scpca_guide(
     W_fac_sd: float = 1.0,
     z_sd: float = 1.0,
     horseshoe: bool = False,
-    batch_beta: bool = False,
     fixed_beta: bool = False,
     minibatches: bool = False,
 ) -> None:
@@ -249,40 +228,17 @@ def scpca_guide(
         sample("W_add", Normal(W_add_loc, W_add_scale).to_event(1))
 
     # account for batches in beta
-    if batch_beta:
-        β_rna_loc = param("β_rna_loc", zeros(num_batches, device=device))
-        β_rna_scale = param("β_rna_scale", ones(num_batches, device=device), constraint=positive)
-
-        with batch_plate:
-            sample(
-                "β_rna",
-                TD(Normal(β_rna_loc, β_rna_scale), ExpTransform()),
-            )
-
-    elif fixed_beta:
-        pass
-    else:
+    if not fixed_beta:
         β_rna_loc = param("β_rna_loc", zeros(1, device=device))
         β_rna_scale = param("β_rna_scale", ones(1, device=device), constraint=positive)
 
         sample("β_rna", TD(Normal(β_rna_loc, β_rna_scale), ExpTransform()))
 
-    if batch_beta:
-        α_rna_loc = param("α_rna_loc", zeros((num_genes, num_batches), device=device))
-        α_rna_scale = param("α_rna_scale", 0.1 * ones((num_genes, num_batches), device=device), constraint=positive)
+    α_rna_loc = param("α_rna_loc", zeros((num_genes), device=device))
+    α_rna_scale = param("α_rna_scale", 0.1 * ones((num_genes), device=device), constraint=positive)
 
-        with gene_plate:
-            sample("α_rna_inv", TD(Normal(α_rna_loc, α_rna_scale), ExpTransform()).to_event(1))
-
-    else:
-        α_rna_loc = param("α_rna_loc", zeros((num_genes), device=device))
-        α_rna_scale = param("α_rna_scale", 0.1 * ones((num_genes), device=device), constraint=positive)
-
-        with gene_plate:
-            sample(
-                "α_rna_inv",
-                TD(Normal(α_rna_loc, α_rna_scale), ExpTransform()),
-            )
+    with gene_plate:
+        sample("α_rna_inv", TD(Normal(α_rna_loc, α_rna_scale), ExpTransform()))
 
     z_loc = param("z_loc", zeros((num_cells, num_factors), device=device))
     z_scale = param("z_scale", 0.1 * ones((num_cells, num_factors), device=device), constraint=positive)
