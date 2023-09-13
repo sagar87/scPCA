@@ -349,7 +349,7 @@ class dPCA(scPCA):
         design_formula: str = "1",
         intercept_formula: str = "1",
         subsampling: int = 4096,
-        device: Device = torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+        device: Optional[Literal["cuda", "cpu"]] = None,
         model_kwargs: Dict[str, Any] = {
             "z_sd": 1.0,
         },
@@ -362,7 +362,9 @@ class dPCA(scPCA):
         self.intercept_formula = intercept_formula
 
         self.subsampling = min([subsampling, adata.shape[0]])
-        self.device = device
+        self.device: Device = (
+            torch.device("cuda" if torch.cuda.is_available() else "cpu") if device is None else torch.device(device)
+        )
 
         # prepare design and batch matrix
         self.design_matrix = dmatrix(design_formula, self.adata)
