@@ -15,34 +15,38 @@ from .utils import get_rna_counts, get_states
 
 class scPCA:
     """
-    scPCA model.
+    Single-cell Principal Component Analysis (scPCA) model.
+
+    This class provides an interface to perform scPCA on single-cell data. It allows for
+    the extraction of principal components while accounting for batch effects and other
+    covariates.
 
     Parameters
     ----------
-    adata: anndata.AnnData
-        Anndata object with the single-cell data.
-    num_factors: int (default: 15)
+    adata :
+        Anndata object containing the single-cell data.
+    num_factors :
         Number of factors to fit.
-    layers_key: str or None (default: None)
-        Key to extract single-cell count matrix from adata.layers. If layers_key is None,
-        scPCA will try to extract the count matrix from the adata.X.
-    batch_formula: str or None (default: None)
-        R style formula to extract batch information from adata.obs. If batch_formula is None,
-        scPCA assumes a single batch. Usually `batch_column - 1`.
-    design_formula: str or None (default: None)
-        R style formula to construct the design matrix from adata.obs. If design_formula is None,
-        scPCA fits a normal PCA.
-    subsampling: int (default: 4096)
-        Number of cells to subsample for training. A larger number will result in a more accurate
-        computation of the gradients, but will also increase the training time and memory usage.
-    device: torch.device (default: torch.device("cuda" if torch.cuda.is_available() else "cpu"))
-        Device to run the model on. A GPU is highly recommended.
-    model_key: str (default: "scpca")
-        Key to store the model in the AnnData object.
-    model_kwargs: dict
-        Model parameters. See sccca.model.model for more details.
-    training_kwargs: dict
-        Training parameters. See sccca.handler for more details.
+    layers_key :
+        Key to extract single-cell count matrix from adata.layers. If None, scPCA will
+        try to extract the count matrix from adata.X. Default is None.
+    design_formula :
+        R style formula to construct the design matrix from adata.obs. If None, scPCA
+        fits a normal PCA. Default is "1".
+    intercept_formula :
+        R style formula to extract batch information from adata.obs. Default is "1".
+    subsampling :
+        Number of cells to subsample for training. A larger number will result in a more
+        accurate computation of the gradients, but will also increase the training time
+        and memory usage. Default is 4096.
+    device :
+        Device to run the model on. A GPU is recommended. Default is GPU if available, else CPU.
+    seed :
+        Random seed for reproducibility. Default is None.
+    model_kwargs :
+        Additional keyword arguments for the model. Default values are provided.
+    training_kwargs :
+        Additional keyword arguments for training. Default is SUBSAMPLE.
     """
 
     def __init__(
@@ -95,13 +99,26 @@ class scPCA:
 
     def _to_torch(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Helper method to convert numpy arrays of a dict to torch tensors.
+        Convert numpy arrays of a dictionary to torch tensors.
+
+        Parameters
+        ----------
+        data :
+            Dictionary containing numpy arrays.
+
+        Returns
+        -------
+            Dictionary with numpy arrays converted to torch tensors.
         """
         return {k: torch.tensor(v, device=self.device) if isinstance(v, np.ndarray) else v for k, v in data.items()}
 
     def _setup_data(self) -> Dict[str, Union[torch.Tensor, int, None]]:
         """
-        Sets up the data.
+        Prepare the data for the scPCA model.
+
+        Returns
+        -------
+            Dictionary containing tensors and other relevant information for the model.
         """
         X = get_rna_counts(self.adata, self.layers_key)
         X_size = np.log(X.sum(axis=1, keepdims=True))
