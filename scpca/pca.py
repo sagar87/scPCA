@@ -69,7 +69,6 @@ class scPCA:
         },
         training_kwargs: Dict[str, Any] = SUBSAMPLE,
     ):
-        self.seed: Optional[torch.Generator] = seed if seed is None else torch.manual_seed(self.seed)
         self.adata = adata
         self.num_factors = num_factors
         self.layers_key = layers_key
@@ -79,6 +78,7 @@ class scPCA:
         self.device: Device = (
             torch.device("cuda" if torch.cuda.is_available() else "cpu") if device is None else torch.device(device)
         )
+        self.seed: Optional[torch.Generator] = seed if seed is None else torch.manual_seed(self.seed)
 
         # prepare design and batch matrix
         self.design_matrix = dmatrix(design_formula, adata.obs)
@@ -350,6 +350,7 @@ class dPCA(scPCA):
         intercept_formula: str = "1",
         subsampling: int = 4096,
         device: Optional[Literal["cuda", "cpu"]] = None,
+        seed: Optional[int] = None,
         model_kwargs: Dict[str, Any] = {
             "z_sd": 1.0,
         },
@@ -360,11 +361,11 @@ class dPCA(scPCA):
         self.layers_key = layers_key
         self.design_formula = design_formula
         self.intercept_formula = intercept_formula
-
         self.subsampling = min([subsampling, adata.shape[0]])
         self.device: Device = (
             torch.device("cuda" if torch.cuda.is_available() else "cpu") if device is None else torch.device(device)
         )
+        self.seed: Optional[torch.Generator] = seed if seed is None else torch.manual_seed(self.seed)
 
         # prepare design and batch matrix
         self.design_matrix = dmatrix(design_formula, self.adata)
