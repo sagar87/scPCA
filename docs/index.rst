@@ -11,6 +11,7 @@ Welcome to scCCA's documentation!
    :caption: API:
 
    models
+   tools
 
 
 Indices and tables
