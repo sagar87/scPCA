@@ -10,7 +10,7 @@ from pyro.distributions import (  # type: ignore
     Normal,
 )
 from pyro.distributions import TransformedDistribution as TD
-from pyro.distributions.constraints import less_than, positive  # type: ignore
+from pyro.distributions.constraints import positive  # type: ignore
 from pyro.distributions.transforms import ExpTransform  # type: ignore
 from torch import Tensor, einsum, exp, ones, tensor, zeros
 
@@ -37,7 +37,6 @@ def scpca_model(
     batch_beta: bool = False,
     fixed_beta: bool = False,
     intercept: bool = True,
-    constrain_alpha: bool = False,
     minibatches: bool = False,
 ) -> None:
     gene_plate = plate("genes", num_genes)
@@ -198,7 +197,6 @@ def scpca_guide(
     batch_beta: bool = False,
     fixed_beta: bool = False,
     intercept: bool = True,
-    constrain_alpha: bool = False,
     minibatches: bool = False,
 ) -> None:
     gene_plate = plate("genes", num_genes)
@@ -275,22 +273,14 @@ def scpca_guide(
         sample("β_rna", TD(Normal(β_rna_loc, β_rna_scale), ExpTransform()))
 
     if batch_beta:
-        if constrain_alpha:
-            α_rna_loc = param("α_rna_loc", zeros((num_genes, num_batches), device=device), constraint=less_than(6.0))
-        else:
-            α_rna_loc = param("α_rna_loc", zeros((num_genes, num_batches), device=device))
-
+        α_rna_loc = param("α_rna_loc", zeros((num_genes, num_batches), device=device))
         α_rna_scale = param("α_rna_scale", 0.1 * ones((num_genes, num_batches), device=device), constraint=positive)
 
         with gene_plate:
             sample("α_rna_inv", TD(Normal(α_rna_loc, α_rna_scale), ExpTransform()).to_event(1))
 
     else:
-        if constrain_alpha:
-            α_rna_loc = param("α_rna_loc", zeros((num_genes), device=device), constraint=less_than(6.0))
-        else:
-            α_rna_loc = param("α_rna_loc", zeros((num_genes), device=device))
-
+        α_rna_loc = param("α_rna_loc", zeros((num_genes), device=device))
         α_rna_scale = param("α_rna_scale", 0.1 * ones((num_genes), device=device), constraint=positive)
 
         with gene_plate:
