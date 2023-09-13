@@ -252,18 +252,10 @@ def scpca_guide(
         W_del_scale = param("W_del_scale", 0.1 * ones(num_factors, device=device), constraint=positive)
 
         W_lam_loc = param("W_lam_loc", zeros((num_factors, num_genes), device=device))
-        W_lam_scale = param(
-            "W_lam_scale",
-            0.1 * ones((num_factors, num_genes), device=device),
-            constraint=positive,
-        )
+        W_lam_scale = param("W_lam_scale", 0.1 * ones((num_factors, num_genes), device=device), constraint=positive)
 
         W_c_loc = param("W_c_loc", zeros((num_factors, num_genes), device=device))
-        W_c_scale = param(
-            "W_c_scale",
-            0.1 * ones((num_factors, num_genes), device=device),
-            constraint=positive,
-        )
+        W_c_scale = param("W_c_scale", 0.1 * ones((num_factors, num_genes), device=device), constraint=positive)
 
     with group_plate:
         sample("W_fac", Normal(W_fac_loc, W_fac_scale).to_event(2))
@@ -298,40 +290,22 @@ def scpca_guide(
         β_rna_loc = param("β_rna_loc", zeros(1, device=device))
         β_rna_scale = param("β_rna_scale", ones(1, device=device), constraint=positive)
 
-        sample(
-            "β_rna",
-            TD(Normal(β_rna_loc, β_rna_scale), ExpTransform()),
-        )
+        sample("β_rna", TD(Normal(β_rna_loc, β_rna_scale), ExpTransform()))
 
     if batch_beta:
         if constrain_alpha:
-            α_rna_loc = param(
-                "α_rna_loc",
-                zeros((num_genes, num_batches), device=device),
-                constraint=less_than(6.0),
-            )
+            α_rna_loc = param("α_rna_loc", zeros((num_genes, num_batches), device=device), constraint=less_than(6.0))
         else:
             α_rna_loc = param("α_rna_loc", zeros((num_genes, num_batches), device=device))
 
-        α_rna_scale = param(
-            "α_rna_scale",
-            0.1 * ones((num_genes, num_batches), device=device),
-            constraint=positive,
-        )
+        α_rna_scale = param("α_rna_scale", 0.1 * ones((num_genes, num_batches), device=device), constraint=positive)
 
         with gene_plate:
-            sample(
-                "α_rna_inv",
-                TD(Normal(α_rna_loc, α_rna_scale), ExpTransform()).to_event(1),
-            )
+            sample("α_rna_inv", TD(Normal(α_rna_loc, α_rna_scale), ExpTransform()).to_event(1))
 
     else:
         if constrain_alpha:
-            α_rna_loc = param(
-                "α_rna_loc",
-                zeros((num_genes), device=device),
-                constraint=less_than(6.0),
-            )
+            α_rna_loc = param("α_rna_loc", zeros((num_genes), device=device), constraint=less_than(6.0))
         else:
             α_rna_loc = param("α_rna_loc", zeros((num_genes), device=device))
 
@@ -344,11 +318,7 @@ def scpca_guide(
             )
 
     z_loc = param("z_loc", zeros((num_cells, num_factors), device=device))
-    z_scale = param(
-        "z_scale",
-        0.1 * ones((num_cells, num_factors), device=device),
-        constraint=positive,
-    )
+    z_scale = param("z_scale", 0.1 * ones((num_cells, num_factors), device=device), constraint=positive)
 
     with cell_plate as ind:
         sample("z", Normal(z_loc[ind], z_scale[ind]).to_event(1))
