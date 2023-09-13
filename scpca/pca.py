@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Literal, Optional, Union
 
 import numpy as np
 import torch
@@ -57,7 +57,7 @@ class scPCA:
         design_formula: str = "1",
         intercept_formula: str = "1",
         subsampling: int = 4096,
-        device: Device = torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+        device: Optional[Literal["cuda", "cpu"]] = None,
         seed: Optional[int] = None,
         model_kwargs: Dict[str, Any] = {
             "β_rna_sd": 0.01,
@@ -69,19 +69,16 @@ class scPCA:
         },
         training_kwargs: Dict[str, Any] = SUBSAMPLE,
     ):
-        self.seed = seed
-
-        if self.seed is not None:
-            torch.manual_seed(self.seed)
-
+        self.seed: Optional[torch.Generator] = seed if seed is None else torch.manual_seed(self.seed)
         self.adata = adata
         self.num_factors = num_factors
         self.layers_key = layers_key
         self.design_formula = design_formula
         self.intercept_formula = intercept_formula
-
         self.subsampling = min([subsampling, adata.shape[0]])
-        self.device = device
+        self.device: Device = (
+            torch.device("cuda" if torch.cuda.is_available() else "cpu") if device is None else torch.device(device)
+        )
 
         # prepare design and batch matrix
         self.design_matrix = dmatrix(design_formula, adata.obs)
@@ -285,7 +282,7 @@ class scPCA:
 
         Parameters
         ----------
-        model_key :k
+        model_key :
             Key to store the model in the AnnData object.
         num_samples :
             Number of samples to draw from the posterior. Default is 25.
