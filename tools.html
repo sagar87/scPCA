@@ -274,6 +274,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.utils.data.get_diff_genes"><code class="docutils literal notranslate"><span class="pre">get_diff_genes()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.utils.data.get_ordered_genes"><code class="docutils literal notranslate"><span class="pre">get_ordered_genes()</span></code></a></li>
 </ul>
             </nav>
@@ -289,33 +290,70 @@ document.write(`
   <section id="module-scpca.utils.data">
 <span id="tools"></span><h1>Tools<a class="headerlink" href="#module-scpca.utils.data" title="Permalink to this heading">#</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="scpca.utils.data.get_ordered_genes">
-<span class="sig-prename descclassname"><span class="pre">scpca.utils.data.</span></span><span class="sig-name descname"><span class="pre">get_ordered_genes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W_rna'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ascending</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.utils.data.get_ordered_genes" title="Permalink to this definition">#</a></dt>
-<dd><p>Retrieve the ordered genes based on differential factor values.</p>
+<dt class="sig sig-object py" id="scpca.utils.data.get_diff_genes">
+<span class="sig-prename descclassname"><span class="pre">scpca.utils.data.</span></span><span class="sig-name descname"><span class="pre">get_diff_genes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ascending</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.96</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.utils.data.get_diff_genes" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the differential genes between two states based on a given model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>adata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code>) – Annotated data object containing gene expression data.</p></li>
-<li><p><strong>model_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Key to identify the specific model.</p></li>
-<li><p><strong>state</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the model state from which to extract genes.</p></li>
-<li><p><strong>factor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Factor index for which differential factor values are calculated.</p></li>
-<li><p><strong>sign</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Sign multiplier for differential factor values. Default is 1.0.</p></li>
-<li><p><strong>vector</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Vector type from which to extract differential factor values. Default is “W_rna”.</p></li>
-<li><p><strong>highest</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of genes with the highest differential factor values to retrieve. Default is 10.</p></li>
-<li><p><strong>lowest</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of genes with the lowest differential factor values to retrieve. Default is 0.</p></li>
-<li><p><strong>ascending</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Flag indicating whether to sort genes in ascending order based on differential factor values.
-Default is False.</p></li>
+<li><p><strong>adata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code>) – Annotated data matrix.</p></li>
+<li><p><strong>model_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Key to access the model in the adata object.</p></li>
+<li><p><strong>states</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List containing two states for comparison. If a single str is provided
+the base state is assumed to be ‘Intercept’.</p></li>
+<li><p><strong>factor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Factor index to consider for the differential calculation.</p></li>
+<li><p><strong>sign</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Sign to adjust the difference, by default 1.0.</p></li>
+<li><p><strong>variable</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Vector key to access in the model, by default “W_rna”.</p></li>
+<li><p><strong>highest</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of highest differential genes to retrieve, by default 10.</p></li>
+<li><p><strong>lowest</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of lowest differential genes to retrieve, by default 0.</p></li>
+<li><p><strong>ascending</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to sort the results in ascending order, by default False.</p></li>
+<li><p><strong>threshold</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Threshold for significance, by default 1.96.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>DataFrame containing the ordered genes along with their magnitude, differential factor values,
-type (lowest/highest), model state, factor index, and gene index.</p>
+<dd class="field-even"><p>DataFrame containing differential genes, their magnitudes, differences, types, states, factors, indices, and significance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function computes the differential genes between two states based on a given model.
+It first validates the sign, retrieves the model design, and computes
+the difference between the two states for a given factor. The function then
+retrieves the gene indices based on the highest and lowest differences and
+constructs a DataFrame with the results.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scpca.utils.data.get_ordered_genes">
+<span class="sig-prename descclassname"><span class="pre">scpca.utils.data.</span></span><span class="sig-name descname"><span class="pre">get_ordered_genes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ascending</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.utils.data.get_ordered_genes" title="Permalink to this definition">#</a></dt>
+<dd><p>Extract and order genes from an AnnData object based on their loading weights.</p>
+<p>This function retrieves genes based on their association with a specific loading weights and state
+from a given model. It allows for the selection of genes with the highest and lowest
+loading weight values, and returns them in a sorted DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code>) – The annotated data matrix containing gene expression data.</p></li>
+<li><p><strong>model_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The key corresponding to the model in the AnnData object.</p></li>
+<li><p><strong>state</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The state from which to extract gene information.</p></li>
+<li><p><strong>factor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The index of the factor based on which genes are ordered.</p></li>
+<li><p><strong>sign</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Multiplier to adjust the direction of factor values.</p></li>
+<li><p><strong>variable</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The type of vector from which factor values are extracted.</p></li>
+<li><p><strong>highest</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The number of top genes with the highest factor values to retrieve.</p></li>
+<li><p><strong>lowest</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The number of genes with the lowest factor values to retrieve.</p></li>
+<li><p><strong>ascending</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to sort the genes in ascending order of factor values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A DataFrame containing genes ordered by their factor values. Columns include gene name,
+magnitude of association, weight, type (highest/lowest), state, factor index, and gene index.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If the specified model key or model state is not found in the provided AnnData object.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If the provided model key or state is not present in the AnnData object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -361,6 +399,7 @@ type (lowest/highest), model state, factor index, and gene index.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.utils.data.get_diff_genes"><code class="docutils literal notranslate"><span class="pre">get_diff_genes()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.utils.data.get_ordered_genes"><code class="docutils literal notranslate"><span class="pre">get_ordered_genes()</span></code></a></li>
 </ul>
   </nav></div>
