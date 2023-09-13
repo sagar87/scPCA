@@ -8,8 +8,8 @@ from pyro.distributions import (  # type: ignore
     HalfCauchy,
     InverseGamma,
     Normal,
-    TransformedDistribution,
 )
+from pyro.distributions import TransformedDistribution as TD
 from pyro.distributions.constraints import less_than, positive  # type: ignore
 from pyro.distributions.transforms import ExpTransform  # type: ignore
 from torch import Tensor, einsum, exp, ones, tensor, zeros
@@ -245,7 +245,7 @@ def scpca_guide(
         with pyro.plate("modality", 2):
             sample(
                 "tau",
-                TransformedDistribution(Normal(tau_loc, tau_scale), ExpTransform()),
+                TD(Normal(tau_loc, tau_scale), ExpTransform()),
             )
 
         W_del_loc = param("W_del_loc", zeros(num_factors, device=device))
@@ -271,15 +271,15 @@ def scpca_guide(
         if horseshoe:
             sample(
                 "W_del",
-                TransformedDistribution(Normal(W_del_loc, W_del_scale), ExpTransform()),
+                TD(Normal(W_del_loc, W_del_scale), ExpTransform()),
             )
             sample(
                 "W_lam",
-                TransformedDistribution(Normal(W_lam_loc, W_lam_scale), ExpTransform()).to_event(1),
+                TD(Normal(W_lam_loc, W_lam_scale), ExpTransform()).to_event(1),
             )
             sample(
                 "W_c",
-                TransformedDistribution(Normal(W_c_loc, W_c_scale), ExpTransform()).to_event(1),
+                TD(Normal(W_c_loc, W_c_scale), ExpTransform()).to_event(1),
             )
 
     # intercept terms
@@ -305,7 +305,7 @@ def scpca_guide(
         with batch_plate:
             sample(
                 "β_rna",
-                TransformedDistribution(Normal(β_rna_loc, β_rna_scale), ExpTransform()),
+                TD(Normal(β_rna_loc, β_rna_scale), ExpTransform()),
             )
 
     elif fixed_beta:
@@ -316,7 +316,7 @@ def scpca_guide(
 
         sample(
             "β_rna",
-            TransformedDistribution(Normal(β_rna_loc, β_rna_scale), ExpTransform()),
+            TD(Normal(β_rna_loc, β_rna_scale), ExpTransform()),
         )
 
     if batch_beta:
@@ -338,7 +338,7 @@ def scpca_guide(
         with gene_plate:
             sample(
                 "α_rna_inv",
-                TransformedDistribution(Normal(α_rna_loc, α_rna_scale), ExpTransform()).to_event(1),
+                TD(Normal(α_rna_loc, α_rna_scale), ExpTransform()).to_event(1),
             )
 
     else:
@@ -356,7 +356,7 @@ def scpca_guide(
         with gene_plate:
             sample(
                 "α_rna_inv",
-                TransformedDistribution(Normal(α_rna_loc, α_rna_scale), ExpTransform()),
+                TD(Normal(α_rna_loc, α_rna_scale), ExpTransform()),
             )
 
     z_loc = param("z_loc", zeros((num_cells, num_factors), device=device))
