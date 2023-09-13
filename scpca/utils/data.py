@@ -187,16 +187,15 @@ def _get_gene_idx(array: NDArray[np.float32], highest: int, lowest: int) -> NDAr
 
     Parameters
     ----------
-    array: np.ndarray
+    array :
         array in which to extract the highest/lowest indices
-    highest: int
+    highest :
         number of top indices to extract
-    lowest: int
+    lowest :
         number of lowest indices to extract
 
     Returns
     -------
-    np.ndarray
     """
     order = np.argsort(array)
 
@@ -211,54 +210,57 @@ def _get_gene_idx(array: NDArray[np.float32], highest: int, lowest: int) -> NDAr
 def get_ordered_genes(
     adata: AnnData,
     model_key: str,
-    state: str,
+    state: Union[List[str], Tuple[str, str], str],
     factor: int,
     sign: Union[int, float] = 1.0,
-    vector: str = "W_rna",
+    variable: str = "W",
     highest: int = 10,
     lowest: int = 0,
     ascending: bool = False,
 ) -> pd.DataFrame:
     """
-    Retrieve the ordered genes based on differential factor values.
+    Extract and order genes from an AnnData object based on their loading weights.
+
+    This function retrieves genes based on their association with a specific loading weights and state
+    from a given model. It allows for the selection of genes with the highest and lowest
+    loading weight values, and returns them in a sorted DataFrame.
 
     Parameters
     ----------
     adata :
-        Annotated data object containing gene expression data.
+        The annotated data matrix containing gene expression data.
     model_key :
-        Key to identify the specific model.
+        The key corresponding to the model in the AnnData object.
     state :
-        Name of the model state from which to extract genes.
+        The state from which to extract gene information.
     factor :
-        Factor index for which differential factor values are calculated.
+        The index of the factor based on which genes are ordered.
     sign :
-        Sign multiplier for differential factor values. Default is 1.0.
-    vector :
-        Vector type from which to extract differential factor values. Default is "W_rna".
+        Multiplier to adjust the direction of factor values.
+    variable :
+        The type of vector from which factor values are extracted.
     highest :
-        Number of genes with the highest differential factor values to retrieve. Default is 10.
+        The number of top genes with the highest factor values to retrieve.
     lowest :
-        Number of genes with the lowest differential factor values to retrieve. Default is 0.
+        The number of genes with the lowest factor values to retrieve.
     ascending :
-        Flag indicating whether to sort genes in ascending order based on differential factor values.
-        Default is False.
+        Whether to sort the genes in ascending order of factor values.
 
     Returns
     -------
     pd.DataFrame
-        DataFrame containing the ordered genes along with their magnitude, differential factor values,
-        type (lowest/highest), model state, factor index, and gene index.
+        A DataFrame containing genes ordered by their factor values. Columns include gene name,
+        magnitude of association, weight, type (highest/lowest), state, factor index, and gene index.
 
     Raises
     ------
     ValueError
-        If the specified model key or model state is not found in the provided AnnData object.
+        If the provided model key or state is not present in the AnnData object.
     """
     _ = _validate_sign(sign)
     model_design = _get_model_design(adata, model_key)
     state = model_design[state]
-    weights = sign * adata.varm[f"{model_key}_{vector}"][..., factor, state]
+    weights = sign * adata.varm[f"{variable}_{model_key}"][..., factor, state]
     gene_idx = _get_gene_idx(weights, highest, lowest)
 
     magnitude = np.abs(weights[gene_idx])
@@ -269,14 +271,106 @@ def get_ordered_genes(
             {
                 "gene": genes,
                 "magnitude": magnitude,
-                "diff": weights[gene_idx],
+                "weight": weights[gene_idx],
                 "type": ["lowest"] * lowest + ["highest"] * highest,
                 "state": state,
                 "factor": factor,
                 "index": gene_idx,
             }
         )
+        .sort_values(by="weight", ascending=ascending)
+        .reset_index(drop=True)
+    )
+
+
+def get_diff_genes(
+    adata: AnnData,
+    model_key: str,
+    states: Union[List[str], Tuple[str, str], str],
+    factor: int,
+    sign: Union[int, float] = 1.0,
+    variable: str = "W",
+    highest: int = 10,
+    lowest: int = 0,
+    ascending: bool = False,
+    threshold: float = 1.96,
+) -> pd.DataFrame:
+    """
+    Compute the differential genes between two states based on a given model.
+
+    Parameters
+    ----------
+    adata :
+        Annotated data matrix.
+    model_key :
+        Key to access the model in the adata object.
+    states :
+        List containing two states for comparison. If a single str is provided
+        the base state is assumed to be 'Intercept'.
+    factor :
+        Factor index to consider for the differential calculation.
+    sign :
+        Sign to adjust the difference, by default 1.0.
+    variable :
+        Vector key to access in the model, by default "W_rna".
+    highest :
+        Number of highest differential genes to retrieve, by default 10.
+    lowest :
+        Number of lowest differential genes to retrieve, by default 0.
+    ascending :
+        Whether to sort the results in ascending order, by default False.
+    threshold :
+        Threshold for significance, by default 1.96.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame containing differential genes, their magnitudes, differences, types, states, factors, indices, and significance.
+
+    Notes
+    -----
+    This function computes the differential genes between two states based on a given model.
+    It first validates the sign, retrieves the model design, and computes
+    the difference between the two states for a given factor. The function then
+    retrieves the gene indices based on the highest and lowest differences and
+    constructs a DataFrame with the results.
+    """
+
+    sign = _validate_sign(sign)
+    states = _validate_states(states)
+
+    model_design = _get_model_design(adata, model_key)
+    state_a = model_design[states[0]]
+    state_b = model_design[states[1]]
+    a = adata.varm[f"{model_key}_{variable}"][..., factor, state_a]
+    b = adata.varm[f"{model_key}_{variable}"][..., factor, state_b]
+
+    # diff_factor = sign * (model_dict[vector][state_b][factor] - model_dict[vector][state_a][factor])
+    diff_factor = sign * (b - a)
+
+    gene_idx = _get_gene_idx(diff_factor, highest, lowest)
+
+    magnitude = np.abs(diff_factor[gene_idx])
+    genes = adata.var_names.to_numpy()[gene_idx]
+    # is_significant = lambda x: x > norm().ppf(1 - significance_level) or x < norm().ppf(significance_level)
+    df = (
+        pd.DataFrame(
+            {
+                "gene": genes,
+                "magnitude": magnitude,
+                "diff": diff_factor[gene_idx],
+                "type": ["lowest"] * lowest + ["highest"] * highest,
+                "state": states[1] + "-" + states[0],
+                "factor": factor,
+                "index": gene_idx,
+                states[0]: a[gene_idx],
+                states[1]: b[gene_idx],
+            }
+        )
         .sort_values(by="diff", ascending=ascending)
         .reset_index(drop=True)
-        .rename(columns={"diff": "value"})
     )
+
+    df["significant"] = df["magnitude"] > threshold
+
+    return df
