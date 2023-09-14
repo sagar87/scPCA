@@ -5,15 +5,13 @@ import numpy as np
 import torch
 from anndata import AnnData  # type: ignore
 from numpy.typing import NDArray
-from patsy import dmatrix  # type: ignore
-from torch.types import Device
 
 from .models import dpca_guide, dpca_model, scpca_guide, scpca_model
-from .train import DEFAULT, FactorModelWrapper, SVILocalHandler, _to_torch
-from .utils import _get_rna_counts, get_states
+from .train import DEFAULT, FactorModel, SVILocalHandler, _to_torch
+from .utils import _get_rna_counts
 
 
-class scPCA(FactorModelWrapper):
+class scPCA(FactorModel):
     """
     Single-cell Principal Component Analysis (scPCA) model.
 
@@ -247,7 +245,7 @@ class scPCA(FactorModelWrapper):
                     ).mean(0)
 
 
-class dPCA:
+class dPCA(FactorModel):
     """
     Design Principal Component Analysis (dPCA) model.
 
@@ -292,31 +290,24 @@ class dPCA:
         },
         training_kwargs: Dict[str, Any] = DEFAULT,
     ):
-        self.adata = adata
-        self.num_factors = num_factors
-        self.layers_key = layers_key
-        self.design_formula = design_formula
-        self.intercept_formula = intercept_formula
-        self.subsampling = min([subsampling, adata.shape[0]])
-        self.device: Device = (
-            torch.device("cuda" if torch.cuda.is_available() else "cpu") if device is None else torch.device(device)
+        super().__init__(
+            adata=adata,
+            num_factors=num_factors,
+            layers_key=layers_key,
+            design_formula=design_formula,
+            intercept_formula=intercept_formula,
+            subsampling=subsampling,
+            device=device,
+            seed=seed,
+            model_kwargs=model_kwargs,
+            training_kwargs=training_kwargs,
         )
-        self.seed: Optional[torch.Generator] = seed if seed is None else torch.manual_seed(self.seed)
-
-        # prepare design and batch matrix
-        self.design_matrix = dmatrix(design_formula, self.adata.obs)
-        self.design_states = get_states(self.design_matrix)
-        self.intercept_matrix = dmatrix(intercept_formula, self.adata.obs)
-        self.intercept_states = get_states(self.intercept_matrix)
-        #
-        self.model_kwargs = model_kwargs
-        self.training_kwargs = training_kwargs
 
         # setup data
         self.data = self._setup_data()
         self.handler = self._setup_handler()
 
-    def _setup_data(self) -> Dict[str, Union[torch.Tensor, int, None]]:
+    def _setup_data(self) -> Dict[str, Union[torch.Tensor, int, float]]:
         """
         Sets up the data.
         """
@@ -391,30 +382,6 @@ class dPCA:
             **self.training_kwargs,
         )
 
-    def fit(self, *args: Any, **kwargs: Any) -> None:
-        self.handler.fit(*args, **kwargs)
-
-    def _meta_to_anndata(self, model_key: str) -> None:
-        """
-        Store meta information in the AnnData object.
-
-        Parameters
-        ----------
-        model_key :
-            Key to store the model in the AnnData object.
-        """
-        res: Dict[str, Any] = {}
-        res["design"] = self.design_states.sparse
-        res["intercept"] = self.intercept_states.sparse
-
-        res["design_index"] = self.design_states.idx
-        res["intercept_index"] = self.intercept_states.idx
-
-        res["loss"] = self.handler.loss
-        res["model"] = {"num_factors": self.num_factors, "seed": self.seed, **self.model_kwargs}
-
-        self.adata.uns[f"{model_key}"] = res
-
     def posterior_to_anndata(
         self, model_key: str, num_samples: int = 25, variables: Sequence[str] = ["W", "Z"]
     ) -> None:
@@ -435,34 +402,34 @@ class dPCA:
 
         self._meta_to_anndata(model_key)
         adata = self.adata
+        if self.handler is not None:
+            for var in variables:
+                if var == "W":
+                    adata.varm[f"W_{model_key}"] = (
+                        self.handler.predict_global_variable("W_lin", num_samples=num_samples)
+                        .T.swapaxes(-1, -3)
+                        .swapaxes(-1, -2)
+                    )
+                if var == "V":
+                    adata.varm[f"V_{model_key}"] = self.handler.predict_global_variable(
+                        "W_add", num_samples=num_samples
+                    ).T.swapaxes(-1, -2)
+                if var == "Z":
+                    adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable(
+                        "z", num_samples=num_samples
+                    ).swapaxes(0, 1)
 
-        for var in variables:
-            if var == "W":
-                adata.varm[f"W_{model_key}"] = (
-                    self.handler.predict_global_variable("W_lin", num_samples=num_samples)
-                    .T.swapaxes(-1, -3)
-                    .swapaxes(-1, -2)
-                )
-            if var == "V":
-                adata.varm[f"V_{model_key}"] = self.handler.predict_global_variable(
-                    "W_add", num_samples=num_samples
-                ).T.swapaxes(-1, -2)
-            if var == "Z":
-                adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable(
-                    "z", num_samples=num_samples
-                ).swapaxes(0, 1)
+                if var == "α":
+                    α_rna = self.handler.predict_global_variable("α_rna", num_samples=num_samples).T
+                    if α_rna.ndim == 2:
+                        α_rna = np.expand_dims(α_rna, 1)
+                    adata.varm[f"{model_key}_α_rna"] = α_rna.swapaxes(-1, -2)
 
-            if var == "α":
-                α_rna = self.handler.predict_global_variable("α_rna", num_samples=num_samples).T
-                if α_rna.ndim == 2:
-                    α_rna = np.expand_dims(α_rna, 1)
-                adata.varm[f"{model_key}_α_rna"] = α_rna.swapaxes(-1, -2)
-
-            if var == "σ":
-                σ_rna = self.handler.predict_global_variable("σ_rna", num_samples=num_samples).T
-                if σ_rna.ndim == 2:
-                    σ_rna = np.expand_dims(σ_rna, 1)
-                adata.varm[f"{model_key}_σ_rna"] = σ_rna.swapaxes(-1, -2)
+                if var == "σ":
+                    σ_rna = self.handler.predict_global_variable("σ_rna", num_samples=num_samples).T
+                    if σ_rna.ndim == 2:
+                        σ_rna = np.expand_dims(σ_rna, 1)
+                    adata.varm[f"{model_key}_σ_rna"] = σ_rna.swapaxes(-1, -2)
 
     def mean_to_anndata(
         self, model_key: str, num_samples: int = 25, num_split: int = 2048, variables: Sequence[str] = ["W", "Z"]
@@ -492,28 +459,29 @@ class dPCA:
         """
         self._meta_to_anndata(model_key)
         adata = self.adata
-        for var in variables:
-            if var == "W":
-                adata.varm[f"W_{model_key}"] = (
-                    self.handler.predict_global_variable("W_lin", num_samples=num_samples).mean(0).T
-                )
-            if var == "V":
-                adata.varm[f"V_{model_key}"] = (
-                    self.handler.predict_global_variable("W_add", num_samples=num_samples).mean(0).T
-                )
-            if var == "μ":
-                adata.layers[f"μ_{model_key}"] = self.handler.predict_local_variable(
-                    "μ_rna", num_samples=num_samples, num_split=num_split
-                ).mean(0)
-            if var == "Z":
-                adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable(
-                    "z", num_samples=num_samples, num_split=num_split
-                ).mean(0)
-            if var == "α":
-                adata.varm[f"α_{model_key}"] = self.handler.predict_global_variable("α_rna").mean(0).T
-            if var == "σ":
-                adata.varm[f"σ_{model_key}"] = self.handler.predict_global_variable("σ_rna").mean(0).T
-            if var == "offset":
-                adata.layers[f"offset_{model_key}"] = self.handler.predict_local_variable(
-                    "offset_rna", num_samples=num_samples, num_split=num_split
-                ).mean(0)
+        if self.handler is not None:
+            for var in variables:
+                if var == "W":
+                    adata.varm[f"W_{model_key}"] = (
+                        self.handler.predict_global_variable("W_lin", num_samples=num_samples).mean(0).T
+                    )
+                if var == "V":
+                    adata.varm[f"V_{model_key}"] = (
+                        self.handler.predict_global_variable("W_add", num_samples=num_samples).mean(0).T
+                    )
+                if var == "μ":
+                    adata.layers[f"μ_{model_key}"] = self.handler.predict_local_variable(
+                        "μ_rna", num_samples=num_samples, num_split=num_split
+                    ).mean(0)
+                if var == "Z":
+                    adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable(
+                        "z", num_samples=num_samples, num_split=num_split
+                    ).mean(0)
+                if var == "α":
+                    adata.varm[f"α_{model_key}"] = self.handler.predict_global_variable("α_rna").mean(0).T
+                if var == "σ":
+                    adata.varm[f"σ_{model_key}"] = self.handler.predict_global_variable("σ_rna").mean(0).T
+                if var == "offset":
+                    adata.layers[f"offset_{model_key}"] = self.handler.predict_local_variable(
+                        "offset_rna", num_samples=num_samples, num_split=num_split
+                    ).mean(0)
