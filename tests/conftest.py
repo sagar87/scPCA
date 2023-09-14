@@ -13,18 +13,6 @@ from scipy import stats
 from scipy.sparse import csr_matrix
 
 
-@pytest.fixture(scope="session")
-def data_dir(tmpdir_factory):
-    # img = compute_expensive_image()
-    test_dir = os.path.join(os.path.dirname(__file__), "test_files")
-    tmp_dir = tmpdir_factory.getbasetemp()
-
-    if os.path.isdir(test_dir):
-        dir_util.copy_tree(test_dir, str(tmp_dir))
-
-    return tmp_dir
-
-
 class SimulatedData(NamedTuple):
     W: NDArray[np.float32]
     Z: NDArray[np.float32]
@@ -76,6 +64,18 @@ def simulate_2d_data(angles=[np.pi / 8 * 1, np.pi / 8 * 4], num_obs=100, σ=0.1)
     return adata
 
 
+@pytest.fixture(scope="session")
+def data_dir(tmpdir_factory):
+    # img = compute_expensive_image()
+    test_dir = os.path.join(os.path.dirname(__file__), "test_files")
+    tmp_dir = tmpdir_factory.getbasetemp()
+
+    if os.path.isdir(test_dir):
+        dir_util.copy_tree(test_dir, str(tmp_dir))
+
+    return tmp_dir
+
+
 @pytest.fixture(scope="module")
 def test_sparse_anndata():
     counts = csr_matrix(np.random.poisson(1, size=(100, 2000)), dtype=np.float32)
@@ -87,4 +87,10 @@ def test_sparse_anndata():
 def test_anndata(data_dir):
     adata = sc.read_h5ad(os.path.join(str(data_dir), "test_object.h5ad"))
 
+    return adata
+
+
+@pytest.fixture(scope="session", name="test_anndata")
+def two_state_data(data_dir):
+    adata = simulate_2d_data()
     return adata
