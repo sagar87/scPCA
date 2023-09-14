@@ -1,3 +1,5 @@
+from typing import Any
+
 import pyro  # type: ignore
 import torch
 from pyro import deterministic, param, plate, sample
@@ -27,7 +29,7 @@ def scpca_model(
     W_fac_sd: float = 1.0,
     z_sd: float = 0.1,
     fixed_beta: bool = True,
-) -> None:
+) -> Any:
     if subsampling > 0:
         cell_plate = plate("cells", num_cells, subsample_size=subsampling)
     else:
@@ -93,7 +95,7 @@ def scpca_model(
 
         μ_rna = deterministic("μ_rna", exp(offset_rna + Wz[design_indicator, cell_indicator]))
         deterministic("σ_rna", μ_rna**2 / α_rna * (1 + α_rna / μ_rna))
-        sample("rna", GammaPoisson(α_rna, α_rna / μ_rna).to_event(1), obs=X[ind])
+        return sample("rna", GammaPoisson(α_rna, α_rna / μ_rna).to_event(1), obs=X[ind])
 
 
 def scpca_guide(
