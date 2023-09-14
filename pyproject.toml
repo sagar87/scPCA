@@ -41,6 +41,10 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 120
-force-exclude = """
-scCCA/model.py
-"""
+
+[tool.pytest.ini_options]
+filterwarnings = [
+  "ignore::DeprecationWarning:pkg_resources",
+  "ignore::DeprecationWarning:anndata",
+  "ignore::PendingDeprecationWarning:anndata",
+]

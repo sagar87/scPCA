@@ -90,7 +90,13 @@ def test_anndata(data_dir):
     return adata
 
 
-@pytest.fixture(scope="session", name="test_anndata")
+@pytest.fixture(scope="session", name="two_state_data")
 def two_state_data(data_dir):
     adata = simulate_2d_data()
+    return adata
+
+
+@pytest.fixture(scope="session", name="four_state_data")
+def four_state_data(data_dir):
+    adata = simulate_2d_data([np.pi / 8 * 1, -np.pi / 8 * 1, np.pi / 8 * 2, np.pi / 8 * 5])
     return adata
