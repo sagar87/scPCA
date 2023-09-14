@@ -365,8 +365,10 @@ class dPCA:
         Sets up the data.
         """
         X = _get_rna_counts(self.adata, self.layers_key)
-        intercept_design: NDArray[np.float32] = np.asarray(self.intercept_matrix).astype(np.float32)
-        loading_design: NDArray[np.float32] = np.asarray(self.design_matrix).astype(np.float32)
+        loading_design: NDArray[np.float32] = np.asarray(self.design_states.encoding).astype(np.float32)
+        loading_idx = self.design_states.idx
+        intercept_design: NDArray[np.float32] = np.asarray(self.intercept_states.encoding).astype(np.float32)
+        intercept_idx = self.intercept_states.idx
 
         num_obs = X.shape[0]
         idx = np.arange(num_obs)
@@ -375,6 +377,8 @@ class dPCA:
             X=X,
             intercept_design=intercept_design,
             loading_design=loading_design,
+            loading_idx=loading_idx,
+            intercept_idx=intercept_idx,
             idx=idx,
             num_obs=num_obs,
         )

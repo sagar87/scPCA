@@ -6,7 +6,7 @@ from pyro.distributions import (  # type: ignore
 )
 from pyro.distributions.constraints import positive  # type: ignore
 from pyro.distributions.transforms import ExpTransform  # type: ignore
-from torch import Tensor, einsum, ones, zeros
+from torch import Tensor, arange, einsum, ones, zeros
 from torch.types import Device
 
 
@@ -38,6 +38,10 @@ def dpca_model(
     num_states = loading_design.shape[1]
     state_plate = plate("states", num_states)
 
+    # rescale
+    normed_design = loading_design * loading_design.sum(1, keepdim=True) ** -0.5
+    normed_batch = intercept_design * intercept_design.sum(1, keepdim=True) ** -0.5
+
     with state_plate:
         W_fac = sample(
             "W_fac",
@@ -67,11 +71,17 @@ def dpca_model(
                 z_sd * ones(num_factors, device=device),
             ).to_event(1),
         )
-        # print(z.shape, loading_design[ind].T.unsqueeze(-1).shape)
-        Wz = (loading_design[ind].T.unsqueeze(-1) * einsum("cf,bfp->bcp", z, W_fac)).sum(0)
-        intercept = intercept_design[ind] @ W_add
 
-        μ = deterministic("μ_rna", intercept + Wz)
+        intercept_mat = normed_batch[intercept_idx[ind]]
+        design_indicator = loading_idx[ind]
+        obs_indicator = arange(ind.shape[0])
+
+        # construct bases for each column of in D
+        W_lin = deterministic("W_lin", (normed_design.unsqueeze(2).unsqueeze(3) * W_fac.unsqueeze(0)).sum(1))
+        Wz = einsum("cf,bfp->bcp", z, W_lin)
+        intercept = intercept_mat @ W_add
+
+        μ = deterministic("μ_rna", intercept + Wz[design_indicator, obs_indicator])
         sample("rna", Normal(μ, σ).to_event(1), obs=X[ind])
 
 
@@ -79,6 +89,8 @@ def dpca_guide(
     X: Tensor,
     loading_design: Tensor,
     intercept_design: Tensor,
+    loading_idx: Tensor,
+    intercept_idx: Tensor,
     idx: Tensor,
     num_factors: int,
     num_obs: int,
@@ -91,8 +103,6 @@ def dpca_guide(
         obs_plate = plate("obs", num_obs, subsample_size=subsampling)
     else:
         obs_plate = plate("obs", num_obs, subsample=idx)
-
-    # factor_plate = plate("factor", num_factors)
 
     num_features = X.shape[1]
     feature_plate = plate("features", num_features)
