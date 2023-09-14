@@ -7,7 +7,7 @@ from anndata import AnnData  # type: ignore
 from numpy.typing import NDArray
 
 from .models import dpca_guide, dpca_model, scpca_guide, scpca_model
-from .train import DEFAULT, FactorModel, SVILocalHandler, _to_torch
+from .train import DEFAULT, FactorModel, SVILocalHandler
 from .utils import _get_rna_counts
 
 
@@ -329,7 +329,7 @@ class dPCA(FactorModel):
             idx=idx,
             num_obs=num_obs,
         )
-        return _to_torch(data, self.device)
+        return self._to_torch(data)
 
     def _setup_handler(self) -> SVILocalHandler:
         """
