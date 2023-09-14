@@ -1,6 +1,6 @@
 import pyro  # type: ignore
 
-SUBSAMPLE = dict(
+DEFAULT = dict(
     num_epochs=5000,
     optimizer=pyro.optim.ClippedAdam,
     optimizer_kwargs={"lr": 0.01, "betas": (0.95, 0.999)},
@@ -9,10 +9,11 @@ SUBSAMPLE = dict(
     loss_kwargs={"num_particles": 1},
 )
 
-DEFAULT = dict(
-    num_epochs=20000,
+
+TEST = dict(
+    num_epochs=200,
     optimizer=pyro.optim.ClippedAdam,
-    optimizer_kwargs={"lr": 0.001, "betas": (0.95, 0.999)},
+    optimizer_kwargs={"lr": 0.1, "betas": (0.95, 0.999)},
     scheduler=None,
     loss=pyro.infer.TraceMeanField_ELBO,
     loss_kwargs={"num_particles": 1},

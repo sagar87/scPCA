@@ -9,7 +9,7 @@ from patsy import dmatrix  # type: ignore
 from torch.types import Device
 
 from .models import dpca_guide, dpca_model, scpca_guide, scpca_model
-from .train import SUBSAMPLE, SVILocalHandler, _to_torch
+from .train import DEFAULT, SVILocalHandler, _to_torch
 from .utils import _get_rna_counts, get_states
 
 
@@ -64,7 +64,7 @@ class scPCA:
             "β_rna_mean": 3.0,
             "fixed_beta": True,
         },
-        training_kwargs: Dict[str, Any] = SUBSAMPLE,
+        training_kwargs: Dict[str, Any] = DEFAULT,
     ):
         self.adata = adata
         self.num_factors = num_factors
@@ -334,7 +334,7 @@ class dPCA:
         model_kwargs: Dict[str, Any] = {
             "z_sd": 1.0,
         },
-        training_kwargs: Dict[str, Any] = SUBSAMPLE,
+        training_kwargs: Dict[str, Any] = DEFAULT,
     ):
         self.adata = adata
         self.num_factors = num_factors
@@ -438,43 +438,126 @@ class dPCA:
     def fit(self, *args: Any, **kwargs: Any) -> None:
         self.handler.fit(*args, **kwargs)
 
-    def mean_to_anndata(self, model_key: str, num_samples: int = 25, num_split: int = 2048) -> None:
+    def _meta_to_anndata(self, model_key: str) -> None:
+        """
+        Store meta information in the AnnData object.
+
+        Parameters
+        ----------
+        model_key :
+            Key to store the model in the AnnData object.
+        """
+        res: Dict[str, Any] = {}
+        res["design"] = self.design_states.sparse
+        res["intercept"] = self.intercept_states.sparse
+
+        res["design_index"] = self.design_states.idx
+        res["intercept_index"] = self.intercept_states.idx
+
+        res["loss"] = self.handler.loss
+        res["model"] = {"num_factors": self.num_factors, "seed": self.seed, **self.model_kwargs}
+
+        self.adata.uns[f"{model_key}"] = res
+
+    def posterior_to_anndata(
+        self, model_key: str, num_samples: int = 25, variables: Sequence[str] = ["W", "Z"]
+    ) -> None:
+        """
+        Store the posterior samples in the AnnData object.
+
+        Parameters
+        ----------
+        model_key :
+            Key to store the model in the AnnData object.
+        num_samples :
+            Number of samples to draw from the posterior. Default is 25.
+        variables :
+            List of variables for which the posterior mean estimates should be stored.
+            Possible values include "W", "V", "μ", "Z", "α", "σ", and "offset".
+            Default is ["W", "Z"].
+        """
+
+        self._meta_to_anndata(model_key)
         adata = self.adata
-        # set up unstructured metadata
-        adata.uns[f"{model_key}"] = {}
-        adata.uns[f"{model_key}"]["posterior"] = {
-            "μ_rna": self.handler.predict_local_variable("μ_rna", num_samples=num_samples).mean(0),
-            "σ": self.handler.predict_global_variable("σ", num_samples=num_samples).mean(0),
-            "W_add": self.handler.predict_global_variable("W_add", num_samples=num_samples).mean(0).T,
-        }
 
-        W_fac = self.handler.predict_global_variable("W_fac", num_samples=num_samples).mean(0)
+        for var in variables:
+            if var == "W":
+                adata.varm[f"W_{model_key}"] = (
+                    self.handler.predict_global_variable("W_lin", num_samples=num_samples)
+                    .T.swapaxes(-1, -3)
+                    .swapaxes(-1, -2)
+                )
+            if var == "V":
+                adata.varm[f"V_{model_key}"] = self.handler.predict_global_variable(
+                    "W_add", num_samples=num_samples
+                ).T.swapaxes(-1, -2)
+            if var == "Z":
+                adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable(
+                    "z", num_samples=num_samples
+                ).swapaxes(0, 1)
 
-        # V = self.handler.predict_global_variable("W_add", num_samples=num_samples).mean(0)
+            if var == "α":
+                α_rna = self.handler.predict_global_variable("α_rna", num_samples=num_samples).T
+                if α_rna.ndim == 2:
+                    α_rna = np.expand_dims(α_rna, 1)
+                adata.varm[f"{model_key}_α_rna"] = α_rna.swapaxes(-1, -2)
 
-        adata.uns[f"{model_key}"]["design"] = get_states(self.design_matrix)
-        # adata.uns[f"{model_key}"]["batch"] = get_states(self.batch)
-        adata.uns[f"{model_key}"]["model"] = self.model_kwargs
+            if var == "σ":
+                σ_rna = self.handler.predict_global_variable("σ_rna", num_samples=num_samples).T
+                if σ_rna.ndim == 2:
+                    σ_rna = np.expand_dims(σ_rna, 1)
+                adata.varm[f"{model_key}_σ_rna"] = σ_rna.swapaxes(-1, -2)
 
-        adata.uns[f"{model_key}"]["W"] = {}
-        adata.uns[f"{model_key}"]["V"] = {}
-        adata.uns[f"{model_key}"]["state_vec"] = {}
-        adata.uns[f"{model_key}"]["state_scale"] = {}
-        adata.uns[f"{model_key}"]["state_unit"] = {}
+    def mean_to_anndata(
+        self, model_key: str, num_samples: int = 25, num_split: int = 2048, variables: Sequence[str] = ["W", "Z"]
+    ) -> None:
+        """
+        Store the posterior mean estimates in the AnnData object for specified variables.
 
-        for i, (k, v) in enumerate(adata.uns[f"{model_key}"]["design"].items()):
-            adata.uns[f"{model_key}"]["W"][k] = W_fac[v[-1]]
-            adata.uns[f"{model_key}"]["state_vec"][k] = W_fac[v].sum(axis=0)
-            adata.uns[f"{model_key}"]["state_scale"][k] = np.linalg.norm(
-                W_fac[v].sum(axis=0), ord=2, axis=1, keepdims=True
-            )
-            adata.uns[f"{model_key}"]["state_unit"][k] = W_fac[v].sum(axis=0) / np.linalg.norm(
-                W_fac[v].sum(axis=0), ord=2, axis=1, keepdims=True
-            )
+        This method retrieves the posterior mean estimates for the given variables and stores them in the AnnData object.
+        The variables can include weights ("W"), loadings ("V"), means ("μ"), latent factors ("Z"), among others.
 
-        # for k, v in get_states(self.intercept_matrix).items():
-        #     adata.uns[f"{model_key}"]["V"][k] = V[v[-1]]
+        Parameters
+        ----------
+        model_key :
+            Key to store the model results in the AnnData object.
+        num_samples :
+            Number of samples to draw from the posterior. Default is 25.
+        num_split :
+            Number of splits for the data. Default is 2048.
+        variables :
+            List of variables for which the posterior mean estimates should be stored.
+            Possible values include "W", "V", "μ", "Z", "α", "σ", and "offset".
+            Default is ["W", "Z"].
 
-        adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable("z", num_samples=num_samples).mean(0)
-
-        adata.varm[f"{model_key}"] = self.handler.predict_global_variable("W_fac", num_samples=num_samples).mean(0).T
+        Returns
+        -------
+            The results are stored in the provided AnnData object.
+        """
+        self._meta_to_anndata(model_key)
+        adata = self.adata
+        for var in variables:
+            if var == "W":
+                adata.varm[f"W_{model_key}"] = (
+                    self.handler.predict_global_variable("W_lin", num_samples=num_samples).mean(0).T
+                )
+            if var == "V":
+                adata.varm[f"V_{model_key}"] = (
+                    self.handler.predict_global_variable("W_add", num_samples=num_samples).mean(0).T
+                )
+            if var == "μ":
+                adata.layers[f"μ_{model_key}"] = self.handler.predict_local_variable(
+                    "μ_rna", num_samples=num_samples, num_split=num_split
+                ).mean(0)
+            if var == "Z":
+                adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable(
+                    "z", num_samples=num_samples, num_split=num_split
+                ).mean(0)
+            if var == "α":
+                adata.varm[f"α_{model_key}"] = self.handler.predict_global_variable("α_rna").mean(0).T
+            if var == "σ":
+                adata.varm[f"σ_{model_key}"] = self.handler.predict_global_variable("σ_rna").mean(0).T
+            if var == "offset":
+                adata.layers[f"offset_{model_key}"] = self.handler.predict_local_variable(
+                    "offset_rna", num_samples=num_samples, num_split=num_split
+                ).mean(0)
