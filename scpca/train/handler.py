@@ -305,7 +305,7 @@ class SVIBaseHandler:
 
     def predict(
         self, return_sites: List[str], num_samples: int = 25, *args: Union[str, List[str]], **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, NDArray[np.float32]]:
         """
         Predict using the trained model.
 
@@ -335,5 +335,6 @@ class SVIBaseHandler:
             return_sites=return_sites,
         )
         posterior = predictive(*args, **kwargs)
-        self.posterior = self._to_numpy(posterior)
+        posterior_predictive = self._to_numpy(posterior)
         empty_cache()
+        return posterior_predictive

@@ -54,7 +54,7 @@ class SVILocalHandler(SVIBaseHandler):
 
     def predict(
         self, return_sites: List[str], num_samples: int = 25, *args: Union[str, List[str]], **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, NDArray[np.float32]]:
         if self.params is not None:
             pyro.clear_param_store()
             pyro.get_param_store().set_state(self.params)
@@ -67,8 +67,10 @@ class SVILocalHandler(SVIBaseHandler):
         )
 
         posterior = predictive(*args, **kwargs)
-        self.posterior: Dict[str, NDArray[np.float32]] = self._to_numpy(posterior)
+        posterior_predictive: Dict[str, NDArray[np.float32]] = self._to_numpy(posterior)
         empty_cache()
+
+        return posterior_predictive
 
     def predict_global_variable(self, var: str, num_samples: int = 25) -> NDArray[np.float32]:
         """
@@ -82,9 +84,9 @@ class SVILocalHandler(SVIBaseHandler):
             Number of samples to draw.
         """
 
-        self.predict([var], num_samples=num_samples, idx=self.idx[0:1])
+        posterior_predictive = self.predict([var], num_samples=num_samples, idx=self.idx[0:1])
 
-        return self.posterior[var]
+        return posterior_predictive[var]
 
     def predict_local_variable(
         self,
@@ -117,8 +119,8 @@ class SVILocalHandler(SVIBaseHandler):
 
         results = []
         for i in pbar:
-            self.predict([var], num_samples=num_samples, idx=split_obs[i])
-            results.append(self.posterior[var])
+            posterior_predictive = self.predict([var], num_samples=num_samples, idx=split_obs[i])
+            results.append(posterior_predictive[var])
             # update status bar
             pbar.set_description(f"Predicting {var} for obs {split_obs[i].min()}-{split_obs[i].max()}.")
 

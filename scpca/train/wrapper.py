@@ -7,10 +7,11 @@ from patsy import dmatrix  # type: ignore
 from torch.types import Device
 
 from ..utils import get_states
+from .local_handler import SVILocalHandler
 from .settings import DEFAULT
 
 
-class ModelWrapper:
+class FactorModelWrapper:
     def __init__(
         self,
         adata: AnnData,
@@ -21,9 +22,7 @@ class ModelWrapper:
         subsampling: int = 4096,
         device: Optional[Literal["cuda", "cpu"]] = None,
         seed: Optional[int] = None,
-        model_kwargs: Dict[str, Any] = {
-            "z_sd": 1.0,
-        },
+        model_kwargs: Dict[str, Any] = {},
         training_kwargs: Dict[str, Any] = DEFAULT,
     ):
         self.adata = adata
@@ -43,6 +42,7 @@ class ModelWrapper:
         #
         self.model_kwargs = model_kwargs
         self.training_kwargs = training_kwargs
+        self.handler: Optional[SVILocalHandler] = None
 
     def _set_device(self, device: Optional[Literal["cuda", "cpu"]] = None) -> Device:
         return torch.device("cuda" if torch.cuda.is_available() else "cpu") if device is None else torch.device(device)
@@ -64,3 +64,37 @@ class ModelWrapper:
             Dictionary with numpy arrays converted to torch tensors.
         """
         return {k: torch.tensor(v, device=self.device) if isinstance(v, np.ndarray) else v for k, v in data.items()}
+
+    def fit(
+        self, num_epochs: Optional[int] = None, lr: Optional[float] = None, *args: torch.Tensor, **kwargs: torch.Tensor
+    ) -> None:
+        if self.handler is not None:
+            self.handler.fit(num_epochs, lr, *args, **kwargs)
+
+    def _setup_data(self) -> Dict[str, Union[torch.Tensor, int, float]]:
+        raise NotImplementedError()
+
+    def _setup_handler(self) -> SVILocalHandler:
+        raise NotImplementedError()
+
+    def _meta_to_anndata(self, model_key: str) -> None:
+        """
+        Store meta information in the AnnData object.
+
+        Parameters
+        ----------
+        model_key :
+            Key to store the model in the AnnData object.
+        """
+        res: Dict[str, Any] = {}
+        res["design"] = self.design_states.sparse
+        res["intercept"] = self.intercept_states.sparse
+
+        res["design_index"] = self.design_states.idx
+        res["intercept_index"] = self.intercept_states.idx
+        res["model"] = {"num_factors": self.num_factors, "seed": self.seed, **self.model_kwargs}
+
+        if self.handler is not None:
+            res["loss"] = self.handler.loss
+
+        self.adata.uns[f"{model_key}"] = res

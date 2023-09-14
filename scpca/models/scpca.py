@@ -26,7 +26,7 @@ def scpca_model(
     β_rna_sd: float = 0.01,
     W_fac_sd: float = 1.0,
     z_sd: float = 0.1,
-    fixed_beta: bool = False,
+    fixed_beta: bool = True,
 ) -> None:
     if subsampling > 0:
         cell_plate = plate("cells", num_cells, subsample_size=subsampling)
@@ -113,7 +113,7 @@ def scpca_guide(
     β_rna_sd: float = 0.1,
     W_fac_sd: float = 1.0,
     z_sd: float = 1.0,
-    fixed_beta: bool = False,
+    fixed_beta: bool = True,
 ) -> None:
     gene_plate = plate("genes", num_genes)
 
