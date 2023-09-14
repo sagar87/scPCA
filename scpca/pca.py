@@ -348,8 +348,8 @@ class dPCA:
         self.seed: Optional[torch.Generator] = seed if seed is None else torch.manual_seed(self.seed)
 
         # prepare design and batch matrix
-        self.design_matrix = dmatrix(design_formula, self.adata)
-        self.intercept_matrix = dmatrix(intercept_formula, self.adata)
+        self.design_matrix = dmatrix(design_formula, self.adata.obs)
+        self.intercept_matrix = dmatrix(intercept_formula, self.adata.obs)
 
         #
         self.model_kwargs = model_kwargs
