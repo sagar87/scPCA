@@ -25,8 +25,9 @@ extensions = [
     "sphinxcontrib.napoleon",
     "nbsphinx",
     "sphinx_autodoc_typehints",
+    "sphinx.ext.autosummary",
 ]
-
+autosummary_generate = True
 autoclass_content = "both"
 bibtex_bibfiles = ["refs.bib"]
 
