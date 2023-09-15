@@ -7,7 +7,7 @@ Welcome to scCCA's documentation!
 =================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: API:
 
    models
