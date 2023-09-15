@@ -187,6 +187,15 @@ def test_one_factorial_two_state_poisson_data():
     return adata
 
 
+@pytest.fixture(scope="session", name="one_factorial_two_state_poisson_data_with_offset")
+def test_one_factorial_two_state_poisson_data_with_offset():
+    # simulate data with more obs to ensure that the mean offsets are
+    adata = simulate_2d_poisson_data(
+        offsets=[np.array([-3.0, -2.0]).reshape(1, -1), np.array([-2.0, -3.0]).reshape(1, -1)], num_obs=500
+    )
+    return adata
+
+
 @pytest.fixture(scope="session", name="one_factorial_four_state_poisson_data")
 def test_one_factorial_four_state_poisson_data():
     adata = simulate_2d_poisson_data(
