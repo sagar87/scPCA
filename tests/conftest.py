@@ -19,6 +19,7 @@ class SimulatedData(NamedTuple):
     μ: NDArray[np.float32]
     X: NDArray[np.float32]
     size_factor: Optional[NDArray[np.float32]] = None
+    offset: Optional[NDArray[np.float32]] = None
 
 
 def principle_axis(rad):
@@ -54,16 +55,21 @@ def simulate_dataset(
         μ = size_factor + np.dot(z, W) + offset
         X = stats.poisson(np.exp(μ)).rvs()
 
-    return SimulatedData(W, z, μ, X, size_factor)
+    return SimulatedData(W, z, μ, X, size_factor, offset)
 
 
-def simulate_2d_data(angles=[np.pi / 8 * 1, np.pi / 8 * 3], num_obs=100, σ=0.1):
+def simulate_2d_data(angles=[np.pi / 8 * 1, np.pi / 8 * 3], offsets=None, num_obs=100, σ=0.1):
     data = []
     states = []
 
-    for angle, state in zip(angles, string.ascii_uppercase):
+    for i, (angle, state) in enumerate(zip(angles, string.ascii_uppercase)):
         w = principle_axis(angle)
-        D = simulate_dataset(num_obs, 1, 2, W=w, σ=σ)
+
+        if offsets is not None:
+            offset = offsets[i]
+        else:
+            offset = None
+        D = simulate_dataset(num_obs, 1, 2, W=w, σ=σ, offset=offset)
         data.append(D)
         states.extend([state] * num_obs)
 
@@ -75,6 +81,7 @@ def simulate_2d_data(angles=[np.pi / 8 * 1, np.pi / 8 * 3], num_obs=100, σ=0.1)
         dtype=np.float32,
     )
     adata.uns["true_axes"] = {state: vec.W for state, vec in zip(string.ascii_uppercase, data)}
+    adata.uns["true_offset"] = {state: vec.offset for state, vec in zip(string.ascii_uppercase, data)}
     adata.obsm["X_true"] = np.concatenate([sub.Z for sub in data])
     return adata
 
@@ -89,7 +96,7 @@ def simulate_2d_poisson_data(angles=[np.pi / 8 * 1, np.pi / 8 * 3], size_factor=
     for i, (angle, state) in enumerate(zip(angles, string.ascii_uppercase)):
         w = principle_axis(angle)
         D = simulate_dataset(
-            num_obs, latent_dim, num_features, W=w, z_loc=0.0, z_scale=1.0, size_factor=size_factor[i], noise="poisson"
+            num_obs, latent_dim, num_features, z_loc=0.0, z_scale=1.0, W=w, size_factor=size_factor[i], noise="poisson"
         )
         data.append(D)
         states.extend([state] * num_obs)
