@@ -1,32 +1,6 @@
 scpca.utils
 ===========
 
-.. automodule:: scpca.utils
+.. currentmodule:: scpca
 
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   
-
-
-
-.. rubric:: Modules
-
-.. autosummary::
-   :toctree:
-   :recursive:
-
-   scpca.utils.data
-   scpca.utils.design
-
+.. automodule:: utils

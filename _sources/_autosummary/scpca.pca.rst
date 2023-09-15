@@ -1,30 +1,6 @@
 scpca.pca
 =========
 
-.. automodule:: scpca.pca
+.. currentmodule:: scpca
 
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-   
-      dPCA
-      scPCA
-   
-   
-
-   
-   
-   
-
-
-
+.. automodule:: pca

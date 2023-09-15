@@ -1,32 +1,6 @@
 scpca.models
 ============
 
-.. automodule:: scpca.models
+.. currentmodule:: scpca
 
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   
-
-
-
-.. rubric:: Modules
-
-.. autosummary::
-   :toctree:
-   :recursive:
-
-   scpca.models.dpca
-   scpca.models.scpca
-
+.. automodule:: models

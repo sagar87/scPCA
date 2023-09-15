@@ -1,34 +1,6 @@
 scpca.train
 ===========
 
-.. automodule:: scpca.train
+.. currentmodule:: scpca
 
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   
-
-   
-   
-   
-
-
-
-.. rubric:: Modules
-
-.. autosummary::
-   :toctree:
-   :recursive:
-
-   scpca.train.handler
-   scpca.train.local_handler
-   scpca.train.settings
-   scpca.train.wrapper
-
+.. automodule:: train
