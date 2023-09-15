@@ -54,6 +54,7 @@ class scPCA(FactorModel):
         layers_key: Union[str, None] = None,
         design_formula: str = "1",
         intercept_formula: str = "1",
+        size_factor: Optional[Union[str, NDArray[np.float32]]] = None,
         subsampling: int = 4096,
         device: Optional[Literal["cuda", "cpu"]] = None,
         seed: Optional[int] = None,
@@ -74,6 +75,7 @@ class scPCA(FactorModel):
         )
 
         # setup data
+        self.size_factor = size_factor
         self.data = self._setup_data()
         self.handler = self._setup_handler()
 
@@ -86,7 +88,16 @@ class scPCA(FactorModel):
             Dictionary containing tensors and other relevant information for the model.
         """
         X = _get_rna_counts(self.adata, self.layers_key)
-        X_size = np.log(X.sum(axis=1, keepdims=True))
+
+        if isinstance(self.size_factor, str):
+            X_size = self.adata.obs[self.size_factor].values.reshape(-1, 1).astype(np.float32)
+        elif isinstance(self.size_factor, np.ndarray):
+            if self.size_factor.ndim == 1:
+                X_size = self.size_factor.reshape(-1, 1)
+            else:
+                X_size = self.size_factor
+        else:
+            X_size = np.log(X.sum(axis=1, keepdims=True))
 
         design: NDArray[np.float32] = np.asarray(self.design_states.encoding).astype(np.float32)
         design_idx = self.design_states.idx
