@@ -48,7 +48,7 @@ class FactorModel:
         return torch.device("cuda" if torch.cuda.is_available() else "cpu") if device is None else torch.device(device)
 
     def _set_seed(self, seed: Optional[int] = None) -> Optional[torch.Generator]:
-        return seed if seed is None else torch.manual_seed(self.seed)
+        return seed if seed is None else torch.manual_seed(seed)
 
     def _to_torch(self, data: Dict[str, Any]) -> Dict[str, Union[torch.Tensor, int, float]]:
         """
