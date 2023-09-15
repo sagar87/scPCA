@@ -133,13 +133,27 @@ def test_anndata(data_dir):
     return adata
 
 
-@pytest.fixture(scope="session", name="two_state_data")
-def two_state_data(data_dir):
+@pytest.fixture(scope="session", name="one_factorial_two_state_normal_data")
+def test_one_factorial_two_state_normal_data():
     adata = simulate_2d_data()
     return adata
 
 
-@pytest.fixture(scope="session", name="four_state_data")
-def four_state_data(data_dir):
+@pytest.fixture(scope="session", name="one_factorial_four_state_normal_data")
+def test_one_factorial_four_state_normal_data():
     adata = simulate_2d_data([np.pi / 8 * 1, -np.pi / 8 * 1, np.pi / 8 * 2, np.pi / 8 * 5])
+    return adata
+
+
+@pytest.fixture(scope="session", name="one_factorial_two_state_poisson_data")
+def test_one_factorial_two_state_poisson_data():
+    adata = simulate_2d_poisson_data()
+    return adata
+
+
+@pytest.fixture(scope="session", name="one_factorial_four_state_poisson_data")
+def test_one_factorial_four_state_poisson_data():
+    adata = simulate_2d_poisson_data(
+        [np.pi / 8 * 1, -np.pi / 8 * 1, np.pi / 8 * 2, np.pi / 8 * 5], size_factor=[4.2, 5.1, 5.5, 3.9]
+    )
     return adata
