@@ -9,4 +9,10 @@ scPCA
 -----
 
 .. automodule:: scpca.pca
-   :members:
+   :members: scPCA
+
+dPCA
+----
+
+.. automodule:: scpca.pca
+   :members: dPCA
