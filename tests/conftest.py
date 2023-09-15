@@ -146,6 +146,15 @@ def test_one_factorial_two_state_normal_data():
     return adata
 
 
+@pytest.fixture(scope="session", name="one_factorial_two_state_normal_data_with_offset")
+def test_one_factorial_two_state_normal_data_with_offset():
+    # simulate data with more obs to ensure that the mean offsets are
+    adata = simulate_2d_data(
+        offsets=[np.array([2.0, -2.0]).reshape(1, -1), np.array([-2.0, 2.0]).reshape(1, -1)], num_obs=300
+    )
+    return adata
+
+
 @pytest.fixture(scope="session", name="one_factorial_four_state_normal_data")
 def test_one_factorial_four_state_normal_data():
     adata = simulate_2d_data([np.pi / 8 * 1, -np.pi / 8 * 1, np.pi / 8 * 2, np.pi / 8 * 5])

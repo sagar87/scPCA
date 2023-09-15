@@ -34,6 +34,21 @@ def test_dpca_two_states(one_factorial_two_state_normal_data):
     assert is_close_to_zero_vec(adata.varm["V_m"])
 
 
+def test_dpca_two_states_with_offset(one_factorial_two_state_normal_data_with_offset):
+    adata = one_factorial_two_state_normal_data_with_offset
+    m = dPCA(adata, 1, design_formula="state", intercept_formula="state-1", training_kwargs=TEST)
+    m.fit(lr=0.01)
+    m.fit(lr=0.001)
+    m.mean_to_anndata("m", variables=["W", "V", "Z"])
+    design = adata.uns["m"]["design"]
+
+    W = adata.varm["W_m"]
+    assert is_aligned(adata.uns["true_axes"]["A"], W[..., design["Intercept"]])
+    assert is_aligned(adata.uns["true_axes"]["B"], W[..., design["state[T.B]"]])
+    assert np.allclose(adata.uns["true_offset"]["A"], adata.varm["V_m"][0], atol=0.1)
+    assert np.allclose(adata.uns["true_offset"]["B"], adata.varm["V_m"][1], atol=0.1)
+
+
 def test_dpca_four_state(one_factorial_four_state_normal_data):
     adata = one_factorial_four_state_normal_data
     m = dPCA(adata, 1, design_formula="state", training_kwargs=TEST)
