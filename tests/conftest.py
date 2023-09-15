@@ -40,7 +40,7 @@ def simulate_dataset(
     noise: str = "normal",
 ) -> SimulatedData:
     if W is None:
-        W = np.random.normal(0.0, 2.0, size=(num_dims, num_features))
+        W = np.random.normal(0.0, 1.0, size=(num_dims, num_features))
 
     if offset is None:
         offset = np.zeros((1, num_features))
@@ -53,6 +53,7 @@ def simulate_dataset(
         X = stats.norm(loc=μ, scale=σ).rvs()
     if noise == "poisson":
         μ = size_factor + np.dot(z, W) + offset
+        # print(μ)
         X = stats.poisson(np.exp(μ)).rvs()
 
     return SimulatedData(W, z, μ, X, size_factor, offset)
@@ -83,10 +84,13 @@ def simulate_2d_data(angles=[np.pi / 8 * 1, np.pi / 8 * 3], offsets=None, num_ob
     adata.uns["true_axes"] = {state: vec.W for state, vec in zip(string.ascii_uppercase, data)}
     adata.uns["true_offset"] = {state: vec.offset for state, vec in zip(string.ascii_uppercase, data)}
     adata.obsm["X_true"] = np.concatenate([sub.Z for sub in data])
+    adata.layers["μ"] = np.exp(np.concatenate([sub.μ for sub in data]))
     return adata
 
 
-def simulate_2d_poisson_data(angles=[np.pi / 8 * 1, np.pi / 8 * 3], size_factor=[4.6, 5.2], num_obs=100):
+def simulate_2d_poisson_data(
+    angles=[np.pi / 8 * 1, np.pi / 8 * 3], size_factor=[4.6, 5.2], offsets=None, z_scale=1.0, num_obs=100
+):
     latent_dim = 1
     num_features = 2
     data = []
@@ -95,8 +99,22 @@ def simulate_2d_poisson_data(angles=[np.pi / 8 * 1, np.pi / 8 * 3], size_factor=
 
     for i, (angle, state) in enumerate(zip(angles, string.ascii_uppercase)):
         w = principle_axis(angle)
+
+        if offsets is not None:
+            offset = offsets[i]
+        else:
+            offset = None
+
         D = simulate_dataset(
-            num_obs, latent_dim, num_features, z_loc=0.0, z_scale=1.0, W=w, size_factor=size_factor[i], noise="poisson"
+            num_obs,
+            latent_dim,
+            num_features,
+            W=w,
+            z_loc=0.0,
+            z_scale=z_scale,
+            size_factor=size_factor[i],
+            offset=offset,
+            noise="poisson",
         )
         data.append(D)
         states.extend([state] * num_obs)
@@ -110,7 +128,9 @@ def simulate_2d_poisson_data(angles=[np.pi / 8 * 1, np.pi / 8 * 3], size_factor=
         dtype=np.float32,
     )
     adata.uns["true_axes"] = {state: vec.W for state, vec in zip(string.ascii_uppercase, data)}
+    adata.uns["true_offset"] = {state: vec.offset for state, vec in zip(string.ascii_uppercase, data)}
     adata.obsm["X_true"] = np.concatenate([sub.Z for sub in data])
+    adata.layers["μ"] = np.exp(np.concatenate([sub.μ for sub in data]))
     return adata
 
 

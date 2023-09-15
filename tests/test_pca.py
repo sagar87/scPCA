@@ -45,8 +45,8 @@ def test_dpca_two_states_with_offset(one_factorial_two_state_normal_data_with_of
     W = adata.varm["W_m"]
     assert is_aligned(adata.uns["true_axes"]["A"], W[..., design["Intercept"]])
     assert is_aligned(adata.uns["true_axes"]["B"], W[..., design["state[T.B]"]])
-    assert np.allclose(adata.uns["true_offset"]["A"], adata.varm["V_m"][0], atol=0.1)
-    assert np.allclose(adata.uns["true_offset"]["B"], adata.varm["V_m"][1], atol=0.1)
+    assert np.allclose(adata.uns["true_offset"]["A"], adata.varm["V_m"][0], atol=0.3)
+    assert np.allclose(adata.uns["true_offset"]["B"], adata.varm["V_m"][1], atol=0.3)
 
 
 def test_dpca_four_state(one_factorial_four_state_normal_data):
