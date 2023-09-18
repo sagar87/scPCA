@@ -119,6 +119,48 @@ def simulate_3d_normal_data(W, offsets=None, num_obs=100, σ=0.1):
     return adata
 
 
+def simulate_3d_poisson_data(W, size_factor=[4.6, 5.2], offsets=None, z_scale=1.0, num_obs=100):
+    latent_dim = 2
+    num_features = 3
+    data = []
+    states = []
+    size_factors = []
+
+    for i, (w, state) in enumerate(zip(W, string.ascii_uppercase)):
+        if offsets is not None:
+            offset = offsets[i]
+        else:
+            offset = None
+
+        D = simulate_dataset(
+            num_obs,
+            latent_dim,
+            num_features,
+            W=w,
+            z_loc=0.0,
+            z_scale=z_scale,
+            size_factor=size_factor[i],
+            offset=offset,
+            noise="poisson",
+        )
+        data.append(D)
+        states.extend([state] * num_obs)
+        size_factors.extend([size_factor[i]] * num_obs)
+
+    X = np.concatenate([sub.X for sub in data])
+    adata = ad.AnnData(
+        X=X,
+        obs=pd.DataFrame({"state": states, "size_factor": size_factors}),
+        var=pd.DataFrame({"gene": list(string.ascii_lowercase[:num_features])}).set_index("gene"),
+        dtype=np.float32,
+    )
+    adata.uns["true_axes"] = {state: vec.W for state, vec in zip(string.ascii_uppercase, data)}
+    adata.uns["true_offset"] = {state: vec.offset for state, vec in zip(string.ascii_uppercase, data)}
+    adata.obsm["X_true"] = np.concatenate([sub.Z for sub in data])
+    adata.layers["μ"] = np.exp(np.concatenate([sub.μ for sub in data]))
+    return adata
+
+
 def simulate_2d_poisson_data(
     angles=[np.pi / 8 * 1, np.pi / 8 * 3], size_factor=[4.6, 5.2], offsets=None, z_scale=1.0, num_obs=100
 ):
@@ -248,4 +290,43 @@ def test_one_factorial_two_state_normal_three_dim_data():
     p2 = np.concatenate([w1, w3])
 
     adata = simulate_3d_normal_data([p1, p2], num_obs=500)
+    return adata
+
+
+@pytest.fixture(scope="session", name="one_factorial_two_state_normal_three_dim_data_with_offset")
+def test_one_factorial_two_state_normal_three_dim_data_with_offset():
+    w1 = np.array([1, 0, 0]).reshape(1, -1)
+    w2 = np.array([0, 1, 0]).reshape(1, -1)
+    w3 = unit(np.array([0, 1, 1]).reshape(1, -1))
+    p1 = np.concatenate([w1, w2])
+    p2 = np.concatenate([w1, w3])
+    os = np.array([[-1, -2, -5], [2, 1, 3]]).astype(np.float32)
+
+    adata = simulate_3d_normal_data([p1, p2], offsets=os, num_obs=500)
+    return adata
+
+
+# 3 dimensional data
+@pytest.fixture(scope="session", name="one_factorial_two_state_poisson_three_dim_data")
+def test_one_factorial_two_state_poisson_three_dim_data():
+    w1 = np.array([1, 0, 0]).reshape(1, -1)
+    w2 = np.array([0, 1, 0]).reshape(1, -1)
+    w3 = unit(np.array([0, 1, 1]).reshape(1, -1))
+    p1 = np.concatenate([w1, w2])
+    p2 = np.concatenate([w1, w3])
+
+    adata = simulate_3d_poisson_data([p1, p2], num_obs=500)
+    return adata
+
+
+@pytest.fixture(scope="session", name="one_factorial_two_state_poisson_three_dim_data_with_offset")
+def test_one_factorial_two_state_poisson_three_dim_data_with_offset():
+    w1 = np.array([1, 0, 0]).reshape(1, -1)
+    w2 = np.array([0, 1, 0]).reshape(1, -1)
+    w3 = unit(np.array([0, 1, 1]).reshape(1, -1))
+    p1 = np.concatenate([w1, w2])
+    p2 = np.concatenate([w1, w3])
+    os = np.array([[-1, -2, -5], [2, 1, 3]]).astype(np.float32)
+
+    adata = simulate_3d_poisson_data([p1, p2], offsets=os, num_obs=500)
     return adata

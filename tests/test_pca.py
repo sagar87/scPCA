@@ -24,10 +24,9 @@ def proj(A):
     return A @ np.linalg.inv(A.T @ A) @ A.T
 
 
-def is_same_subspace(reference, inferred):
+def is_same_subspace(reference, inferred, atol=0.01):
     A = proj(inferred)
-    # print(A@reference)
-    return np.allclose(A @ reference, reference, atol=0.01)
+    return np.allclose(A @ reference, reference, atol=atol)
 
 
 def test_dpca_two_states(one_factorial_two_state_normal_data):
@@ -153,3 +152,57 @@ def test_dpca_two_states_3_dims(one_factorial_two_state_normal_three_dim_data):
     assert is_same_subspace(adata.uns["true_axes"]["A"].T, W[..., design["Intercept"]])
     assert is_same_subspace(adata.uns["true_axes"]["B"].T, W[..., design["state[T.B]"]])
     # assert is_close_to_zero_vec(adata.varm["V_m"])
+
+
+def test_dpca_two_states_3_dims_with_offset(one_factorial_two_state_normal_three_dim_data_with_offset):
+    adata = one_factorial_two_state_normal_three_dim_data_with_offset
+    MODIFIED = {**DEFAULT}
+    MODIFIED["num_epochs"] = 1000
+    m = dPCA(adata, 2, design_formula="state", intercept_formula="state-1", training_kwargs=MODIFIED)
+    m.fit()
+    m.fit(lr=0.01)
+    m.fit(lr=0.001)
+    m.mean_to_anndata("m", variables=["W", "V", "Z"])
+    design = adata.uns["m"]["design"]
+
+    W = adata.varm["W_m"]
+    # import pdb; pdb.set_trace()
+    assert np.allclose(adata.uns["true_offset"]["A"], adata.varm["V_m"][..., design["Intercept"]], atol=0.2)
+    assert np.allclose(adata.uns["true_offset"]["B"], adata.varm["V_m"][..., design["state[T.B]"]], atol=0.2)
+    assert is_same_subspace(adata.uns["true_axes"]["A"].T, W[..., design["Intercept"]], atol=0.1)
+    assert is_same_subspace(adata.uns["true_axes"]["B"].T, W[..., design["state[T.B]"]], atol=0.1)
+
+
+def test_dpca_two_states_3_dims_poisson(one_factorial_two_state_poisson_three_dim_data):
+    adata = one_factorial_two_state_poisson_three_dim_data
+    MODIFIED = {**DEFAULT}
+    MODIFIED["num_epochs"] = 1000
+    m = scPCA(adata, 2, design_formula="state", size_factor="size_factor", training_kwargs=MODIFIED)
+    m.fit()
+    m.fit(lr=0.01)
+    m.fit(lr=0.001)
+    m.mean_to_anndata("m", variables=["W", "V", "Z"])
+    design = adata.uns["m"]["design"]
+
+    W = adata.varm["W_m"]
+    # import pdb; pdb.set_trace()
+    assert is_same_subspace(adata.uns["true_axes"]["A"].T, W[..., design["Intercept"]])
+    assert is_same_subspace(adata.uns["true_axes"]["B"].T, W[..., design["state[T.B]"]])
+    # assert is_close_to_zero_vec(adata.varm["V_m"])
+
+
+# def test_dpca_two_states_3_dims_poisson_with_offset(one_factorial_two_state_poisson_three_dim_data_with_offset):
+#     adata = one_factorial_two_state_poisson_three_dim_data_with_offset
+#     MODIFIED = {**DEFAULT}
+#     MODIFIED["num_epochs"] = 1000
+#     m = scPCA(adata, 2, design_formula="state", intercept_formula='state-1', training_kwargs=MODIFIED)
+#     m.fit()
+#     m.fit(lr=0.01)
+#     m.fit(lr=0.001)
+#     m.mean_to_anndata("m", variables=["W", "V", "Z"])
+#     design = adata.uns["m"]["design"]
+
+#     W = adata.varm["W_m"]
+#     # import pdb; pdb.set_trace()
+#     assert np.allclose(adata.uns['true_offset']['A'], adata.varm['V_m'][..., design["Intercept"]], atol=1.)
+#     assert np.allclose(adata.uns['true_offset']['B'], adata.varm['V_m'][..., design["state[T.B]"]], atol=1.)
