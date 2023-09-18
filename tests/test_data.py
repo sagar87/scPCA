@@ -3,7 +3,64 @@ import pytest
 from anndata import AnnData
 from scipy.sparse import csr_matrix
 
-from scpca.utils.data import _get_rna_counts
+from scpca.utils.data import _get_rna_counts, _validate_sign, _validate_states
+
+
+# validation functions
+def test_valid_signs():
+    assert _validate_sign(1) == 1
+    assert _validate_sign(-1) == -1
+    assert _validate_sign(1.0) == 1.0
+    assert _validate_sign(-1.0) == -1.0
+
+
+def test_invalid_signs():
+    with pytest.raises(ValueError):
+        _validate_sign(2)
+    with pytest.raises(ValueError):
+        _validate_sign(-2)
+    with pytest.raises(ValueError):
+        _validate_sign(0)
+
+
+def test_invalid_types():
+    with pytest.raises(TypeError):
+        _validate_sign("1")
+    with pytest.raises(TypeError):
+        _validate_sign([1])
+    with pytest.raises(TypeError):
+        _validate_sign((1,))
+
+
+def test_validate_states_with_list():
+    state_a, state_b = _validate_states(["state1", "state2"])
+    assert state_a == "state1"
+    assert state_b == "state2"
+
+
+def test_validate_states_with_tuple():
+    state_a, state_b = _validate_states(("state1", "state2"))
+    assert state_a == "state1"
+    assert state_b == "state2"
+
+
+def test_validate_states_with_single_state():
+    state_a, state_b = _validate_states("state1")
+    assert state_a == "Intercept"
+    assert state_b == "state1"
+
+
+def test_validate_states_with_invalid_list_length():
+    with pytest.raises(ValueError, match="The length of provided states must equal 2."):
+        _validate_states(["state1"])
+
+
+def test_validate_states_with_invalid_type():
+    with pytest.raises(TypeError, match="The 'states' parameter must be either a list or a string."):
+        _validate_states(123)
+
+    with pytest.raises(TypeError, match="The 'states' parameter must be either a list or a string."):
+        _validate_states({"state1": "index1"})
 
 
 def test_get_rna_counts_with_X():
