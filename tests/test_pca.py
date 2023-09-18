@@ -2,7 +2,7 @@ import numpy as np
 from scipy.spatial.distance import cosine
 
 from scpca.pca import dPCA, scPCA
-from scpca.train import TEST
+from scpca.train import DEFAULT, TEST
 
 
 def is_aligned(a, b, atol=0.001):
@@ -18,6 +18,16 @@ def is_close_to_zero_vec(vec, atol=0.1):
     vec = vec.squeeze()
     true = np.zeros_like(vec)
     return np.allclose(vec, true, atol=atol)
+
+
+def proj(A):
+    return A @ np.linalg.inv(A.T @ A) @ A.T
+
+
+def is_same_subspace(reference, inferred):
+    A = proj(inferred)
+    # print(A@reference)
+    return np.allclose(A @ reference, reference, atol=0.01)
 
 
 def test_dpca_two_states(one_factorial_two_state_normal_data):
@@ -122,3 +132,24 @@ def test_scpca_four_state(one_factorial_four_state_poisson_data):
     assert is_aligned(adata.uns["true_axes"]["D"], W[..., design["state[T.D]"]])
 
     assert is_close_to_zero_vec(adata.varm["V_m"])
+
+
+# 3 dimensional data
+
+
+def test_dpca_two_states_3_dims(one_factorial_two_state_normal_three_dim_data):
+    adata = one_factorial_two_state_normal_three_dim_data
+    MODIFIED = {**DEFAULT}
+    MODIFIED["num_epochs"] = 1000
+    m = dPCA(adata, 2, design_formula="state", training_kwargs=MODIFIED)
+    m.fit()
+    m.fit(lr=0.01)
+    m.fit(lr=0.001)
+    m.mean_to_anndata("m", variables=["W", "V", "Z"])
+    design = adata.uns["m"]["design"]
+
+    W = adata.varm["W_m"]
+    # import pdb; pdb.set_trace()
+    assert is_same_subspace(adata.uns["true_axes"]["A"].T, W[..., design["Intercept"]])
+    assert is_same_subspace(adata.uns["true_axes"]["B"].T, W[..., design["state[T.B]"]])
+    # assert is_close_to_zero_vec(adata.varm["V_m"])

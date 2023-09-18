@@ -22,6 +22,10 @@ class SimulatedData(NamedTuple):
     offset: Optional[NDArray[np.float32]] = None
 
 
+def unit(v):
+    return v / np.linalg.norm(v)
+
+
 def principle_axis(rad):
     return np.array([np.cos(rad), np.sin(rad)]).reshape(1, -1)
 
@@ -79,6 +83,33 @@ def simulate_2d_data(angles=[np.pi / 8 * 1, np.pi / 8 * 3], offsets=None, num_ob
         X=X,
         obs=pd.DataFrame({"state": states}),
         var=pd.DataFrame({"gene": list(string.ascii_lowercase[:2])}).set_index("gene"),
+        dtype=np.float32,
+    )
+    adata.uns["true_axes"] = {state: vec.W for state, vec in zip(string.ascii_uppercase, data)}
+    adata.uns["true_offset"] = {state: vec.offset for state, vec in zip(string.ascii_uppercase, data)}
+    adata.obsm["X_true"] = np.concatenate([sub.Z for sub in data])
+    adata.layers["μ"] = np.exp(np.concatenate([sub.μ for sub in data]))
+    return adata
+
+
+def simulate_3d_normal_data(W, offsets=None, num_obs=100, σ=0.1):
+    data = []
+    states = []
+
+    for i, (w, state) in enumerate(zip(W, string.ascii_uppercase)):
+        if offsets is not None:
+            offset = offsets[i]
+        else:
+            offset = None
+        D = simulate_dataset(num_obs, 2, 3, W=w, σ=σ, offset=offset)
+        data.append(D)
+        states.extend([state] * num_obs)
+
+    X = np.concatenate([sub.X for sub in data])
+    adata = ad.AnnData(
+        X=X,
+        obs=pd.DataFrame({"state": states}),
+        var=pd.DataFrame({"gene": list(string.ascii_lowercase[:3])}).set_index("gene"),
         dtype=np.float32,
     )
     adata.uns["true_axes"] = {state: vec.W for state, vec in zip(string.ascii_uppercase, data)}
@@ -160,6 +191,9 @@ def test_anndata(data_dir):
     return adata
 
 
+# 2 dimensional data
+
+
 @pytest.fixture(scope="session", name="one_factorial_two_state_normal_data")
 def test_one_factorial_two_state_normal_data():
     adata = simulate_2d_data()
@@ -201,4 +235,17 @@ def test_one_factorial_four_state_poisson_data():
     adata = simulate_2d_poisson_data(
         [np.pi / 8 * 1, -np.pi / 8 * 1, np.pi / 8 * 2, np.pi / 8 * 5], size_factor=[4.2, 5.1, 5.5, 3.9]
     )
+    return adata
+
+
+# 3 dimensional data
+@pytest.fixture(scope="session", name="one_factorial_two_state_normal_three_dim_data")
+def test_one_factorial_two_state_normal_three_dim_data():
+    w1 = np.array([1, 0, 0]).reshape(1, -1)
+    w2 = np.array([0, 1, 0]).reshape(1, -1)
+    w3 = unit(np.array([0, 1, 1]).reshape(1, -1))
+    p1 = np.concatenate([w1, w2])
+    p2 = np.concatenate([w1, w3])
+
+    adata = simulate_3d_normal_data([p1, p2], num_obs=500)
     return adata
