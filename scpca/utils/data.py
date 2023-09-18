@@ -342,8 +342,8 @@ def get_diff_genes(
     model_design = _get_model_design(adata, model_key)
     state_a = model_design[states[0]]
     state_b = model_design[states[1]]
-    a = adata.varm[f"{model_key}_{variable}"][..., factor, state_a]
-    b = adata.varm[f"{model_key}_{variable}"][..., factor, state_b]
+    a = adata.varm[f"{variable}_{model_key}"][..., factor, state_a]
+    b = adata.varm[f"{variable}_{model_key}"][..., factor, state_b]
 
     # diff_factor = sign * (model_dict[vector][state_b][factor] - model_dict[vector][state_a][factor])
     diff_factor = sign * (b - a)
@@ -358,7 +358,7 @@ def get_diff_genes(
             {
                 "gene": genes,
                 "magnitude": magnitude,
-                "diff": diff_factor[gene_idx],
+                "difference": diff_factor[gene_idx],
                 "type": ["lowest"] * lowest + ["highest"] * highest,
                 "state": states[1] + "-" + states[0],
                 "factor": factor,
@@ -367,7 +367,7 @@ def get_diff_genes(
                 states[1]: b[gene_idx],
             }
         )
-        .sort_values(by="diff", ascending=ascending)
+        .sort_values(by="difference", ascending=ascending)
         .reset_index(drop=True)
     )
 

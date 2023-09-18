@@ -114,21 +114,21 @@ def test_get_ordered_genes(model_key, state, factor, highest, lowest, vector, si
         factor=factor,
         highest=highest,
         lowest=lowest,
-        vector=vector,
+        variable=vector,
         sign=sign,
         ascending=ascending,
     )
 
     state_index = test_anndata.uns[model_key]["design"][state]
-    factor_weights = sign * test_anndata.varm[f"{model_key}_{vector}"][..., factor, state_index]
+    factor_weights = sign * test_anndata.varm[f"{vector}_{model_key}"][..., factor, state_index]
     gene_idx = _get_gene_idx(factor_weights, highest, lowest)
-
+    # import pdb; pdb.set_trace()
     if ascending:
         assert np.all(df["gene"].to_numpy() == test_anndata.var_names[gene_idx].to_numpy())
-        assert np.all(df["value"].to_numpy() == factor_weights[gene_idx])
+        assert np.all(df["weight"].to_numpy() == factor_weights[gene_idx])
     else:
         assert np.all(df["gene"].to_numpy() == test_anndata.var_names[gene_idx][::-1].to_numpy())
-        assert np.all(df["value"].to_numpy() == factor_weights[gene_idx][::-1])
+        assert np.all(df["weight"].to_numpy() == factor_weights[gene_idx][::-1])
 
 
 @pytest.mark.parametrize(
@@ -156,26 +156,26 @@ def test_get_diff_genes(model_key, state, factor, highest, lowest, vector, sign,
         factor,
         highest=highest,
         lowest=lowest,
-        vector=vector,
+        variable=vector,
         sign=sign,
         ascending=ascending,
     )
-
     model_dict = test_anndata.uns[model_key]
     model_design = model_dict["design"]
     state_a, state_b = model_design[state[0]], model_design[state[1]]
     diff = sign * (
-        test_anndata.varm[f"{model_key}_{vector}"][..., factor, state_b]
-        - test_anndata.varm[f"{model_key}_{vector}"][..., factor, state_a]
+        test_anndata.varm[f"{vector}_{model_key}"][..., factor, state_b]
+        - test_anndata.varm[f"{vector}_{model_key}"][..., factor, state_a]
     )
+    # import pdb; pdb.set_trace()
     gene_idx = _get_gene_idx(diff, highest, lowest)
 
     if ascending:
         assert np.all(df["gene"].to_numpy() == test_anndata.var_names[gene_idx].to_numpy())
-        assert np.all(df["diff"].to_numpy() == diff[gene_idx])
+        assert np.all(df["difference"].to_numpy() == diff[gene_idx])
     else:
         assert np.all(df["gene"].to_numpy() == test_anndata.var_names[gene_idx][::-1].to_numpy())
-        assert np.all(df["diff"].to_numpy() == diff[gene_idx][::-1])
+        assert np.all(df["difference"].to_numpy() == diff[gene_idx][::-1])
 
 
 def test_get_model_design_existing_key():
