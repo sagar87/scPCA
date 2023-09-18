@@ -286,6 +286,11 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.pca">scPCA</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA"><code class="docutils literal notranslate"><span class="pre">dPCA</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA.mean_to_anndata"><code class="docutils literal notranslate"><span class="pre">dPCA.mean_to_anndata()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA.posterior_to_anndata"><code class="docutils literal notranslate"><span class="pre">dPCA.posterior_to_anndata()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.scPCA"><code class="docutils literal notranslate"><span class="pre">scPCA</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.scPCA.mean_to_anndata"><code class="docutils literal notranslate"><span class="pre">scPCA.mean_to_anndata()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.scPCA.posterior_to_anndata"><code class="docutils literal notranslate"><span class="pre">scPCA.posterior_to_anndata()</span></code></a></li>
@@ -294,9 +299,14 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-0">dPCA</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA"><code class="docutils literal notranslate"><span class="pre">dPCA</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA.mean_to_anndata"><code class="docutils literal notranslate"><span class="pre">dPCA.mean_to_anndata()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA.posterior_to_anndata"><code class="docutils literal notranslate"><span class="pre">dPCA.posterior_to_anndata()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">dPCA</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">dPCA.mean_to_anndata()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">dPCA.posterior_to_anndata()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">scPCA</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">scPCA.mean_to_anndata()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">scPCA.posterior_to_anndata()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -316,6 +326,76 @@ document.write(`
 <h1>Models<a class="headerlink" href="#models" title="Permalink to this heading">#</a></h1>
 <section id="module-scpca.pca">
 <span id="scpca"></span><h2>scPCA<a class="headerlink" href="#module-scpca.pca" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="scpca.pca.dPCA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scpca.pca.</span></span><span class="sig-name descname"><span class="pre">dPCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_formula='1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intercept_formula='1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsampling=4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs={'z_sd':</span> <span class="pre">1.0}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_kwargs={'loss':</span> <span class="pre">&lt;class</span> <span class="pre">'pyro.infer.trace_mean_field_elbo.TraceMeanField_ELBO'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'loss_kwargs':</span> <span class="pre">{'num_particles':</span> <span class="pre">1}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'num_epochs':</span> <span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'optimizer':</span> <span class="pre">&lt;function</span> <span class="pre">ClippedAdam&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'optimizer_kwargs':</span> <span class="pre">{'betas':</span> <span class="pre">(0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.999)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'lr':</span> <span class="pre">0.01}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'scheduler':</span> <span class="pre">None}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.pca.dPCA" title="Permalink to this definition">#</a></dt>
+<dd><p>Design Principal Component Analysis (dPCA) model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code>) – Anndata object containing the single-cell data.</p></li>
+<li><p><strong>num_factors</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of factors to fit. Default is 15.</p></li>
+<li><p><strong>layers_key</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Key to extract single-cell count matrix from adata.layers. If None, scPCA will
+try to extract the count matrix from adata.X. Default is None.</p></li>
+<li><p><strong>batch_formula</strong> – R style formula to extract batch information from adata.obs. If None, scPCA
+assumes a single batch. Default is None.</p></li>
+<li><p><strong>design_formula</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – R style formula to construct the design matrix from adata.obs. If None, scPCA
+fits a normal PCA. Default is None.</p></li>
+<li><p><strong>subsampling</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of cells to subsample for training. Default is 4096.</p></li>
+<li><p><strong>device</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'cuda'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cpu'</span></code>]]) – Device to run the model on. A GPU is recommended. Default is GPU if available, else CPU.</p></li>
+<li><p><strong>model_kwargs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – Additional keyword arguments for the model. Default values are provided.</p></li>
+<li><p><strong>training_kwargs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – Additional keyword arguments for training. Default is SUBSAMPLE.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="scpca.pca.dPCA.mean_to_anndata">
+<span class="sig-name descname"><span class="pre">mean_to_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['W',</span> <span class="pre">'Z']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.pca.dPCA.mean_to_anndata" title="Permalink to this definition">#</a></dt>
+<dd><p>Store the posterior mean estimates in the AnnData object for specified variables.</p>
+<p>This method retrieves the posterior mean estimates for the given variables and stores them in the AnnData object.
+The variables can include weights (“W”), loadings (“V”), means (“μ”), latent factors (“Z”), among others.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Key to store the model results in the AnnData object.</p></li>
+<li><p><strong>num_samples</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of samples to draw from the posterior. Default is 25.</p></li>
+<li><p><strong>num_split</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of splits for the data. Default is 2048.</p></li>
+<li><p><strong>variables</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of variables for which the posterior mean estimates should be stored.
+Possible values include “W”, “V”, “μ”, “Z”, “α”, “σ”, and “offset”.
+Default is [“W”, “Z”].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The results are stored in the provided AnnData object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scpca.pca.dPCA.posterior_to_anndata">
+<span class="sig-name descname"><span class="pre">posterior_to_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['W',</span> <span class="pre">'Z']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.pca.dPCA.posterior_to_anndata" title="Permalink to this definition">#</a></dt>
+<dd><p>Store the posterior samples in the AnnData object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Key to store the model in the AnnData object.</p></li>
+<li><p><strong>num_samples</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of samples to draw from the posterior. Default is 25.</p></li>
+<li><p><strong>variables</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of variables for which the posterior mean estimates should be stored.
+Possible values include “W”, “V”, “μ”, “Z”, “α”, “σ”, and “offset”.
+Default is [“W”, “Z”].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="scpca.pca.scPCA">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scpca.pca.</span></span><span class="sig-name descname"><span class="pre">scPCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_formula='1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intercept_formula='1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_factor=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsampling=4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs={}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_kwargs={'loss':</span> <span class="pre">&lt;class</span> <span class="pre">'pyro.infer.trace_mean_field_elbo.TraceMeanField_ELBO'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'loss_kwargs':</span> <span class="pre">{'num_particles':</span> <span class="pre">1}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'num_epochs':</span> <span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'optimizer':</span> <span class="pre">&lt;function</span> <span class="pre">ClippedAdam&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'optimizer_kwargs':</span> <span class="pre">{'betas':</span> <span class="pre">(0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.999)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'lr':</span> <span class="pre">0.01}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'scheduler':</span> <span class="pre">None}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.pca.scPCA" title="Permalink to this definition">#</a></dt>
@@ -395,8 +475,8 @@ Default is [“W”, “Z”].</p></li>
 <section id="module-0">
 <span id="dpca"></span><h2>dPCA<a class="headerlink" href="#module-0" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="scpca.pca.dPCA">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scpca.pca.</span></span><span class="sig-name descname"><span class="pre">dPCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_formula='1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intercept_formula='1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsampling=4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs={'z_sd':</span> <span class="pre">1.0}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_kwargs={'loss':</span> <span class="pre">&lt;class</span> <span class="pre">'pyro.infer.trace_mean_field_elbo.TraceMeanField_ELBO'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'loss_kwargs':</span> <span class="pre">{'num_particles':</span> <span class="pre">1}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'num_epochs':</span> <span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'optimizer':</span> <span class="pre">&lt;function</span> <span class="pre">ClippedAdam&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'optimizer_kwargs':</span> <span class="pre">{'betas':</span> <span class="pre">(0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.999)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'lr':</span> <span class="pre">0.01}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'scheduler':</span> <span class="pre">None}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.pca.dPCA" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scpca.pca.</span></span><span class="sig-name descname"><span class="pre">dPCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_formula='1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intercept_formula='1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsampling=4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs={'z_sd':</span> <span class="pre">1.0}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_kwargs={'loss':</span> <span class="pre">&lt;class</span> <span class="pre">'pyro.infer.trace_mean_field_elbo.TraceMeanField_ELBO'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'loss_kwargs':</span> <span class="pre">{'num_particles':</span> <span class="pre">1}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'num_epochs':</span> <span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'optimizer':</span> <span class="pre">&lt;function</span> <span class="pre">ClippedAdam&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'optimizer_kwargs':</span> <span class="pre">{'betas':</span> <span class="pre">(0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.999)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'lr':</span> <span class="pre">0.01}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'scheduler':</span> <span class="pre">None}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
 <dd><p>Design Principal Component Analysis (dPCA) model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -417,8 +497,8 @@ fits a normal PCA. Default is None.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="scpca.pca.dPCA.mean_to_anndata">
-<span class="sig-name descname"><span class="pre">mean_to_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['W',</span> <span class="pre">'Z']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.pca.dPCA.mean_to_anndata" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">mean_to_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['W',</span> <span class="pre">'Z']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id1" title="Permalink to this definition">#</a></dt>
 <dd><p>Store the posterior mean estimates in the AnnData object for specified variables.</p>
 <p>This method retrieves the posterior mean estimates for the given variables and stores them in the AnnData object.
 The variables can include weights (“W”), loadings (“V”), means (“μ”), latent factors (“Z”), among others.</p>
@@ -443,8 +523,83 @@ Default is [“W”, “Z”].</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="scpca.pca.dPCA.posterior_to_anndata">
-<span class="sig-name descname"><span class="pre">posterior_to_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['W',</span> <span class="pre">'Z']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.pca.dPCA.posterior_to_anndata" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">posterior_to_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['W',</span> <span class="pre">'Z']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id2" title="Permalink to this definition">#</a></dt>
+<dd><p>Store the posterior samples in the AnnData object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Key to store the model in the AnnData object.</p></li>
+<li><p><strong>num_samples</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of samples to draw from the posterior. Default is 25.</p></li>
+<li><p><strong>variables</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of variables for which the posterior mean estimates should be stored.
+Possible values include “W”, “V”, “μ”, “Z”, “α”, “σ”, and “offset”.
+Default is [“W”, “Z”].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="id3">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scpca.pca.</span></span><span class="sig-name descname"><span class="pre">scPCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers_key=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_formula='1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intercept_formula='1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_factor=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsampling=4096</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs={}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_kwargs={'loss':</span> <span class="pre">&lt;class</span> <span class="pre">'pyro.infer.trace_mean_field_elbo.TraceMeanField_ELBO'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'loss_kwargs':</span> <span class="pre">{'num_particles':</span> <span class="pre">1}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'num_epochs':</span> <span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'optimizer':</span> <span class="pre">&lt;function</span> <span class="pre">ClippedAdam&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'optimizer_kwargs':</span> <span class="pre">{'betas':</span> <span class="pre">(0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.999)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'lr':</span> <span class="pre">0.01}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'scheduler':</span> <span class="pre">None}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Permalink to this definition">#</a></dt>
+<dd><p>Single-cell Principal Component Analysis (scPCA) model.</p>
+<p>This class provides an interface to perform scPCA on single-cell data. It allows for
+the extraction of principal components while accounting for batch effects and other
+covariates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code>) – Anndata object containing the single-cell data.</p></li>
+<li><p><strong>num_factors</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of factors to fit.</p></li>
+<li><p><strong>layers_key</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Key to extract single-cell count matrix from adata.layers. If None, scPCA will
+try to extract the count matrix from adata.X. Default is None.</p></li>
+<li><p><strong>design_formula</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – R style formula to construct the design matrix from adata.obs. If None, scPCA
+fits a normal PCA. Default is “1”.</p></li>
+<li><p><strong>intercept_formula</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – R style formula to extract batch information from adata.obs. Default is “1”.</p></li>
+<li><p><strong>subsampling</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of cells to subsample for training. A larger number will result in a more
+accurate computation of the gradients, but will also increase the training time
+and memory usage. Default is 4096.</p></li>
+<li><p><strong>device</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'cuda'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cpu'</span></code>]]) – Device to run the model on. A GPU is recommended. Default is GPU if available, else CPU.</p></li>
+<li><p><strong>seed</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Random seed for reproducibility. Default is None.</p></li>
+<li><p><strong>model_kwargs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – Additional keyword arguments for the model. Default values are provided.</p></li>
+<li><p><strong>training_kwargs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – Additional keyword arguments for training. Default is SUBSAMPLE.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">mean_to_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['W',</span> <span class="pre">'Z']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id4" title="Permalink to this definition">#</a></dt>
+<dd><p>Store the posterior mean estimates in the AnnData object for specified variables.</p>
+<p>This method retrieves the posterior mean estimates for the given variables and stores them in the AnnData object.
+The variables can include weights (“W”), loadings (“V”), means (“μ”), latent factors (“Z”), among others.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Key to store the model results in the AnnData object.</p></li>
+<li><p><strong>num_samples</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of samples to draw from the posterior. Default is 25.</p></li>
+<li><p><strong>num_split</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of splits for the data. Default is 2048.</p></li>
+<li><p><strong>variables</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of variables for which the posterior mean estimates should be stored.
+Possible values include “W”, “V”, “μ”, “Z”, “α”, “σ”, and “offset”.
+Default is [“W”, “Z”].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The results are stored in the provided AnnData object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">posterior_to_anndata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['W',</span> <span class="pre">'Z']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id5" title="Permalink to this definition">#</a></dt>
 <dd><p>Store the posterior samples in the AnnData object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -512,6 +667,11 @@ Default is [“W”, “Z”].</p></li>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.pca">scPCA</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA"><code class="docutils literal notranslate"><span class="pre">dPCA</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA.mean_to_anndata"><code class="docutils literal notranslate"><span class="pre">dPCA.mean_to_anndata()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA.posterior_to_anndata"><code class="docutils literal notranslate"><span class="pre">dPCA.posterior_to_anndata()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.scPCA"><code class="docutils literal notranslate"><span class="pre">scPCA</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.scPCA.mean_to_anndata"><code class="docutils literal notranslate"><span class="pre">scPCA.mean_to_anndata()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.scPCA.posterior_to_anndata"><code class="docutils literal notranslate"><span class="pre">scPCA.posterior_to_anndata()</span></code></a></li>
@@ -520,9 +680,14 @@ Default is [“W”, “Z”].</p></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-0">dPCA</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA"><code class="docutils literal notranslate"><span class="pre">dPCA</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA.mean_to_anndata"><code class="docutils literal notranslate"><span class="pre">dPCA.mean_to_anndata()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.pca.dPCA.posterior_to_anndata"><code class="docutils literal notranslate"><span class="pre">dPCA.posterior_to_anndata()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">dPCA</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">dPCA.mean_to_anndata()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><code class="docutils literal notranslate"><span class="pre">dPCA.posterior_to_anndata()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><code class="docutils literal notranslate"><span class="pre">scPCA</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><code class="docutils literal notranslate"><span class="pre">scPCA.mean_to_anndata()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><code class="docutils literal notranslate"><span class="pre">scPCA.posterior_to_anndata()</span></code></a></li>
 </ul>
 </li>
 </ul>
