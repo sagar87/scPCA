@@ -364,8 +364,8 @@ def state_diff(
                 "state": states[1] + "-" + states[0],
                 "factor": factor,
                 "index": gene_idx,
-                states[0]: a[gene_idx],
-                states[1]: b[gene_idx],
+                states[0]: sign * a[gene_idx],
+                states[1]: sign * b[gene_idx],
             }
         )
         .sort_values(by="difference", ascending=ascending)
@@ -383,7 +383,7 @@ def umap(
     """
     Performs UMAP dimensionality reduction on an AnnData object. Uses scanpy's
     UMAP function but stores the nearest neighbors graph and UMAP coordinates in the
-    `anndata` object with the `model_key` prefix.
+    `anndata` object with the a `model_key` prefix.
 
     Parameters
     ----------
