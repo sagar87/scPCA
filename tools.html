@@ -288,6 +288,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.utils.data.state_diff"><code class="docutils literal notranslate"><span class="pre">state_diff()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.utils.data.state_loadings"><code class="docutils literal notranslate"><span class="pre">state_loadings()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.utils.data.umap"><code class="docutils literal notranslate"><span class="pre">umap()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -370,6 +371,45 @@ magnitude of association, weight, type (highest/lowest), state, factor index, an
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="scpca.utils.data.umap">
+<span class="sig-prename descclassname"><span class="pre">scpca.utils.data.</span></span><span class="sig-name descname"><span class="pre">umap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbors_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.utils.data.umap" title="Permalink to this definition">#</a></dt>
+<dd><p>Performs UMAP dimensionality reduction on an AnnData object. Uses scanpy’s
+UMAP function but stores the nearest neighbors graph and UMAP coordinates in the
+<cite>anndata</cite> object with the a <cite>model_key</cite> prefix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code>) – The AnnData object containing the data to be processed.</p></li>
+<li><p><strong>model_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The basis to use for the UMAP calculation.</p></li>
+<li><p><strong>neighbors_kwargs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – Additional keyword arguments to be passed to <cite>sc.pp.neighbors</cite> function.
+Default is an empty dictionary.</p></li>
+<li><p><strong>umap_kwargs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – Additional keyword arguments to be passed to <cite>sc.tl.umap</cite> function.
+Default is an empty dictionary.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function performs UMAP dimensionality reduction on the input <cite>adata</cite> object
+using the specified embedding of the specified model. It first computes the neighbors graph using the
+<cite>sc.pp.neighbors</cite> function, with the option to provide additional keyword arguments
+via <cite>neighbors_kwargs</cite>. Then, it applies the UMAP algorithm using the <cite>sc.tl.umap</cite>
+function, with the option to provide additional keyword arguments via <cite>umap_kwargs</cite>.
+Finally, it stores the UMAP coordinates in the <cite>obsm</cite> attribute of the <cite>adata</cite> object
+under the key <cite>“{model_key}_umap”</cite> or <cite>“X_{model_key}_umap”</cite> respectively.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">adata</span> <span class="o">=</span> <span class="n">AnnData</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">umap</span><span class="p">(</span><span class="n">adata</span><span class="p">,</span> <span class="n">model_key</span><span class="o">=</span><span class="s2">&quot;pca&quot;</span><span class="p">,</span> <span class="n">neighbors_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_neighbors&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span> <span class="n">umap_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;min_dist&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 
 
@@ -418,6 +458,7 @@ magnitude of association, weight, type (highest/lowest), state, factor index, an
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.utils.data.state_diff"><code class="docutils literal notranslate"><span class="pre">state_diff()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.utils.data.state_loadings"><code class="docutils literal notranslate"><span class="pre">state_loadings()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.utils.data.umap"><code class="docutils literal notranslate"><span class="pre">umap()</span></code></a></li>
 </ul>
   </nav></div>
 
