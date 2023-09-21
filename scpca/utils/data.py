@@ -207,7 +207,7 @@ def _get_gene_idx(array: NDArray[np.float32], highest: int, lowest: int) -> NDAr
     return gene_idx
 
 
-def get_ordered_genes(
+def state_loadings(
     adata: AnnData,
     model_key: str,
     state: Union[List[str], Tuple[str, str], str],
@@ -283,7 +283,7 @@ def get_ordered_genes(
     )
 
 
-def get_diff_genes(
+def state_diff(
     adata: AnnData,
     model_key: str,
     states: Union[List[str], Tuple[str, str], str],
@@ -296,7 +296,7 @@ def get_diff_genes(
     threshold: float = 1.96,
 ) -> pd.DataFrame:
     """
-    Compute the differential genes between two states based on a given model.
+    Compute the dfference between two state loadings (logits) of a specified factor.
 
     Parameters
     ----------
@@ -305,20 +305,20 @@ def get_diff_genes(
     model_key :
         Key to access the model in the adata object.
     states :
-        List containing two states for comparison. If a single str is provided
+        List containing two states for comparison. If a single `str` is provided
         the base state is assumed to be 'Intercept'.
     factor :
-        Factor index to consider for the differential calculation.
+        Factor index to consider for the diff calculation.
     sign :
-        Sign to adjust the difference, by default 1.0.
+        Sign to adjust the difference, either -1.0 or 1.0, by default 1.0.
     variable :
-        Vector key to access in the model, by default "W_rna".
+        Vector key to access in the model, by default "W".
     highest :
-        Number of highest differential genes to retrieve, by default 10.
+        Number of highest diff genes to retrieve, by default 10.
     lowest :
-        Number of lowest differential genes to retrieve, by default 0.
+        Number of lowest diff genes to retrieve, by default 0.
     ascending :
-        Whether to sort the results in ascending order, by default False.
+        Whether to sort the results in ascending order, by default `False`.
     threshold :
         Threshold for significance, by default 1.96.
 

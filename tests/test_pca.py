@@ -140,7 +140,7 @@ def test_dpca_two_states_3_dims(one_factorial_two_state_normal_three_dim_data):
     adata = one_factorial_two_state_normal_three_dim_data
     MODIFIED = {**DEFAULT}
     MODIFIED["num_epochs"] = 1000
-    m = dPCA(adata, 2, design_formula="state", training_kwargs=MODIFIED)
+    m = dPCA(adata, 2, design_formula="state", seed=353151, training_kwargs=MODIFIED)
     m.fit()
     m.fit(lr=0.01)
     m.fit(lr=0.001)
@@ -158,7 +158,7 @@ def test_dpca_two_states_3_dims_with_offset(one_factorial_two_state_normal_three
     adata = one_factorial_two_state_normal_three_dim_data_with_offset
     MODIFIED = {**DEFAULT}
     MODIFIED["num_epochs"] = 1000
-    m = dPCA(adata, 2, design_formula="state", intercept_formula="state-1", training_kwargs=MODIFIED)
+    m = dPCA(adata, 2, design_formula="state", intercept_formula="state-1", seed=353151, training_kwargs=MODIFIED)
     m.fit()
     m.fit(lr=0.01)
     m.fit(lr=0.001)
@@ -177,7 +177,7 @@ def test_dpca_two_states_3_dims_poisson(one_factorial_two_state_poisson_three_di
     adata = one_factorial_two_state_poisson_three_dim_data
     MODIFIED = {**DEFAULT}
     MODIFIED["num_epochs"] = 1000
-    m = scPCA(adata, 2, design_formula="state", size_factor="size_factor", training_kwargs=MODIFIED)
+    m = scPCA(adata, 2, design_formula="state", size_factor="size_factor", seed=65364, training_kwargs=MODIFIED)
     m.fit()
     m.fit(lr=0.01)
     m.fit(lr=0.001)

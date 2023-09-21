@@ -1,3 +1,3 @@
-from .data import get_diff_genes, get_ordered_genes
+from .data import state_diff, state_loadings
 
-__all__ = ["get_ordered_genes", "get_diff_genes"]
+__all__ = ["state_diff", "state_loadings"]

@@ -9,8 +9,8 @@ from scpca.utils.data import (
     _get_rna_counts,
     _validate_sign,
     _validate_states,
-    get_diff_genes,
-    get_ordered_genes,
+    state_diff,
+    state_loadings,
 )
 
 
@@ -107,7 +107,7 @@ def test_get_gene_idx():
 def test_get_ordered_genes(model_key, state, factor, highest, lowest, vector, sign, ascending, test_anndata):
     # test that the right order of genes is returned
 
-    df = get_ordered_genes(
+    df = state_loadings(
         test_anndata,
         model_key=model_key,
         state=state,
@@ -148,8 +148,8 @@ def test_get_ordered_genes(model_key, state, factor, highest, lowest, vector, si
         ("m2", ["Intercept", "label[T.stim]"], 0, 0, 50, "W_rna", 1.0, True),
     ],
 )
-def test_get_diff_genes(model_key, state, factor, highest, lowest, vector, sign, ascending, test_anndata):
-    df = get_diff_genes(
+def test_state_diff(model_key, state, factor, highest, lowest, vector, sign, ascending, test_anndata):
+    df = state_diff(
         test_anndata,
         model_key,
         state,
