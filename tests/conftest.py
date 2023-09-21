@@ -283,6 +283,7 @@ def test_one_factorial_four_state_poisson_data():
 # 3 dimensional data
 @pytest.fixture(scope="session", name="one_factorial_two_state_normal_three_dim_data")
 def test_one_factorial_two_state_normal_three_dim_data():
+    np.random.seed(4253535)
     w1 = np.array([1, 0, 0]).reshape(1, -1)
     w2 = np.array([0, 1, 0]).reshape(1, -1)
     w3 = unit(np.array([0, 1, 1]).reshape(1, -1))
@@ -295,6 +296,7 @@ def test_one_factorial_two_state_normal_three_dim_data():
 
 @pytest.fixture(scope="session", name="one_factorial_two_state_normal_three_dim_data_with_offset")
 def test_one_factorial_two_state_normal_three_dim_data_with_offset():
+    np.random.seed(730134)
     w1 = np.array([1, 0, 0]).reshape(1, -1)
     w2 = np.array([0, 1, 0]).reshape(1, -1)
     w3 = unit(np.array([0, 1, 1]).reshape(1, -1))
@@ -309,6 +311,7 @@ def test_one_factorial_two_state_normal_three_dim_data_with_offset():
 # 3 dimensional data
 @pytest.fixture(scope="session", name="one_factorial_two_state_poisson_three_dim_data")
 def test_one_factorial_two_state_poisson_three_dim_data():
+    np.random.seed(35325)
     w1 = np.array([1, 0, 0]).reshape(1, -1)
     w2 = np.array([0, 1, 0]).reshape(1, -1)
     w3 = unit(np.array([0, 1, 1]).reshape(1, -1))
@@ -321,6 +324,7 @@ def test_one_factorial_two_state_poisson_three_dim_data():
 
 @pytest.fixture(scope="session", name="one_factorial_two_state_poisson_three_dim_data_with_offset")
 def test_one_factorial_two_state_poisson_three_dim_data_with_offset():
+    np.random.seed(41545)
     w1 = np.array([1, 0, 0]).reshape(1, -1)
     w2 = np.array([0, 1, 0]).reshape(1, -1)
     w3 = unit(np.array([0, 1, 1]).reshape(1, -1))
