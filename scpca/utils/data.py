@@ -1,7 +1,8 @@
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd  # type: ignore
+import scanpy as sc  # type: ignore
 from anndata import AnnData  # type: ignore
 from numpy.typing import NDArray
 from scipy.sparse import issparse  # type: ignore
@@ -374,3 +375,57 @@ def state_diff(
     df["significant"] = df["magnitude"] > threshold
 
     return df
+
+
+def umap(
+    adata: AnnData, model_key: str, neighbors_kwargs: Dict[str, Any] = {}, umap_kwargs: Dict[str, Any] = {}
+) -> None:
+    """
+    Performs UMAP dimensionality reduction on an AnnData object. Uses scanpy's
+    UMAP function but stores the nearest neighbors graph and UMAP coordinates in the
+    `anndata` object with the `model_key` prefix.
+
+    Parameters
+    ----------
+    adata :
+        The AnnData object containing the data to be processed.
+    model_key :
+        The basis to use for the UMAP calculation.
+    neighbors_kwargs :
+        Additional keyword arguments to be passed to `sc.pp.neighbors` function.
+        Default is an empty dictionary.
+    umap_kwargs :
+        Additional keyword arguments to be passed to `sc.tl.umap` function.
+        Default is an empty dictionary.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    This function performs UMAP dimensionality reduction on the input `adata` object
+    using the specified embedding of the specified model. It first computes the neighbors graph using the
+    `sc.pp.neighbors` function, with the option to provide additional keyword arguments
+    via `neighbors_kwargs`. Then, it applies the UMAP algorithm using the `sc.tl.umap`
+    function, with the option to provide additional keyword arguments via `umap_kwargs`.
+    Finally, it stores the UMAP coordinates in the `obsm` attribute of the `adata` object
+    under the key `"{model_key}_umap"` or `"X_{model_key}_umap"` respectively.
+
+    Example
+    -------
+    >>> adata = AnnData(X)
+    >>> umap(adata, model_key="pca", neighbors_kwargs={"n_neighbors": 10}, umap_kwargs={"min_dist": 0.5})
+
+    """
+    if f"X_{model_key}" in adata.obsm:
+        model_key = f"X_{model_key}"
+    elif model_key in adata.obsm:
+        pass
+    else:
+        raise KeyError("Neither f'X_{model_key}' nor '{model_key}' in adata.obsm.")
+
+    sc.pp.neighbors(adata, use_rep=f"{model_key}", key_added=f"{model_key}", **neighbors_kwargs)
+    sc.tl.umap(adata, neighbors_key=f"{model_key}", **umap_kwargs)
+    adata.obsm[f"{model_key}_umap"] = adata.obsm["X_umap"]
+    del adata.obsm["X_umap"]
