@@ -10,9 +10,35 @@ from matplotlib.figure import Figure  # type: ignore
 from numpy.typing import NDArray
 
 
-def set_up_cmap(
+def _set_up_cmap(
     array: NDArray[np.float32], colormap: str = "RdBu"
 ) -> Tuple[Union[co.Colormap, co.LinearSegmentedColormap], Union[co.TwoSlopeNorm, co.Normalize]]:
+    """
+    Set up a colormap and normalization based on the given array.
+
+    Parameters
+    ----------
+    array :
+        Input array for which the colormap and normalization are to be set up.
+    colormap :
+        The name of the colormap to use. Default is "RdBu".
+
+    Returns
+    -------
+        A tuple containing the colormap and normalization objects.
+
+    Notes
+    -----
+    - If the array contains both positive and negative values, a diverging colormap is used.
+    - If the array contains only negative values, a colormap ranging from the minimum value to zero is used.
+    - If the array contains only non-negative values, a colormap ranging from zero to the maximum value is used.
+
+    Examples
+    --------
+    >>> cmap, norm = _set_up_cmap(np.array([-1, 0, 1]))
+    >>> cmap, norm = _set_up_cmap(np.array([-1, -0.5, -0.2]), colormap="coolwarm")
+    """
+
     vmin = array.min()
     vmax = array.max()
 
@@ -31,34 +57,53 @@ def set_up_cmap(
     return cmap, norm
 
 
-def rand_jitter(arr: NDArray[np.float32], stdev: float = 1.0) -> NDArray[np.float32]:
-    # stdev = .01 * (max(arr) - min(arr))
-    # print(stdev)
-    return arr + np.random.randn(len(arr)) * stdev
-
-
-def set_up_subplots(
-    num_plots: int, ncols: int = 4, width: float = 4, height: float = 3, sharey: bool = False, sharex: bool = False
-) -> Tuple[Figure, Axes]:
+def _rand_jitter(arr: NDArray[np.float32], stdev: float = 1.0) -> NDArray[np.float32]:
     """
-    Set up subplots for plotting multiple factors.
+    Add random jitter to an array.
 
     Parameters
     ----------
-    num_plots : int
-        The total number of plots to be created.
-    ncols : int, optional
-        The number of columns in the subplot grid. Default is 4.
-    width : int, optional
-        The width factor for each subplot. Default is 4.
-    height : int, optional
-        The height factor for each subplot. Default is 3.
+    arr :
+        Input array to which random jitter will be added.
+    stdev :
+        Standard deviation of the random jitter. Default is 1.0.
 
     Returns
     -------
-    fig : matplotlib.figure.Figure
+        Array with added random jitter.
+
+    Examples
+    --------
+    >>> jittered_arr = _rand_jitter(np.array([1, 2, 3]))
+    >>> jittered_arr = _rand_jitter(np.array([1, 2, 3]), stdev=0.5)
+    """
+    return arr + np.random.randn(len(arr)) * stdev
+
+
+def _set_up_subplots(
+    num_plots: int, ncols: int = 4, width: float = 4, height: float = 3, sharey: bool = False, sharex: bool = False
+) -> Tuple[Figure, Axes]:
+    """
+    Internal function to set up subplots for plotting multiple factors.
+
+    Parameters
+    ----------
+    num_plots :
+        The total number of plots to be created.
+    ncols :
+        The number of columns in the subplot grid. Default is 4.
+    width :
+        The width factor for each subplot. Default is 4.
+    height :
+        The height factor for each subplot. Default is 3.
+    sharey :
+        Whether to share the y-axis across subplots. Default is False.
+    sharex :
+        Whether to share the x-axis across subplots. Default is False.
+
+    Returns
+    -------
         The Figure object representing the entire figure.
-    axes : numpy.ndarray of matplotlib.axes.Axes
         An array of Axes objects representing the subplots. The shape of the
         array is determined by the number of rows and columns.
 
@@ -72,13 +117,13 @@ def set_up_subplots(
     Examples
     --------
     # Create a single subplot
-    fig, ax = set_up_subplots(num_plots=1)
+    fig, ax = _set_up_subplots(num_plots=1)
 
     # Create a grid of subplots with 2 rows and 4 columns
-    fig, axes = set_up_subplots(num_plots=8)
+    fig, axes = _set_up_subplots(num_plots=8)
 
     # Create a single row of subplots with 1 row and 3 columns
-    fig, axes = set_up_subplots(num_plots=3, ncols=3)
+    fig, axes = _set_up_subplots(num_plots=3, ncols=3)
     """
 
     if num_plots == 1:
@@ -103,7 +148,7 @@ def set_up_subplots(
     return fig, axes
 
 
-def set_up_plot(
+def _set_up_plot(
     adata: AnnData,
     model_key: str,
     instances: Union[int, List[int], None],
@@ -121,30 +166,29 @@ def set_up_plot(
 
     Parameters
     ----------
-    adata : AnnData
+    adata :
         AnnData object containing the data and model information.
-    model_key : str
+    model_key :
         Key to access the model information in `adata.uns`.
-    instances : int, List[int], or None
+    instances :
         Index or list of indices of instances or factors to visualize.
         If None, the function determines the number of instances/factors automatically.
-    func : Callable
+    func :
         Plotting function to visualize each instance/factor.
         It should accept the following parameters: `adata`, `model_key`, `instance`, and `ax`.
-    ncols : int, optional (default: 4)
+    ncols :
         Number of columns in the subplot grid.
-    width : int, optional (default: 4)
+    width :
         Width of each subplot in inches.
-    height : int, optional (default: 3)
+    height :
         Height of each subplot in inches.
-    ax : plt.Axes or None, optional (default: None)
+    ax :
         Matplotlib axes to use for plotting. If None, new subplots will be created.
     **kwargs
         Additional keyword arguments to pass to the `func` plotting function.
 
     Returns
     -------
-    ax : plt.Axes
         Matplotlib axes object containing the plotted instances or factors.
 
     Notes
@@ -158,20 +202,20 @@ def set_up_plot(
     Examples
     --------
     # Plot a single instance of a model using a custom plotting function
-    set_up_plot(adata, 'pca', 0, plot_function)
+    _set_up_plot(adata, 'pca', 0, plot_function)
 
     # Plot multiple instances of a model using a custom plotting function
-    set_up_plot(adata, 'umap', [0, 1, 2], plot_function)
+    _set_up_plot(adata, 'umap', [0, 1, 2], plot_function)
 
     # Automatically determine the number of instances and plot them using a custom plotting function
-    set_up_plot(adata, 'lda', None, plot_function)
+    _set_up_plot(adata, 'lda', None, plot_function)
 
     # Specify the number of columns and size of subplots
-    set_up_plot(adata, 'nmf', [0, 1, 2, 3], plot_function, ncols=3, width=6, height=4)
+    _set_up_plot(adata, 'nmf', [0, 1, 2, 3], plot_function, ncols=3, width=6, height=4)
     """
     if isinstance(instances, list):
         num_plots = len(instances)
-        fig, ax = set_up_subplots(num_plots, ncols=ncols, width=width, height=height, sharex=sharex, sharey=sharey)
+        fig, ax = _set_up_subplots(num_plots, ncols=ncols, width=width, height=height, sharex=sharex, sharey=sharey)
     elif isinstance(instances, int):
         num_plots = 1
         if ax is None:
@@ -184,7 +228,7 @@ def set_up_plot(
             num_plots = model_dict["model"]["num_factors"]
 
         instances = [i for i in range(num_plots)]
-        fig, ax = set_up_subplots(num_plots, ncols=ncols, width=width, height=height, sharex=sharex, sharey=sharey)
+        fig, ax = _set_up_subplots(num_plots, ncols=ncols, width=width, height=height, sharex=sharex, sharey=sharey)
 
     if num_plots == 1:
         if isinstance(instances, list):
