@@ -12,6 +12,7 @@ Welcome to scCCA's documentation!
 
    models
    tools
+   plots
 
 
 Indices and tables

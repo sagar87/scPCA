@@ -31,6 +31,7 @@
    scpca.logger
    scpca.models
    scpca.pca
+   scpca.plots
    scpca.train
    scpca.utils
 
