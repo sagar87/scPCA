@@ -7,5 +7,5 @@ Plotting
 Factor Embedding
 ----------------
 
-.. automodule:: scpca.pl.factor_embedding
+.. automodule:: scpca.plots.factor_embedding
    :members:
