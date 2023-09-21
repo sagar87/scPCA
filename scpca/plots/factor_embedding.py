@@ -27,7 +27,7 @@ def factor_embedding(
     ax: Axes = None,
 ) -> Axes:
     """
-    Plot factor on a given basis.
+    Plot factor weights on a given basis such as UMAP/TSNE.
 
     Parameters
     ----------
@@ -80,9 +80,9 @@ def factor_embedding(
         model_key,
         factor,
         _factor_embedding,
+        basis=basis,
         sign=sign,
         cmap=cmap,
-        basis=basis,
         colorbar_pos=colorbar_pos,
         colorbar_width=colorbar_width,
         orientation=orientation,
