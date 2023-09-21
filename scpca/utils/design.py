@@ -16,7 +16,7 @@ class StateMapping(NamedTuple):
     sparse: Dict[str, int]
 
 
-def get_states(design: DesignMatrix) -> StateMapping:
+def _get_states(design: DesignMatrix) -> StateMapping:
     """Extracts the states from the design matrix.
 
     Parameters

@@ -6,7 +6,7 @@ from anndata import AnnData  # type: ignore
 from patsy import dmatrix  # type: ignore
 from torch.types import Device
 
-from ..utils import get_states
+from ..utils.design import _get_states
 from .local_handler import SVILocalHandler
 from .settings import DEFAULT
 
@@ -36,9 +36,9 @@ class FactorModel:
 
         # prepare design and batch matrix
         self.design_matrix = dmatrix(design_formula, self.adata.obs)
-        self.design_states = get_states(self.design_matrix)
+        self.design_states = _get_states(self.design_matrix)
         self.intercept_matrix = dmatrix(intercept_formula, self.adata.obs)
-        self.intercept_states = get_states(self.intercept_matrix)
+        self.intercept_states = _get_states(self.intercept_matrix)
         #
         self.model_kwargs = model_kwargs
         self.training_kwargs = training_kwargs

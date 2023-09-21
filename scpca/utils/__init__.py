@@ -1,4 +1,3 @@
-from .data import _get_rna_counts, get_ordered_genes
-from .design import get_states
+from .data import get_diff_genes, get_ordered_genes
 
-__all__ = ["get_states", "_get_rna_counts", "get_ordered_genes"]
+__all__ = ["get_ordered_genes", "get_diff_genes"]

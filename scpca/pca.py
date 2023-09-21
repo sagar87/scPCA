@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 
 from .models import dpca_guide, dpca_model, scpca_guide, scpca_model
 from .train import DEFAULT, FactorModel, SVILocalHandler
-from .utils import _get_rna_counts
+from .utils.data import _get_rna_counts
 
 
 class scPCA(FactorModel):
