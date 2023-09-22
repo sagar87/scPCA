@@ -9,8 +9,8 @@ scPCA - A probabilistic factor model for single-cell data
 ![scPCA schematic](https://github.com/sagar87/scPCA/blob/main/docs/scpca_schematic.png?raw=true)
 
 
-scPCA is a versatile matrix factorisation framework designed to analyze single-cell data across diverse experimental designs. 
- 
+scPCA is a versatile matrix factorisation framework designed to analyze single-cell data across diverse experimental designs.
+
 *scPCA is a young project and breaking changes are to be expected.*
 
 *************
