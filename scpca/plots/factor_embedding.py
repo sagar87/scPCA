@@ -31,42 +31,42 @@ def factor_embedding(
 
     Parameters
     ----------
-    adata :
+    adata
         AnnData object.
-    model_key :
+    model_key
         Key for the fitted model.
-    factor :
+    factor
         Factor(s) to plot. If None, then all factors are plotted.
-    basis :
+    basis
         Key for the basis (e.g. UMAP, T-SNE). If basis is None factor embedding
         tries to retrieve "X_{model_key}_umap".
-    sign :
+    sign
         Sign of the factor. Should be either 1.0 or -1.0.
-    cmap :
+    cmap
         Colormap for the scatterplot.
-    colorbar_pos :
+    colorbar_pos
         Position of the colorbar.
-    colorbar_width :
+    colorbar_width
         Width of the colorbar.
-    orientation :
+    orientation
         Orientation of the colorbar. Should be either "vertical" or "horizontal".
-    pad :
+    pad
         Padding between the plot and colorbar
-    size :
+    size
         Marker/Dot size of the scatterplot.
-    ncols :
+    ncols
         Number of columns for the subplots.
-    width :
+    width
         Width of each subplot.
-    height :
+    height
         Height of each subplot.
-    ax :
+    ax
         Axes object to plot on. If None, then a new figure is created. Works only
         if one factor is plotted.
 
     Returns
     -------
-    ax :
+    ax
         Axes object.
     """
     # do validation here
@@ -100,52 +100,16 @@ def _factor_embedding(
     adata: AnnData,
     model_key: str,
     factor: int,
-    basis: Union[str, None] = None,
-    sign: Union[float, int] = 1.0,
-    cmap: str = "RdBu",
-    colorbar_pos: str = "right",
-    colorbar_width: str = "3%",
-    orientation: str = "vertical",
-    pad: float = 0.1,
-    size: float = 1,
+    basis: Union[str, None],
+    sign: Union[float, int],
+    cmap: str,
+    colorbar_pos: str,
+    colorbar_width: str,
+    orientation: str,
+    pad: float,
+    size: float,
     ax: Axes = None,
 ) -> Axes:
-    """
-    Helper function to plot factor embeddings.
-
-    Parameters
-    ----------
-    adata :
-        AnnData object.
-    model_key :
-        Key for the fitted model.
-    factor :
-        Factor to plot.
-    basis :
-        Key for the basis (e.g. UMAP, T-SNE).
-    sign :
-        Sign of the factor. Should be either 1.0 or -1.0.
-    cmap :
-        Colormap for the scatterplot.
-    colorbar_pos :
-        Position of the colorbar.
-    colorbar_width :
-        Width of the colorbar.
-    orientation :
-        Orientation of the colorbar. Should be either "vertical" or "horizontal".
-    pad :
-        Padding for the colorbar.
-    size :
-        Marker/Dot size of the scatterplot.
-    ax :
-        Axes object to plot on. If None, then a new figure is created.
-
-    Returns
-    -------
-    ax :
-        Axes object.
-    """
-
     if ax is None:
         fig = plt.figure()
         ax = plt.gca()

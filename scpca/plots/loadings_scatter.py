@@ -32,44 +32,62 @@ def loadings_scatter(
     ax: Axes = None,
 ) -> Axes:
     """
-    Plot factor on a given embedding.
+    Create a scatter plot of loading states for a given model and factors.
 
     Parameters
     ----------
-    adata: AnnData
-        AnnData object.
-    model_key: str, optional (default: "X_scpca")
-        Key for the fitted model.
-    embedding: str, optional (default: "X_umap")
-        Key for the embedding (e.g. UMAP, T-SNE).
-    factor: int, list, optional (default: None)
-        Factor(s) to plot. If None, then all factors are plotted.
-    sign: float, optional (default: 1.0)
-        Sign of the factor. Should be either 1.0 or -1.0.
-    cmap: str, optional (default: "PiYG")
-        Colormap for the scatterplot.
-    colorbar_pos: str, optional (default: "right")
-        Position of the colorbar.
-    colorbar_width: str, optional (default: "3%")
-        Width of the colorbar.
-    orientation: str, optional (default: "vertical")
-        Orientation of the colorbar. Should be either "vertical" or "horizontal".
-    size: float, optional (default: 1)
-        Marker/Dot size of the scatterplot.
-    ncols: int, optional (default: 4)
-        Number of columns for the subplots.
-    width: int, optional (default: 4)
-        Width of each subplot.
-    height: int, optional (default: 3)
-        Height of each subplot.
-    ax: matplotlib.axes.Axes, optional (default: None)
-        Axes object to plot on. If None, then a new figure is created.
+    adata
+        AnnData object containing the data and model information.
+    model_key
+        Key to access the model information in `adata.uns`.
+    states
+        States to compare. Default is an empty list.
+    factor
+        Factor or list of factors to plot. If None, all factors are plotted. Default is None.
+    var_names
+        Variable names to highlight. Default is an empty list.
+    variable
+        Variable to plot. Default is "W".
+    highlight
+        Whether to highlight specific variables. Default is True.
+    size_func
+        Function to determine the size of the dots. Default is a lambda function that returns 10.0.
+    sign
+        Sign of the loadings to consider. Default is 1.0.
+    jitter
+        Amount of jitter to apply to the x-coordinates. Default is 0.01.
+    fontsize
+        Font size for annotations. Default is 10.
+    show_labels
+        Indices of states for which to show labels. Default is 0.
+    annotation_linewidth
+        Line width for annotations. Default is 0.5.
+    cmap
+        Colormap to use. Default is "RdBu".
+    ncols
+        Number of columns in the subplot grid. Default is 4.
+    width
+        Width of each subplot in inches. Default is 4.
+    height
+        Height of each subplot in inches. Default is 3.
+    ax
+        Matplotlib axes to use for plotting. Default is None.
 
     Returns
     -------
-    ax: matplotlib.axes.Axes
-        Axes object.
+    ax
+        Matplotlib axes object containing the plotted instances or factors.
+
+    Notes
+    -----
+    - The function sets up the plot environment and calls the internal function `_loadings_scatter` to do the actual plotting.
+
+    Examples
+    --------
+    # Example usage
+    loadings_scatter(adata, 'pca', ['state1', 'state2'], factor=0)
     """
+
     _ = _validate_sign(sign)
 
     if isinstance(var_names, str):
@@ -92,6 +110,7 @@ def loadings_scatter(
         fontsize=fontsize,
         size_func=size_func,
         show_labels=show_labels,
+        annotation_linewidth=annotation_linewidth,
         cmap=cmap,
         ncols=ncols,
         width=width,
@@ -118,61 +137,6 @@ def _loadings_scatter(
     cmap: str,
     ax: Axes = None,
 ) -> Axes:
-    """
-    Scatter plot of factor loadings for a given factor in each state.
-
-    Arguments
-    ---------
-    adata: AnnData
-        AnnData object with the fitted model.
-    model_key: str
-        Key used to store the fitted model in adata.uns.
-    factor: int
-        The factor to plot.
-    states: List[str], optional (default: [])
-        The states to include in the plot.
-    genes: List[str], optional (default: [])
-        The genes to include in the plot.
-    diff: List[str], optional (default: [])
-        The genes to highlight in the plot.
-    geneset: str or None, optional (default: None)
-        Name of a gene set to include in the plot. Requires gseapy package.
-    vector: str, optional (default: "W_rna")
-        Vector to use for plotting the loadings.
-    alpha: float, optional (default: 1.0)
-        Transparency of the scatter plot.
-    highest: int, optional (default: 3)
-        Number of genes with highest loadings to plot per state.
-    lowest: int, optional (default: 3)
-        Number of genes with lowest loadings to plot per state.
-    size_scale: float, optional (default: 1.0)
-        Scaling factor for the gene symbol size.
-    sign: float, optional (default: 1.0)
-        Sign of the loadings.
-    jitter: float, optional (default: 0.01)
-        Jittering factor for the x-axis to reduce overlap.
-    fontsize: int, optional (default: 10)
-        Font size for gene labels.
-    geneset_top_genes: int, optional (default: 100)
-        Number of genes from the gene set to plot with the highest loadings.
-    geneset_bottom_genes: int, optional (default: 0)
-        Number of genes from the gene set to plot with the lowest loadings.
-    show_labels: int, optional (default: 0)
-        Show gene labels for top `show_labels` genes with the highest loadings.
-    show_geneset: bool, optional (default: False)
-        Show the gene set as a solid line.
-    show_diff: bool, optional (default: False)
-        Show the differential genes as a dashed line.
-    return_order: bool, optional (default: False)
-        Return the order of genes plotted.
-    annotation_kwargs: dict, optional (default: {})
-        Additional keyword arguments for gene label annotations.
-
-    Returns
-    -------
-    order: np.ndarray
-        The order of genes plotted (only if `return_order` is True).
-    """
     if ax is None:
         _ = plt.figure()
         ax = plt.gca()

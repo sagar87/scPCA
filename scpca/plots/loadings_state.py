@@ -46,63 +46,63 @@ def loadings_state(
 
     Parameters
     ----------
-    adata :
+    adata
         AnnData object containing the scPCA model.
-    model_key :
+    model_key
         Key to access the model information in `adata.uns`.
-    states :
+    states
         States to compare.
-    factor :
+    factor
         Factor or list of factors to plot. If None, all factors are plotted. Default is None.
-    var_names :
+    var_names
         Variable names to highlight. Default is an empty list.
-    variable :
+    variable
         Variable to plot. Default is "W".
-    highest :
+    highest
         Number of genes to plot with largest positve difference between two states. Default is 0.
-    lowest :
+    lowest
         Number of genes to plot with largest negative difference between two states. Default is 0.
-    sign :
+    sign
         Sign of the loadings, either -1 or 1. Default is 1.0.
-    highlight :
+    highlight
         If true only var_names and highest/lowest genes are shown in color, all other genes in grey.
         Default is True.
-    cmap :
+    cmap
         Colormap to use. Default is "RdBu".
-    colorbar_pos :
+    colorbar_pos
         Position of the colorbar. Default is "right".
-    colorbar_width :
+    colorbar_width
         Width of the colorbar. Default is "3%".
-    orientation :
+    orientation
         Orientation of the colorbar. Default is "vertical".
-    fontsize :
+    fontsize
         Font size for annotations. Default is 10.
-    pad :
+    pad
         Padding for the colorbar. Default is 0.1.
-    show_corr :
+    show_corr
         Whether to show correlation. Default is False.
-    show_diff :
+    show_diff
         Whether to show difference. Default is False.
-    size_func :
+    size_func
         Function to determine the size of the dots. Default is a lambda function that returns an array of 10.0.
-    sharey :
+    sharey
         Whether to share the y-axis across subplots. Default is False.
-    sharex :
+    sharex
         Whether to share the x-axis across subplots. Default is False.
-    ncols :
+    ncols
         Number of columns in the subplot grid. Default is 4.
-    width :
+    width
         Width of each subplot in inches. Default is 4.
-    height :
+    height
         Height of each subplot in inches. Default is 3.
-    text_kwargs :
+    text_kwargs
         Additional keyword arguments for text annotations. Default is an empty dictionary.
-    ax :
+    ax
         Matplotlib axes to use for plotting. If None, new subplots will be created. Default is None.
 
     Returns
     -------
-    ax :
+    ax
         Matplotlib axes object containing the plotted instances or factors.
 
     Notes
