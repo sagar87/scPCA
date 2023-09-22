@@ -42,7 +42,7 @@ def loadings_state(
     ax: Optional[Axes] = None,
 ) -> Axes:
     """
-    Plot the loading states for a given model and factors.
+    Plot the loadings of two states.
 
     Parameters
     ----------

@@ -37,11 +37,11 @@ def loadings_scatter(
     Parameters
     ----------
     adata
-        AnnData object containing the data and model information.
+        AnnData object.
     model_key
         Key to access the model information in `adata.uns`.
     states
-        States to compare. Default is an empty list.
+        States to plot compare. Can be more than two.
     factor
         Factor or list of factors to plot. If None, all factors are plotted. Default is None.
     var_names
@@ -85,7 +85,7 @@ def loadings_scatter(
     Examples
     --------
     # Example usage
-    loadings_scatter(adata, 'pca', ['state1', 'state2'], factor=0)
+    loadings_scatter(adata, 'm0', ['state1', 'state2'], factor=0)
     """
 
     _ = _validate_sign(sign)
