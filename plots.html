@@ -291,6 +291,7 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.plots.loadings_state">Loadings states</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.loadings_state.loadings_state"><code class="docutils literal notranslate"><span class="pre">loadings_state()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.loadings_scatter.loadings_scatter"><code class="docutils literal notranslate"><span class="pre">loadings_scatter()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -399,6 +400,49 @@ Default is True.</p></li>
 loadings_state(adata, ‘model1’, [‘state1’, ‘state2’], factor=0)</p>
 </dd></dl>
 
+<span class="target" id="module-scpca.plots.loadings_scatter"></span><dl class="py function">
+<dt class="sig sig-object py" id="scpca.plots.loadings_scatter.loadings_scatter">
+<span class="sig-prename descclassname"><span class="pre">scpca.plots.loadings_scatter.</span></span><span class="sig-name descname"><span class="pre">loadings_scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states=[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_names=[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable='W'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlight=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign=1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter=0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize=10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_labels=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_linewidth=0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap='RdBu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncols=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height=3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.plots.loadings_scatter.loadings_scatter" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a scatter plot of loading states for a given model and factors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code>) – AnnData object.</p></li>
+<li><p><strong>model_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Key to access the model information in <cite>adata.uns</cite>.</p></li>
+<li><p><strong>states</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – States to plot compare. Can be more than two.</p></li>
+<li><p><strong>factor</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – Factor or list of factors to plot. If None, all factors are plotted. Default is None.</p></li>
+<li><p><strong>var_names</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Variable names to highlight. Default is an empty list.</p></li>
+<li><p><strong>variable</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Variable to plot. Default is “W”.</p></li>
+<li><p><strong>highlight</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to highlight specific variables. Default is True.</p></li>
+<li><p><strong>size_func</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Function to determine the size of the dots. Default is a lambda function that returns 10.0.</p></li>
+<li><p><strong>sign</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Sign of the loadings to consider. Default is 1.0.</p></li>
+<li><p><strong>jitter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Amount of jitter to apply to the x-coordinates. Default is 0.01.</p></li>
+<li><p><strong>fontsize</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Font size for annotations. Default is 10.</p></li>
+<li><p><strong>show_labels</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Indices of states for which to show labels. Default is 0.</p></li>
+<li><p><strong>annotation_linewidth</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Line width for annotations. Default is 0.5.</p></li>
+<li><p><strong>cmap</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Colormap to use. Default is “RdBu”.</p></li>
+<li><p><strong>ncols</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of columns in the subplot grid. Default is 4.</p></li>
+<li><p><strong>width</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Width of each subplot in inches. Default is 4.</p></li>
+<li><p><strong>height</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Height of each subplot in inches. Default is 3.</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]) – Matplotlib axes to use for plotting. Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Matplotlib axes object containing the plotted instances or factors.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ax</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function sets up the plot environment and calls the internal function <cite>_loadings_scatter</cite> to do the actual plotting.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<p># Example usage
+loadings_scatter(adata, ‘m0’, [‘state1’, ‘state2’], factor=0)</p>
+</dd></dl>
+
 </section>
 </section>
 
@@ -443,6 +487,7 @@ loadings_state(adata, ‘model1’, [‘state1’, ‘state2’], factor=0)</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.plots.loadings_state">Loadings states</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.loadings_state.loadings_state"><code class="docutils literal notranslate"><span class="pre">loadings_state()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.loadings_scatter.loadings_scatter"><code class="docutils literal notranslate"><span class="pre">loadings_scatter()</span></code></a></li>
 </ul>
 </li>
 </ul>
