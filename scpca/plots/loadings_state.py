@@ -2,18 +2,15 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np
-import pandas as pd  # type: ignore
 from adjustText import adjust_text  # type: ignore
 from anndata import AnnData  # type: ignore
 from matplotlib.axes import Axes  # type: ignore
-from matplotlib.colors import Colormap, Normalize  # type: ignore
 from mpl_toolkits.axes_grid1 import make_axes_locatable  # type: ignore
-from numpy.typing import NDArray
 
 from ..logger import logger
 from ..utils import state_diff
 from ..utils.data import _validate_sign, _validate_states
-from .helper import _set_up_cmap, _set_up_plot
+from .helper import _annotate_dots, _plot_dots, _set_up_cmap, _set_up_plot
 
 
 def loadings_state(
@@ -35,7 +32,7 @@ def loadings_state(
     pad: float = 0.1,
     show_corr: bool = False,
     show_diff: bool = False,
-    size_func: Callable[[NDArray[np.float32]], NDArray[np.float32]] = lambda x: np.asarray([10.0]),
+    size_func: Callable[[float], float] = lambda x: 10.0,
     sharey: bool = False,
     sharex: bool = False,
     ncols: int = 4,
@@ -49,63 +46,63 @@ def loadings_state(
 
     Parameters
     ----------
-    adata : AnnData
+    adata :
         AnnData object containing the scPCA model.
-    model_key : str
+    model_key :
         Key to access the model information in `adata.uns`.
-    states : Union[List[str], Tuple[str, str], str]
+    states :
         States to compare.
-    factor : Union[int, List[int], None], optional
+    factor :
         Factor or list of factors to plot. If None, all factors are plotted. Default is None.
-    var_names : Union[List[str], str], optional
+    var_names :
         Variable names to highlight. Default is an empty list.
-    variable : str, optional
+    variable :
         Variable to plot. Default is "W".
-    highest : int, optional
+    highest :
         Number of genes to plot with largest positve difference between two states. Default is 0.
-    lowest : int, optional
+    lowest :
         Number of genes to plot with largest negative difference between two states. Default is 0.
-    sign : Union[int, float], optional
+    sign :
         Sign of the loadings, either -1 or 1. Default is 1.0.
-    highlight : bool, optional
+    highlight :
         If true only var_names and highest/lowest genes are shown in color, all other genes in grey.
         Default is True.
-    cmap : str, optional
+    cmap :
         Colormap to use. Default is "RdBu".
-    colorbar_pos : str, optional
+    colorbar_pos :
         Position of the colorbar. Default is "right".
-    colorbar_width : str, optional
+    colorbar_width :
         Width of the colorbar. Default is "3%".
-    orientation : str, optional
+    orientation :
         Orientation of the colorbar. Default is "vertical".
-    fontsize : int, optional
+    fontsize :
         Font size for annotations. Default is 10.
-    pad : float, optional
+    pad :
         Padding for the colorbar. Default is 0.1.
-    show_corr : bool, optional
+    show_corr :
         Whether to show correlation. Default is False.
-    show_diff : bool, optional
+    show_diff :
         Whether to show difference. Default is False.
-    size_func : Callable, optional
+    size_func :
         Function to determine the size of the dots. Default is a lambda function that returns an array of 10.0.
-    sharey : bool, optional
+    sharey :
         Whether to share the y-axis across subplots. Default is False.
-    sharex : bool, optional
+    sharex :
         Whether to share the x-axis across subplots. Default is False.
-    ncols : int, optional
+    ncols :
         Number of columns in the subplot grid. Default is 4.
-    width : int, optional
+    width :
         Width of each subplot in inches. Default is 4.
-    height : int, optional
+    height :
         Height of each subplot in inches. Default is 3.
-    text_kwargs : Dict[str, Any], optional
+    text_kwargs :
         Additional keyword arguments for text annotations. Default is an empty dictionary.
-    ax : Optional[Axes], optional
+    ax :
         Matplotlib axes to use for plotting. If None, new subplots will be created. Default is None.
 
     Returns
     -------
-    ax : plt.Axes
+    ax :
         Matplotlib axes object containing the plotted instances or factors.
 
     Notes
@@ -169,7 +166,7 @@ def _loadings_state(
     highest: int = 0,
     lowest: int = 0,
     sign: Union[float, int] = 1.0,
-    size_func: Callable[[NDArray[np.float32]], NDArray[np.float32]] = lambda x: np.asarray([10.0]),
+    size_func: Callable[[float], float] = lambda x: 10.0,
     highlight: bool = False,
     cmap: str = "RdBu",
     colorbar_pos: str = "right",
@@ -187,9 +184,9 @@ def _loadings_state(
     y = df[states[1]].values
     diff = df.difference.values
     cmap, norm = _set_up_cmap(diff, cmap)
-    size = size_func(diff)
+    df["dot_size"] = df.difference.map(size_func)
 
-    im = _plot_dots(ax, x, y, size, diff, cmap, norm, highlight)
+    im = _plot_dots(ax, x, y, df.dot_size.values, diff, cmap, norm, highlight)
 
     # set up the diagonal line
     diag = np.linspace(np.quantile(df[states[0]].values, 0.01), np.quantile(df[states[0]].values, 0.99))
@@ -211,7 +208,7 @@ def _loadings_state(
                 ax,
                 sub[states[0]].values,
                 sub[states[1]].values,
-                size_func(sub.difference.values),
+                sub.dot_size.values,
                 sub.difference,
                 cmap,
                 norm,
@@ -220,6 +217,7 @@ def _loadings_state(
 
     elif (highest > 0) or (lowest > 0):
         sub = state_diff(adata, model_key, states, factor, variable=variable, highest=highest, lowest=lowest, sign=sign)
+        sub["dot_size"] = sub.difference.map(size_func)
         annotations = _annotate_dots(ax, sub, states, fontsize, show_diff)
         texts.extend(annotations)
         if highlight:
@@ -227,7 +225,7 @@ def _loadings_state(
                 ax,
                 sub[states[0]].values,
                 sub[states[1]].values,
-                size_func(sub.difference.values),
+                sub.dot_size.values,
                 sub.difference,
                 cmap,
                 norm,
@@ -248,39 +246,3 @@ def _loadings_state(
         ax.text(0.95, 0.95, f"Correlation: {correlation:.2f}", ha="right", va="top", transform=ax.transAxes)
 
     return ax
-
-
-def _plot_dots(
-    ax: Axes,
-    x: NDArray[np.float32],
-    y: NDArray[np.float32],
-    size: NDArray[np.float32],
-    diff: NDArray[np.float32],
-    cmap: Colormap,
-    norm: Normalize,
-    highlight: bool,
-) -> Any:
-    if highlight:
-        im = ax.scatter(x, y, s=size, c="lightgrey")
-    else:
-        im = ax.scatter(x, y, s=size, c=diff, cmap=cmap, norm=norm)
-
-    return im
-
-
-def _annotate_dots(
-    ax: Axes, dataframe: pd.DataFrame, states: List[str], fontsize: int = 10, show_diff: bool = False
-) -> List[Any]:
-    texts = []
-    for i, row in dataframe.iterrows():
-        # import pdb; pdb.set_trace()
-        label = row["gene"]
-
-        if show_diff:
-            label += f' {row["difference"]:.2f}'
-
-        t = ax.text(row[states[0]], row[states[1]], s=label, fontsize=fontsize)
-
-        texts.append(t)
-
-    return texts

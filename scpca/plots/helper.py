@@ -3,9 +3,11 @@ from typing import Any, Callable, List, Optional, Tuple, Union
 import matplotlib.colors as co  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np
+import pandas as pd  # type: ignore
 from anndata import AnnData  # type: ignore
 from matplotlib.axes import Axes  # type: ignore
 from matplotlib.cm import get_cmap  # type: ignore
+from matplotlib.colors import Colormap, Normalize
 from matplotlib.figure import Figure  # type: ignore
 from numpy.typing import NDArray
 
@@ -159,7 +161,7 @@ def _set_up_plot(
     sharey: bool = False,
     sharex: bool = False,
     ax: Optional[Axes] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Axes:
     """
     Set up the plot environment for visualizing multiple instances or factors.
@@ -240,3 +242,39 @@ def _set_up_plot(
             func(adata, model_key, i, ax=ax_i, **kwargs)
 
     return ax
+
+
+def _plot_dots(
+    ax: Axes,
+    x: NDArray[np.float32],
+    y: NDArray[np.float32],
+    size: NDArray[np.float32],
+    diff: NDArray[np.float32],
+    cmap: Colormap,
+    norm: Normalize,
+    highlight: bool,
+) -> Any:
+    if highlight:
+        im = ax.scatter(x, y, s=size, c="lightgrey")
+    else:
+        im = ax.scatter(x, y, s=size, c=diff, cmap=cmap, norm=norm)
+
+    return im
+
+
+def _annotate_dots(
+    ax: Axes, dataframe: pd.DataFrame, states: List[str], fontsize: int = 10, show_diff: bool = False
+) -> List[Any]:
+    texts = []
+    for i, row in dataframe.iterrows():
+        # import pdb; pdb.set_trace()
+        label = row["gene"]
+
+        if show_diff:
+            label += f' {row["difference"]:.2f}'
+
+        t = ax.text(row[states[0]], row[states[1]], s=label, fontsize=fontsize)
+
+        texts.append(t)
+
+    return texts
