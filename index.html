@@ -143,6 +143,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="notebooks/kang.html">Analysing interferon stimulated PBMCs using scPCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/pancreas.html">Integrating the human pancreas dataset</a></li>
 </ul>
 
     </div>
@@ -322,7 +323,7 @@ document.write(`
 <p>scPCA makes use <cite>torch</cite>, <cite>pyro</cite> and <cite>anndata</cite>. We highly recommend to run scPCA on a GPU device.</p>
 <section id="via-pypi">
 <h3>Via Pypi<a class="headerlink" href="#via-pypi" title="Permalink to this heading">#</a></h3>
-<p>The easiest option to install <cite>scpca</cite> is throug Pypi. Simply type</p>
+<p>The easiest option to install <cite>scpca</cite> is via Pypi. Simply type</p>
 <p>into your shell and hit enter.</p>
 <ul class="simple">
 <li><p>Free software: MIT license</p></li>
@@ -338,15 +339,55 @@ document.write(`
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plots.html">Plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models.html#module-scpca.pca">scPCA</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models.html#scpca.pca.scPCA"><code class="docutils literal notranslate"><span class="pre">scPCA</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models.html#scpca.pca.scPCA.mean_to_anndata"><code class="docutils literal notranslate"><span class="pre">scPCA.mean_to_anndata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="models.html#scpca.pca.scPCA.posterior_to_anndata"><code class="docutils literal notranslate"><span class="pre">scPCA.posterior_to_anndata()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#module-0">dPCA</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models.html#scpca.pca.dPCA"><code class="docutils literal notranslate"><span class="pre">dPCA</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models.html#scpca.pca.dPCA.mean_to_anndata"><code class="docutils literal notranslate"><span class="pre">dPCA.mean_to_anndata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="models.html#scpca.pca.dPCA.posterior_to_anndata"><code class="docutils literal notranslate"><span class="pre">dPCA.posterior_to_anndata()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#scpca.utils.data.state_diff"><code class="docutils literal notranslate"><span class="pre">state_diff()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#scpca.utils.data.state_loadings"><code class="docutils literal notranslate"><span class="pre">state_loadings()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#scpca.utils.data.umap"><code class="docutils literal notranslate"><span class="pre">umap()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plots.html">Plotting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plots.html#module-scpca.plots.factor_embedding">Factor Embedding</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="plots.html#scpca.plots.factor_embedding.factor_embedding"><code class="docutils literal notranslate"><span class="pre">factor_embedding()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="plots.html#module-scpca.plots.loadings_state">Loadings states</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="plots.html#scpca.plots.loadings_state.loadings_state"><code class="docutils literal notranslate"><span class="pre">loadings_state()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="plots.html#scpca.plots.loadings_scatter.loadings_scatter"><code class="docutils literal notranslate"><span class="pre">loadings_scatter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/kang.html">Analysing interferon stimulated PBMCs using scPCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/kang.html">Analysing interferon stimulated PBMCs using scPCA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/kang.html#Recovering-PCA,-i.e. providing-no-information-about-the-condition">Recovering PCA, i.e. providing no information about the condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/kang.html#Accounting-for-mean-offsets-using-an-intercept-design-matrix">Accounting for mean offsets using an intercept design matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/kang.html#Accounting-for-spectral-shifts-across-conditions-using-a-loading-design-matrix">Accounting for spectral shifts across conditions using a loading design matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/pancreas.html">Integrating the human pancreas dataset</a></li>
 </ul>
 </div>
 </section>
