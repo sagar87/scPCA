@@ -9,10 +9,10 @@ scPCA
 -----
 
 .. automodule:: scpca.pca
-   :inherited-members: scPCA
+   :members: scPCA
 
 dPCA
 ----
 
 .. automodule:: scpca.pca
-   :inherited-members: dPCA
+   :members: dPCA

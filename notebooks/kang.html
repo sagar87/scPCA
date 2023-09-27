@@ -1,0 +1,1511 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Analysing interferon-\(\beta\) stimulated PBMCs using scPCA &#8212; scPCA 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=927b94d3fcb96560df09"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/kang';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Plotting" href="../plots.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">scPCA 0.1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plots.html">Plotting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Analysing interferon-<span class="math notranslate nohighlight">\(\beta\)</span> stimulated PBMCs using scPCA</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/kang.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Analysing interferon-\beta stimulated PBMCs using scPCA</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Recovering-PCA,-i.e. providing-no-information-about-the-condition">Recovering PCA, i.e. providing no information about the condition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Accounting-for-mean-offsets-using-an-intercept-design-matrix">Accounting for mean offsets using an intercept design matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Accounting-for-spectral-shifts-across-conditions-using-a-loading-design-matrix">Accounting for spectral shifts across conditions using a loading design matrix</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.jp-RenderedHTMLCommon thead,
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+.jp-RenderedHTMLCommon th,
+div.rendered_html th {
+  font-weight: bold;
+}
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.jp-RenderedHTMLCommon tbody tr:hover,
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<p><a class="reference external" href="https://colab.research.google.com/github/sagar87/scCCA/blob/main/docs/notebooks/kang.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<p><em>In order to run this notebook in Google Colab run the following cells. For best performance make sure that you run the notebook on a GPU instance, i.e. choose from the menu bar Runtime &gt; Change Runtime &gt; Hardware accelerator &gt; GPU.</em></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Install scCCA + depenencies
+!pip install --quiet scpca scikit-misc
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Download the Kang et. al. dataset
+!wget https://www.huber.embl.de/users/harald/sc/kang.h5ad /content/kang.h5ad
+</pre></div>
+</div>
+</div>
+<section id="Analysing-interferon-\beta-stimulated-PBMCs-using-scPCA">
+<h1>Analysing interferon-<span class="math notranslate nohighlight">\(\beta\)</span> stimulated PBMCs using scPCA<a class="headerlink" href="#Analysing-interferon-\beta-stimulated-PBMCs-using-scPCA" title="Permalink to this heading">#</a></h1>
+<p>In this notebook, we analyse the dataset from Kang et. al. in which the authors stimulated PBMCs with Interferon-<span class="math notranslate nohighlight">\(\beta\)</span>. We load the dataset using <code class="docutils literal notranslate"><span class="pre">scanpy</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from IPython.display import Image
+from IPython.core.display import HTML
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import scpca as scp
+import torch
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import scanpy as sc
+import scpca as scp
+import seaborn as sns
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>data_path = &#39;/content/kang.h5ad&#39;
+adata = sc.read_h5ad(data_path)
+</pre></div>
+</div>
+</div>
+<p>The canonical approach to analyse single-cell data involves to select highly variable genes followed by a logCPM transformation of the count data prior to PCA. Note that we save the original count data in the <code class="docutils literal notranslate"><span class="pre">layers</span></code> slot of the <code class="docutils literal notranslate"><span class="pre">adata</span></code> object, because <code class="docutils literal notranslate"><span class="pre">scPCA</span></code> operates on directly count data.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata.layers[&quot;counts&quot;] = adata.X.copy()
+
+sc.pp.highly_variable_genes(
+    adata,
+    n_top_genes=2000,
+    flavor=&quot;seurat_v3&quot;,
+    subset=True,
+    layer=&quot;counts&quot;
+)
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.pp.normalize_total(adata, target_sum=1e4)
+sc.pp.log1p(adata)
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.tl.pca(adata, n_comps=15)
+</pre></div>
+</div>
+</div>
+<p>We now generate a UMAP from PCA cell embeddings to obtain a visual overview of the dataset. The <code class="docutils literal notranslate"><span class="pre">scp.tl.umap</span></code> function first creates a nearest neighborhood graph and subsequently calculates UMAP coordinates.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>scp.tl.umap(adata, &#39;X_pca&#39;)
+</pre></div>
+</div>
+</div>
+<p>Plotting the UMAPs reveals that although the PCA embeddings preserved the cellular identity within both conditions, they fail to align those properly within within UMAP space. This results in a separation of control and stimulated cells along the second UMAP axis (<code class="docutils literal notranslate"><span class="pre">X_pca_umap2</span></code>).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig, ax = plt.subplots(1, 2, figsize=(9, 3), sharey=True)
+sc.pl.embedding(adata, basis=&#39;X_pca_umap&#39;, color=&#39;cell_type&#39;, show=False, ax=ax[0])
+sc.pl.embedding(adata, basis=&#39;X_pca_umap&#39;, color=&#39;label&#39;, show=False, ax=ax[1])
+plt.tight_layout()
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/voehring/.local/lib/python3.8/site-packages/scanpy/plotting/_tools/scatterplots.py:392: UserWarning: No data for colormapping provided via &#39;c&#39;. Parameters &#39;cmap&#39; will be ignored
+  cax = scatter(
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_15_1.png" src="../_images/notebooks_kang_15_1.png" />
+</div>
+</div>
+<p>To understand why, we proceed by investigating the PCA factors. In particular, we plot the factor weights of the first few principal components using the <code class="docutils literal notranslate"><span class="pre">scc.pl.factor_embedding</span></code> function on top of the UMAP coordinates. Visual inspection indicates that the first factor (<code class="docutils literal notranslate"><span class="pre">Factor</span> <span class="pre">0</span></code>) is likely to represent an axis of variation that delineates CD14+/FCGR3A+ monocytes and dendritic cells from all other cell types within the dataset. The second principal component (<code class="docutils literal notranslate"><span class="pre">Factor</span> <span class="pre">1</span></code>) however seems to
+separate the cells by condition, i.e. whether the cell origins from the control or stimulated experiment.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>scp.pl.factor_embedding(adata, &#39;pca&#39;, [0, 1], width=4, height=3)
+plt.tight_layout()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_17_0.png" src="../_images/notebooks_kang_17_0.png" />
+</div>
+</div>
+<p>While the separation of cells across conditions is expected, it poses potential problems for further downstream analyses. Clustering by cell type, for example, is difficult due to the presence of factor 1 which separates same cell types by condition. For this reason, it is desirebable to account for the experimental condition while performing the dimensionality reduction. In <code class="docutils literal notranslate"><span class="pre">scPCA</span></code>, we inform the model about the experimental condition of each cell by employing design matrices. To understand
+how, we consider in this tutorial the usage of different design matrices, and explore how these affect <code class="docutils literal notranslate"><span class="pre">scPCA</span></code>’s cell embeddings.</p>
+<section id="Recovering-PCA,-i.e. providing-no-information-about-the-condition">
+<h2>Recovering PCA, i.e. providing no information about the condition<a class="headerlink" href="#Recovering-PCA,-i.e. providing-no-information-about-the-condition" title="Permalink to this heading">#</a></h2>
+<p>To recover results that are similar to the PCA baseline, we provide two non-informative rank one matrices <span class="math notranslate nohighlight">\(D_1, B_1\)</span> full of ones (depicted as black squares) as loading and intercept design matrix, respectively.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>raw = &quot;https://github.com/sagar87/scCCA/blob/7480621cbeb12cc296cf19ebbb75af61ceb515de/docs/notebooks/img/base_kang.png?raw=True&quot;
+Image(url=raw, width=150, height=100)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<img src="https://github.com/sagar87/scCCA/blob/7480621cbeb12cc296cf19ebbb75af61ceb515de/docs/notebooks/img/base_kang.png?raw=True" width="150" height="100"/></div>
+</div>
+<p>To instantiate such a model, we call the <code class="docutils literal notranslate"><span class="pre">scp.scPCA</span></code> constructor and provide the <code class="docutils literal notranslate"><span class="pre">anndata</span></code> object containing our data, the number of factors to extract and R-style formulas for the loadings (<code class="docutils literal notranslate"><span class="pre">loadings_formula</span></code>) and intercept (<code class="docutils literal notranslate"><span class="pre">intercept_formula</span></code>) design matrices. The <code class="docutils literal notranslate"><span class="pre">scPCA</span></code> constructor returns a model object with a <code class="docutils literal notranslate"><span class="pre">.fit()</span></code> method which by default trains the model aggressively with a learning rate of <code class="docutils literal notranslate"><span class="pre">lr=0.01</span></code> for 5000 training steps. Further training steps at a lower learning are
+often beneficial and may be added by calling the <code class="docutils literal notranslate"><span class="pre">.fit</span></code> method for a second time.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m0 = scp.scPCA(adata, 15, layers_key=&#39;counts&#39;, loadings_formula=&#39;1&#39;, intercept_formula=&#39;1&#39;, seed=13516) # set seed for reproducibility
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m0.fit()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+  0%|          | 0/5000 [00:00&lt;?, ?it/s]/home/voehring/voehring/opt/scPCA/scpca/models/scpca.py:68: UserWarning: The use of `x.T` on tensors of dimension other than 2 to reverse their shape is deprecated and it will throw an error in a future release. Consider `x.mT` to transpose batches of matricesor `x.permute(*torch.arange(x.ndim - 1, -1, -1))` to reverse the dimensions of a tensor. (Triggered internally at  ../aten/src/ATen/native/TensorShape.cpp:2985.)
+  α_rna = deterministic(&#34;α_rna&#34;, (1 / α_rna_inv).T)
+Epoch: 4990 | lr: 1.00E-02 | ELBO: 7766362 | Δ_10: -197905.00 | Best: 7546874: 100%|██████████| 5000/5000 [02:32&lt;00:00, 32.69it/s]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m0.fit(lr=0.001, num_epochs=2000)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Epoch: 6990 | lr: 1.00E-03 | ELBO: 7728532 | Δ_10: -110.50 | Best: 7478136: 100%|██████████| 2000/2000 [00:59&lt;00:00, 33.73it/s]
+</pre></div></div>
+</div>
+<p>To obtain the results, we invoke the <code class="docutils literal notranslate"><span class="pre">.mean_to_anndata</span></code> function which computes the posterior mean of fitted parameters and stores them to the <code class="docutils literal notranslate"><span class="pre">anndata</span></code> object. Specifying <code class="docutils literal notranslate"><span class="pre">model_key</span></code> adds a prefix to the added keys such that a single <code class="docutils literal notranslate"><span class="pre">anndata</span></code> object may contain the fitted parameters of multiple <code class="docutils literal notranslate"><span class="pre">scPCA</span></code> models. Also, note the arguments <code class="docutils literal notranslate"><span class="pre">num_samples</span></code> and <code class="docutils literal notranslate"><span class="pre">num_split</span></code> which allow to specify the number of posterior samples and the number of observations that are sampled during a
+single batch of samples (here we set the number of posterior samples and number of observations per batch deliberately to 10 and 512 to avoid memory issues when the notebook is run in Google Colab).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m0.mean_to_anndata(model_key=&#39;m0&#39;, num_samples=10, num_split=512)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Predicting z for obs 24576-24672.: 100%|██████████| 49/49 [00:03&lt;00:00, 13.97it/s]
+</pre></div></div>
+</div>
+<p>By default, following variables are saved to the <code class="docutils literal notranslate"><span class="pre">anndata</span></code> object</p>
+<ul class="simple">
+<li><p>Model metadata: <code class="docutils literal notranslate"><span class="pre">adata.uns[f'{model_key}']</span></code></p></li>
+<li><p>Factor weights (<span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>): <code class="docutils literal notranslate"><span class="pre">adata.obsm[f&quot;X_{model_key}&quot;]</span></code></p></li>
+<li><p>Loading tensor weights (<span class="math notranslate nohighlight">\(\mathbf{W}\)</span>): <code class="docutils literal notranslate"><span class="pre">adata.varm[f&quot;W_{model_key}&quot;]</span></code></p></li>
+</ul>
+<p>In addition, by supplying via the <code class="docutils literal notranslate"><span class="pre">variables</span></code> argument the names</p>
+<ul class="simple">
+<li><p>Intercept weights (<span class="math notranslate nohighlight">\(\mathbf{V}\)</span>): <code class="docutils literal notranslate"><span class="pre">adata.varm[f&quot;V_{model_key}&quot;]</span></code></p></li>
+<li><p>Predicted counts (<span class="math notranslate nohighlight">\(\boldsymbol{\mu}\)</span>): <code class="docutils literal notranslate"><span class="pre">adata.layers[f&quot;μ_{model_key}&quot;]</span></code></p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AnnData object with n_obs × n_vars = 24673 × 2000
+    obs: &#39;orig.ident&#39;, &#39;nCount_RNA&#39;, &#39;nFeature_RNA&#39;, &#39;tsne1&#39;, &#39;tsne2&#39;, &#39;label&#39;, &#39;cluster&#39;, &#39;cell_type&#39;, &#39;multiplets&#39;, &#39;replicate&#39;, &#39;nCount_SCT&#39;, &#39;nFeature_SCT&#39;, &#39;integrated_snn_res.0.4&#39;, &#39;seurat_clusters&#39;, &#39;ident&#39;
+    var: &#39;highly_variable&#39;, &#39;highly_variable_rank&#39;, &#39;means&#39;, &#39;variances&#39;, &#39;variances_norm&#39;
+    uns: &#39;X_name&#39;, &#39;celltype_column&#39;, &#39;condition_column&#39;, &#39;main_assay&#39;, &#39;hvg&#39;, &#39;log1p&#39;, &#39;pca&#39;, &#39;X_pca&#39;, &#39;umap&#39;, &#39;cell_type_colors&#39;, &#39;label_colors&#39;, &#39;m0&#39;
+    obsm: &#39;X_pca&#39;, &#39;X_pca_umap&#39;, &#39;X_m0&#39;
+    varm: &#39;PCs&#39;, &#39;W_m0&#39;
+    layers: &#39;logcounts&#39;, &#39;counts&#39;
+    obsp: &#39;X_pca_distances&#39;, &#39;X_pca_connectivities&#39;
+</pre></div></div>
+</div>
+<p>We next compute a UMAP visualization on the embeddings of <code class="docutils literal notranslate"><span class="pre">m0</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>scp.tl.umap(adata, &#39;X_m0&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig, ax = plt.subplots(1, 2, figsize=(9, 3), sharey=True)
+sc.pl.embedding(adata, basis=&#39;X_m0_umap&#39;, color=&#39;cell_type&#39;, show=False, ax=ax[0])
+sc.pl.embedding(adata, basis=&#39;X_m0_umap&#39;, color=&#39;label&#39;, show=False, ax=ax[1])
+plt.tight_layout()
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/voehring/.local/lib/python3.8/site-packages/scanpy/plotting/_tools/scatterplots.py:392: UserWarning: No data for colormapping provided via &#39;c&#39;. Parameters &#39;cmap&#39; will be ignored
+  cax = scatter(
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_30_1.png" src="../_images/notebooks_kang_30_1.png" />
+</div>
+</div>
+<p>We find that the UMAP plot from <code class="docutils literal notranslate"><span class="pre">scPCA</span></code> cell embedding looks similar to the one which was based on PCA. We again look at the factors (Here we plot all facors because unlike in PCA, <code class="docutils literal notranslate"><span class="pre">scPCA</span></code> returns factors are not sorted by the amount of variance explained) to obtain a better understanding about the captured “principal axis” of variation (strictly speaking <code class="docutils literal notranslate"><span class="pre">scPCA</span></code> does not extract the principal axes of the data as it employs a non-isotropic noise model). Similar to PCA, we find a factor
+that seemingly delineates monocytes and dendritic cells (negative weights) from all other cells (positive weights, factor 7). The model also captured a factor that seemingly explains differences between the control (postive weights) and stimulated (negative weights) condition (Factor 6).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>scp.pl.factor_embedding(adata, &#39;m0&#39;, &#39;X_m0_umap&#39;, width=3, height=2.5, ncols=4)
+plt.tight_layout()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_32_0.png" src="../_images/notebooks_kang_32_0.png" />
+</div>
+</div>
+</section>
+<section id="Accounting-for-mean-offsets-using-an-intercept-design-matrix">
+<h2>Accounting for mean offsets using an intercept design matrix<a class="headerlink" href="#Accounting-for-mean-offsets-using-an-intercept-design-matrix" title="Permalink to this heading">#</a></h2>
+<p>As a first step we try to account for potential shifts in mean gene expression across conditions. Evidence for such shifts may be obtained by exploring how the number of total counts per cell differ between experimental condition.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata.obs[&#39;label&#39;] = pd.Categorical(adata.obs[&#39;label&#39;], categories=[&#39;ctrl&#39;, &#39;stim&#39;], ordered=True)
+adata.obs[&#39;total_counts&#39;] = np.asarray(adata.layers[&#39;counts&#39;].sum(1)).reshape(-1)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sns.kdeplot(x=&#39;total_counts&#39;, hue=&#39;label&#39;, data=adata.obs, log_scale=True)
+sns.despine()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_35_0.png" src="../_images/notebooks_kang_35_0.png" />
+</div>
+</div>
+<p>We find that cells from the stimulated condition tend to have a larger number of counts. To instruct the model to fit different means for both conditions, we consider the intercept design matrix <span class="math notranslate nohighlight">\(B_2\)</span> which we may create by using the R-style formula <code class="docutils literal notranslate"><span class="pre">label-1</span></code> (see also <a class="reference external" href="https://patsy.readthedocs.io/en/latest/">https://patsy.readthedocs.io/en/latest/</a>).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>raw = &quot;https://github.com/sagar87/scCCA/blob/7480621cbeb12cc296cf19ebbb75af61ceb515de/docs/notebooks/img/mean_kang.png?raw=True&quot;
+Image(url=raw, width=150, height=100)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<img src="https://github.com/sagar87/scCCA/blob/7480621cbeb12cc296cf19ebbb75af61ceb515de/docs/notebooks/img/mean_kang.png?raw=True" width="150" height="100"/></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m1 = scp.scPCA(adata, 15, layers_key=&#39;counts&#39;, loadings_formula=&#39;1&#39;, intercept_formula=&#39;label-1&#39;, seed=352476) # seed for reproducibility
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m1.fit()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Epoch: 4990 | lr: 1.00E-02 | ELBO: 7762446 | Δ_10: -160301.50 | Best: 7631525: 100%|██████████| 5000/5000 [02:32&lt;00:00, 32.81it/s]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m1.fit(lr=0.001, num_epochs=2000)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Epoch: 6990 | lr: 1.00E-03 | ELBO: 7716152 | Δ_10: 30369.50 | Best: 7546086: 100%|██████████| 2000/2000 [01:00&lt;00:00, 33.10it/s]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m1.mean_to_anndata(model_key=&#39;m1&#39;, num_samples=10, num_split=512)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Predicting z for obs 24576-24672.: 100%|██████████| 49/49 [00:03&lt;00:00, 14.12it/s]
+</pre></div></div>
+</div>
+<p>As before we proceed by computing an UMAP to observe the information captured by the factors.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>scp.tl.umap(adata, &#39;X_m1&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig, ax = plt.subplots(1, 2, figsize=(9, 3), sharey=True)
+sc.pl.embedding(adata, basis=&#39;X_m1_umap&#39;, color=&#39;cell_type&#39;, show=False, ax=ax[0])
+sc.pl.embedding(adata, basis=&#39;X_m1_umap&#39;, color=&#39;label&#39;, show=False, ax=ax[1])
+plt.tight_layout()
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/voehring/.local/lib/python3.8/site-packages/scanpy/plotting/_tools/scatterplots.py:392: UserWarning: No data for colormapping provided via &#39;c&#39;. Parameters &#39;cmap&#39; will be ignored
+  cax = scatter(
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_44_1.png" src="../_images/notebooks_kang_44_1.png" />
+</div>
+</div>
+<p>Strikingly, we observe that accounting for mean expression across coditions improves mixing across conditions substantially whilst preserving the identity of cells. Inspection of factors reveals the absence of a factor that clearly delineates the experimental condition.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>scp.pl.factor_embedding(adata, &#39;m1&#39;, &#39;X_m1_umap&#39;, width=3, height=2.5, ncols=4)
+plt.tight_layout()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_46_0.png" src="../_images/notebooks_kang_46_0.png" />
+</div>
+</div>
+</section>
+<section id="Accounting-for-spectral-shifts-across-conditions-using-a-loading-design-matrix">
+<h2>Accounting for spectral shifts across conditions using a loading design matrix<a class="headerlink" href="#Accounting-for-spectral-shifts-across-conditions-using-a-loading-design-matrix" title="Permalink to this heading">#</a></h2>
+<p>Note that mixing of cells across conditions worked for all cell types except CD14+ monocytes which still clearly separate by condition. We next consider a model that specifies the design matrices <span class="math notranslate nohighlight">\(D_2\)</span> and <span class="math notranslate nohighlight">\(B_2\)</span>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>raw = &quot;https://github.com/sagar87/scCCA/blob/7480621cbeb12cc296cf19ebbb75af61ceb515de/docs/notebooks/img/full_kang.png?raw=True&quot;
+Image(url=raw, width=150, height=100)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<img src="https://github.com/sagar87/scCCA/blob/7480621cbeb12cc296cf19ebbb75af61ceb515de/docs/notebooks/img/full_kang.png?raw=True" width="150" height="100"/></div>
+</div>
+<p>Note that although both matrices have a column rank of two, <span class="math notranslate nohighlight">\(B_2\)</span> exhibits a different structure from <span class="math notranslate nohighlight">\(D_2\)</span>. Particularly, <span class="math notranslate nohighlight">\(D_2\)</span> contains a “intercept” column full of ones and an additional column in which cells from the control and stimulated conditions are marked with zeros and ones, respectively. This design matrix instructs the model to fit a set of basis vectors to the control condition and a separate set basis vectors to the stimulated condition. Importantly, the
+“intercept” column of <span class="math notranslate nohighlight">\(D_2\)</span> introduces dependency between both bases, i.e. the bases for stimulated cells is expressed in terms of the basis vectors of the control.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m2 = scp.scPCA(adata, 15, layers_key=&#39;counts&#39;, loadings_formula=&#39;label&#39;, intercept_formula=&#39;label-1&#39;, seed=4513516)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m2.fit()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Epoch: 4990 | lr: 1.00E-02 | ELBO: 7825681 | Δ_10: -224599.00 | Best: 7610722: 100%|██████████| 5000/5000 [02:36&lt;00:00, 32.04it/s]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m2.fit(lr=0.001, num_epochs=2000)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Epoch: 6990 | lr: 1.00E-03 | ELBO: 7823088 | Δ_10: -46555.00 | Best: 7567708: 100%|██████████| 2000/2000 [01:02&lt;00:00, 32.25it/s]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>m2.mean_to_anndata(model_key=&#39;m2&#39;, num_samples=10, num_split=512)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Predicting z for obs 24576-24672.: 100%|██████████| 49/49 [00:03&lt;00:00, 13.68it/s]
+</pre></div></div>
+</div>
+<p>Visual inspection of the UMAP suggests finally good mixing of the full dataset including CD14+ monocytes.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>scp.tl.umap(adata, &#39;X_m2&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig, ax = plt.subplots(1, 2, figsize=(9, 3), sharey=True)
+sc.pl.embedding(adata, basis=&#39;X_m2_umap&#39;, color=&#39;cell_type&#39;, show=False, ax=ax[0])
+sc.pl.embedding(adata, basis=&#39;X_m2_umap&#39;, color=&#39;label&#39;, show=False, ax=ax[1])
+plt.tight_layout()
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/voehring/.local/lib/python3.8/site-packages/scanpy/plotting/_tools/scatterplots.py:392: UserWarning: No data for colormapping provided via &#39;c&#39;. Parameters &#39;cmap&#39; will be ignored
+  cax = scatter(
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_56_1.png" src="../_images/notebooks_kang_56_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>scp.pl.factor_embedding(adata, &#39;m2&#39;, &#39;X_m2_umap&#39;, width=3, height=2.5, ncols=4)
+plt.tight_layout()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_57_0.png" src="../_images/notebooks_kang_57_0.png" />
+</div>
+</div>
+<p>Inspecting the factors suggests that Factor 5 constitutes particular large factor weights in CD14+ monocytes. To understand how the expression spectrum along this factor changed, we now investigate it’s corresponding loading weights of factor 5. These represent expression shifts relative to the mean expression in the corresponding condition condition. We may visualize these shifts using the <code class="docutils literal notranslate"><span class="pre">scp.pl.loadings_state</span></code> function which plots the loading weights of two states against each other. The
+function takes as an input the <code class="docutils literal notranslate"><span class="pre">anndata</span></code> object containing the model parameters, the <code class="docutils literal notranslate"><span class="pre">model_key</span></code>, and the states (conditions) and factor(s) to visualise. In the following plot, we show the top 10 upregulated genes in the interferon stimulated condition with respect to the control.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>_ = scp.pl.loadings_state(adata, &#39;m2&#39;, [&#39;Intercept&#39;, &#39;label[T.stim]&#39;], 5, highest=10, width=4, height=4)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_59_0.png" src="../_images/notebooks_kang_59_0.png" />
+</div>
+</div>
+<div class="alert alert-block alert-info"><p>NOTE The state names are saved in adata.uns[‘{model_key}’][‘design’].</p>
+</div><div class="admonition note"><p class="admonition-title"><p>Note</p>
+</p><p><p>The state names are saved in adata.uns[‘{model_key}’][‘design’].</p>
+</p></div><p>Likewise we can investigate the downregulated genes by setting <code class="docutils literal notranslate"><span class="pre">lowest</span></code> to greater than 1.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>_ = scp.pl.loadings_state(adata, &#39;m2&#39;, [&#39;Intercept&#39;, &#39;label[T.stim]&#39;], 5, lowest=10, width=4, height=4)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_62_0.png" src="../_images/notebooks_kang_62_0.png" />
+</div>
+</div>
+<p>We can retrieve these genes using <code class="docutils literal notranslate"><span class="pre">scp.tl.state_diff</span></code> function which returns a <code class="docutils literal notranslate"><span class="pre">pd.DataFrame</span></code> containing the genes with the largest loading differences.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[75]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>scp.tl.state_diff(adata, model_key=&#39;m2&#39;, states=[&#39;Intercept&#39;, &#39;label[T.stim]&#39;], factor=5)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[75]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>gene</th>
+      <th>magnitude</th>
+      <th>difference</th>
+      <th>type</th>
+      <th>state</th>
+      <th>factor</th>
+      <th>index</th>
+      <th>Intercept</th>
+      <th>label[T.stim]</th>
+      <th>significant</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>FAM26F</td>
+      <td>5.420140</td>
+      <td>5.420140</td>
+      <td>highest</td>
+      <td>label[T.stim]-Intercept</td>
+      <td>5</td>
+      <td>718</td>
+      <td>-4.853004</td>
+      <td>0.567136</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>TNFSF10</td>
+      <td>4.378287</td>
+      <td>4.378287</td>
+      <td>highest</td>
+      <td>label[T.stim]-Intercept</td>
+      <td>5</td>
+      <td>433</td>
+      <td>-6.189829</td>
+      <td>-1.811542</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>CXCL10</td>
+      <td>3.978639</td>
+      <td>3.978639</td>
+      <td>highest</td>
+      <td>label[T.stim]-Intercept</td>
+      <td>5</td>
+      <td>492</td>
+      <td>-4.128115</td>
+      <td>-0.149476</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>CCL8</td>
+      <td>3.908131</td>
+      <td>3.908131</td>
+      <td>highest</td>
+      <td>label[T.stim]-Intercept</td>
+      <td>5</td>
+      <td>1645</td>
+      <td>4.258205</td>
+      <td>8.166336</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>CTSC</td>
+      <td>3.865702</td>
+      <td>3.865702</td>
+      <td>highest</td>
+      <td>label[T.stim]-Intercept</td>
+      <td>5</td>
+      <td>1241</td>
+      <td>-3.576062</td>
+      <td>0.289641</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>TNFSF13B</td>
+      <td>3.831863</td>
+      <td>3.831863</td>
+      <td>highest</td>
+      <td>label[T.stim]-Intercept</td>
+      <td>5</td>
+      <td>1420</td>
+      <td>-3.926485</td>
+      <td>-0.094622</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>MT2A</td>
+      <td>3.802433</td>
+      <td>3.802433</td>
+      <td>highest</td>
+      <td>label[T.stim]-Intercept</td>
+      <td>5</td>
+      <td>1569</td>
+      <td>-4.681114</td>
+      <td>-0.878682</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>HES4</td>
+      <td>3.688747</td>
+      <td>3.688747</td>
+      <td>highest</td>
+      <td>label[T.stim]-Intercept</td>
+      <td>5</td>
+      <td>0</td>
+      <td>-3.721412</td>
+      <td>-0.032665</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>APOBEC3B</td>
+      <td>3.635942</td>
+      <td>3.635942</td>
+      <td>highest</td>
+      <td>label[T.stim]-Intercept</td>
+      <td>5</td>
+      <td>1968</td>
+      <td>1.684396</td>
+      <td>5.320337</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>HSPB1</td>
+      <td>3.546452</td>
+      <td>3.546452</td>
+      <td>highest</td>
+      <td>label[T.stim]-Intercept</td>
+      <td>5</td>
+      <td>795</td>
+      <td>-2.077442</td>
+      <td>1.469010</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="admonition important"><p><p>Note that factor models retrieve global axes of variation from data. While it is true that these often indicate features (i.e. genes) it is important double check these with the data.</p>
+</p></div><div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[73]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>var_dic = {
+    &#39;up in stim CD14+ monocytes&#39;: scp.tl.state_diff(adata, &#39;m2&#39;, &#39;label[T.stim]&#39;, 5).gene.tolist(),
+    &#39;down in stim CD14+ monocytes&#39;: scp.tl.state_diff(adata, &#39;m2&#39;, &#39;label[T.stim]&#39;, 5, highest=0, lowest=10).gene.tolist(),
+}
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+2023-09-27 09:12:38,439 - Only one state was provided, using &#39;Intercept&#39; as base state.
+2023-09-27 09:12:38,444 - Only one state was provided, using &#39;Intercept&#39; as base state.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[74]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.pl.heatmap(adata[adata.obs.cell_type == &#39;CD14+ Monocytes&#39;], var_names=var_dic, groupby=&#39;label&#39;, var_group_rotation=0)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_kang_67_0.png" src="../_images/notebooks_kang_67_0.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../plots.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Plotting</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Recovering-PCA,-i.e. providing-no-information-about-the-condition">Recovering PCA, i.e. providing no information about the condition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Accounting-for-mean-offsets-using-an-intercept-design-matrix">Accounting for mean offsets using an intercept design matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Accounting-for-spectral-shifts-across-conditions-using-a-loading-design-matrix">Accounting for spectral shifts across conditions using a loading design matrix</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Harald Vohringer
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023, Harald Vohringer.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
