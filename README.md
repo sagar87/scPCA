@@ -17,7 +17,7 @@ scPCA makes use `torch`, `pyro` and `anndata`. We highly recommend to run scPCA 
 
 ### Via Pypi
 
-The easiest option to install `scpca` is throug Pypi. Simply type
+The easiest option to install `scpca` is via Pypi. Simply type
 
 ```
 $ pip install scpca

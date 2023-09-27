@@ -22,12 +22,10 @@ scPCA makes use `torch`, `pyro` and `anndata`. We highly recommend to run scPCA 
 Via Pypi
 ^^^^^^^^
 
-The easiest option to install `scpca` is throug Pypi. Simply type
+The easiest option to install `scpca` is via Pypi. Simply type
 
 .. code-block:: console
    $ pip install scpca
-
-
 
 into your shell and hit enter.
 
@@ -41,7 +39,7 @@ Credits
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 0
    :caption: API
 
    models
@@ -49,10 +47,11 @@ Credits
    plots
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 0
    :caption: Tutorials
 
    notebooks/kang
+   notebooks/pancreas
 
 
 Indices and tables
