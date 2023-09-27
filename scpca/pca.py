@@ -21,30 +21,32 @@ class scPCA(FactorModel):
 
     Parameters
     ----------
-    adata :
+    adata
         Anndata object containing the single-cell data.
-    num_factors :
+    num_factors
         Number of factors to fit.
-    layers_key :
+    layers_key
         Key to extract single-cell count matrix from adata.layers. If None, scPCA will
         try to extract the count matrix from adata.X. Default is None.
-    design_formula :
-        R style formula to construct the design matrix from adata.obs. If None, scPCA
+    loadings_formula
+        R style formula to construct the loadings design matrix from adata.obs. If None, scPCA
         fits a normal PCA. Default is "1".
-    intercept_formula :
-        R style formula to extract batch information from adata.obs. Default is "1".
-    subsampling :
-        Number of cells to subsample for training. A larger number will result in a more
-        accurate computation of the gradients, but will also increase the training time
-        and memory usage. Default is 4096.
-    device :
+    intercept_formula
+        R style formula to construct the intercept design matrix from adata.obs. Default is "1",
+        which fits a single mean offset for each gene across all cells.
+    size_factor
+        Optional size factor information for cells. Default is None, if no size factor
+        is given scPCA computes simply computes the log sum of counts for each cell.
+    subsampling
+        Number of cells to subsample for training. Default is 4096.
+    device
         Device to run the model on. A GPU is recommended. Default is GPU if available, else CPU.
-    seed :
+    seed
         Random seed for reproducibility. Default is None.
-    model_kwargs :
+    model_kwargs
         Additional keyword arguments for the model. Default values are provided.
-    training_kwargs :
-        Additional keyword arguments for training. Default is SUBSAMPLE.
+    training_kwargs
+        Additional keyword arguments for training. Default is DEFAULT.
     """
 
     def __init__(
@@ -52,7 +54,7 @@ class scPCA(FactorModel):
         adata: AnnData,
         num_factors: int,
         layers_key: Union[str, None] = None,
-        design_formula: str = "1",
+        loadings_formula: str = "1",
         intercept_formula: str = "1",
         size_factor: Optional[Union[str, NDArray[np.float32]]] = None,
         subsampling: int = 4096,
@@ -65,7 +67,7 @@ class scPCA(FactorModel):
             adata=adata,
             num_factors=num_factors,
             layers_key=layers_key,
-            design_formula=design_formula,
+            design_formula=loadings_formula,
             intercept_formula=intercept_formula,
             subsampling=subsampling,
             device=device,
@@ -158,11 +160,11 @@ class scPCA(FactorModel):
 
         Parameters
         ----------
-        model_key :
+        model_key
             Key to store the model in the AnnData object.
-        num_samples :
+        num_samples
             Number of samples to draw from the posterior. Default is 25.
-        variables :
+        variables
             List of variables for which the posterior mean estimates should be stored.
             Possible values include "W", "V", "μ", "Z", "α", "σ", and "offset".
             Default is ["W", "Z"].
@@ -211,13 +213,13 @@ class scPCA(FactorModel):
 
         Parameters
         ----------
-        model_key :
+        model_key
             Key to store the model results in the AnnData object.
-        num_samples :
+        num_samples
             Number of samples to draw from the posterior. Default is 25.
-        num_split :
+        num_split
             Number of splits for the data. Default is 2048.
-        variables :
+        variables
             List of variables for which the posterior mean estimates should be stored.
             Possible values include "W", "V", "μ", "Z", "α", "σ", and "offset".
             Default is ["W", "Z"].
@@ -260,29 +262,28 @@ class dPCA(FactorModel):
     """
     Design Principal Component Analysis (dPCA) model.
 
-
     Parameters
     ----------
-    adata :
-        Anndata object containing the single-cell data.
-    num_factors :
-        Number of factors to fit. Default is 15.
-    layers_key :
-        Key to extract single-cell count matrix from adata.layers. If None, scPCA will
-        try to extract the count matrix from adata.X. Default is None.
-    batch_formula :
-        R style formula to extract batch information from adata.obs. If None, scPCA
-        assumes a single batch. Default is None.
-    design_formula :
-        R style formula to construct the design matrix from adata.obs. If None, scPCA
-        fits a normal PCA. Default is None.
-    subsampling :
-        Number of cells to subsample for training. Default is 4096.
-    device :
+    adata
+        Anndata object containing the data to analyse.
+    num_factors
+        Number of factors to fit.
+    layers_key
+        Key to extract data matrix from adata.layers. If None, dPCA will
+        try to extract the matrix from adata.X. Default is None.
+    loadings_formula
+        R style formula to construct the loadings design matrix from adata.obs. If None, dPCA
+        fits a normal PCA/factor model. Default is '1'.
+    batch_formula
+        R style formula to extract intercept design maxtrix from adata.obs. If None, dPCA
+        assumes a single batch. Default is '1'.
+    subsampling
+        Number of obs to subsample for training. Default is 4096.
+    device
         Device to run the model on. A GPU is recommended. Default is GPU if available, else CPU.
-    model_kwargs :
+    model_kwargs
         Additional keyword arguments for the model. Default values are provided.
-    training_kwargs :
+    training_kwargs
         Additional keyword arguments for training. Default is SUBSAMPLE.
     """
 
@@ -291,7 +292,7 @@ class dPCA(FactorModel):
         adata: AnnData,
         num_factors: int,
         layers_key: Union[str, None] = None,
-        design_formula: str = "1",
+        loadings_formula: str = "1",
         intercept_formula: str = "1",
         subsampling: int = 4096,
         device: Optional[Literal["cuda", "cpu"]] = None,
@@ -305,7 +306,7 @@ class dPCA(FactorModel):
             adata=adata,
             num_factors=num_factors,
             layers_key=layers_key,
-            design_formula=design_formula,
+            design_formula=loadings_formula,
             intercept_formula=intercept_formula,
             subsampling=subsampling,
             device=device,
@@ -401,11 +402,11 @@ class dPCA(FactorModel):
 
         Parameters
         ----------
-        model_key :
+        model_key
             Key to store the model in the AnnData object.
-        num_samples :
+        num_samples
             Number of samples to draw from the posterior. Default is 25.
-        variables :
+        variables
             List of variables for which the posterior mean estimates should be stored.
             Possible values include "W", "V", "μ", "Z", "α", "σ", and "offset".
             Default is ["W", "Z"].
@@ -453,13 +454,13 @@ class dPCA(FactorModel):
 
         Parameters
         ----------
-        model_key :
+        model_key
             Key to store the model results in the AnnData object.
-        num_samples :
+        num_samples
             Number of samples to draw from the posterior. Default is 25.
-        num_split :
+        num_split
             Number of splits for the data. Default is 2048.
-        variables :
+        variables
             List of variables for which the posterior mean estimates should be stored.
             Possible values include "W", "V", "μ", "Z", "α", "σ", and "offset".
             Default is ["W", "Z"].

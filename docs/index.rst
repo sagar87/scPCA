@@ -8,11 +8,17 @@ Welcome to scCCA's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: API:
+   :caption: API
 
    models
    tools
    plots
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Tutorials
+
+   notebooks/kang
 
 
 Indices and tables
