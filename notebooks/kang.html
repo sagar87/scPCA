@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Analysing interferon-\(\beta\) stimulated PBMCs using scPCA &#8212; scPCA 0.1.0 documentation</title>
+    <title>Analysing interferon stimulated PBMCs using scPCA &#8212; scPCA 0.1.0 documentation</title>
   
   
   
@@ -144,7 +144,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Analysing interferon-<span class="math notranslate nohighlight">\(\beta\)</span> stimulated PBMCs using scPCA</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Analysing interferon stimulated PBMCs using scPCA</a></li>
 </ul>
 
     </div>
@@ -281,7 +281,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Analysing interferon-\beta stimulated PBMCs using scPCA</h1>
+    <h1>Analysing interferon stimulated PBMCs using scPCA</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -581,8 +581,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<section id="Analysing-interferon-\beta-stimulated-PBMCs-using-scPCA">
-<h1>Analysing interferon-<span class="math notranslate nohighlight">\(\beta\)</span> stimulated PBMCs using scPCA<a class="headerlink" href="#Analysing-interferon-\beta-stimulated-PBMCs-using-scPCA" title="Permalink to this heading">#</a></h1>
+<section id="Analysing-interferon-stimulated-PBMCs-using-scPCA">
+<h1>Analysing interferon stimulated PBMCs using scPCA<a class="headerlink" href="#Analysing-interferon-stimulated-PBMCs-using-scPCA" title="Permalink to this heading">#</a></h1>
 <p>In this notebook, we analyse the dataset from Kang et. al. in which the authors stimulated PBMCs with Interferon-<span class="math notranslate nohighlight">\(\beta\)</span>. We load the dataset using <code class="docutils literal notranslate"><span class="pre">scanpy</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -1180,8 +1180,7 @@ function takes as an input the <code class="docutils literal notranslate"><span 
 <img alt="../_images/notebooks_kang_59_0.png" src="../_images/notebooks_kang_59_0.png" />
 </div>
 </div>
-<div class="alert alert-block alert-info"><p>NOTE The state names are saved in adata.uns[‘{model_key}’][‘design’].</p>
-</div><div class="admonition note"><p class="admonition-title"><p>Note</p>
+<div class="admonition note"><p class="admonition-title"><p>Note</p>
 </p><p><p>The state names are saved in adata.uns[‘{model_key}’][‘design’].</p>
 </p></div><p>Likewise we can investigate the downregulated genes by setting <code class="docutils literal notranslate"><span class="pre">lowest</span></code> to greater than 1.</p>
 <div class="nbinput docutils container">

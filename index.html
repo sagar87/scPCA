@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Welcome to scCCA’s documentation! &#8212; scPCA 0.1.0 documentation</title>
+    <title>Welcome to scPCA’s documentation! &#8212; scPCA 0.1.0 documentation</title>
   
   
   
@@ -142,7 +142,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="notebooks/kang.html">Analysing interferon-<span class="math notranslate nohighlight">\(\beta\)</span> stimulated PBMCs using scPCA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/kang.html">Analysing interferon stimulated PBMCs using scPCA</a></li>
 </ul>
 
     </div>
@@ -279,7 +279,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Welcome to scCCA’s documentation!</h1>
+    <h1>Welcome to scPCA’s documentation!</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -289,7 +289,14 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Welcome to scCCA’s documentation!</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Welcome to scPCA’s documentation!</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-install">Quick install</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#via-pypi">Via Pypi</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#credits">Credits</a><ul class="nav section-nav flex-column">
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#indices-and-tables">Indices and tables</a></li>
@@ -305,8 +312,29 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="welcome-to-sccca-s-documentation">
-<h1>Welcome to scCCA’s documentation!<a class="headerlink" href="#welcome-to-sccca-s-documentation" title="Permalink to this heading">#</a></h1>
+  <section id="welcome-to-scpca-s-documentation">
+<h1>Welcome to scPCA’s documentation!<a class="headerlink" href="#welcome-to-scpca-s-documentation" title="Permalink to this heading">#</a></h1>
+<p>scPCA is a versatile matrix factorisation framework designed to analyze single-cell data across diverse experimental designs.</p>
+<img alt="scPCA schematic" src="https://github.com/sagar87/scPCA/blob/main/docs/scpca_schematic.png?raw=true" />
+<p><em>scPCA is a young project and breaking changes are to be expected.</em></p>
+<section id="quick-install">
+<h2>Quick install<a class="headerlink" href="#quick-install" title="Permalink to this heading">#</a></h2>
+<p>scPCA makes use <cite>torch</cite>, <cite>pyro</cite> and <cite>anndata</cite>. We highly recommend to run scPCA on a GPU device.</p>
+<section id="via-pypi">
+<h3>Via Pypi<a class="headerlink" href="#via-pypi" title="Permalink to this heading">#</a></h3>
+<p>The easiest option to install <cite>scpca</cite> is throug Pypi. Simply type</p>
+<p>into your shell and hit enter.</p>
+<ul class="simple">
+<li><p>Free software: MIT license</p></li>
+<li><p>Documentation: <a class="reference external" href="https://sagar87.github.io/scPCA/index.html">https://sagar87.github.io/scPCA/index.html</a></p></li>
+</ul>
+</section>
+</section>
+<section id="credits">
+<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Harald Vöhringer</p></li>
+</ul>
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -318,14 +346,10 @@ document.write(`
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/kang.html">Analysing interferon-<span class="math notranslate nohighlight">\(\beta\)</span> stimulated PBMCs using scPCA</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/kang.html#Recovering-PCA,-i.e. providing-no-information-about-the-condition">Recovering PCA, i.e. providing no information about the condition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/kang.html#Accounting-for-mean-offsets-using-an-intercept-design-matrix">Accounting for mean offsets using an intercept design matrix</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/kang.html#Accounting-for-spectral-shifts-across-conditions-using-a-loading-design-matrix">Accounting for spectral shifts across conditions using a loading design matrix</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/kang.html">Analysing interferon stimulated PBMCs using scPCA</a></li>
 </ul>
 </div>
+</section>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">#</a></h1>
@@ -371,7 +395,14 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Welcome to scCCA’s documentation!</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Welcome to scPCA’s documentation!</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-install">Quick install</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#via-pypi">Via Pypi</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#credits">Credits</a><ul class="nav section-nav flex-column">
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#indices-and-tables">Indices and tables</a></li>
