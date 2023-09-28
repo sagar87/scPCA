@@ -39,7 +39,7 @@ Credits
 
 
 .. toctree::
-   :maxdepth: 0
+   :hidden:
    :caption: API
 
    models
@@ -47,7 +47,7 @@ Credits
    plots
 
 .. toctree::
-   :maxdepth: 0
+   :hidden:
    :caption: Tutorials
 
    notebooks/kang
