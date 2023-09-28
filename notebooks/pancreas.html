@@ -617,7 +617,14 @@ import matplotlib.pyplot as plt
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>model = scp.scPCA(adata, 15, layers_key=&#39;counts&#39;, loadings_formula=&#39;tech&#39;, intercept_formula=&#39;tech-1&#39;, seed=313536)
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>model = scp.scPCA(
+    adata,
+    num_factors=15,
+    layers_key=&#39;counts&#39;,
+    loadings_formula=&#39;tech&#39;,
+    intercept_formula=&#39;tech-1&#39;,
+    seed=313536
+)
 </pre></div>
 </div>
 </div>
