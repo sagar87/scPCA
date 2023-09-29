@@ -32,7 +32,8 @@ class FactorModel:
         self.intercept_formula = intercept_formula
         self.subsampling = min([subsampling, adata.shape[0]])
         self.device = self._set_device(device)
-        self.seed = self._set_seed(seed)
+        self.seed = seed
+        self._set_seed(seed)
 
         # prepare design and batch matrix
         self.design_matrix = dmatrix(design_formula, self.adata.obs)
@@ -56,7 +57,7 @@ class FactorModel:
 
         Parameters
         ----------
-        data :
+        data
             Dictionary containing numpy arrays.
 
         Returns
@@ -83,7 +84,7 @@ class FactorModel:
 
         Parameters
         ----------
-        model_key :
+        model_key
             Key to store the model in the AnnData object.
         """
         res: Dict[str, Any] = {}
