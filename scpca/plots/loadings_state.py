@@ -32,6 +32,7 @@ def loadings_state(
     pad: float = 0.1,
     show_corr: bool = False,
     show_diff: bool = False,
+    show_orthants: bool = False,
     size_func: Callable[[float], float] = lambda x: 10.0,
     sharey: bool = False,
     sharex: bool = False,
@@ -82,7 +83,9 @@ def loadings_state(
     show_corr
         Whether to show correlation. Default is False.
     show_diff
-        Whether to show difference. Default is False.
+        Whether to show log differences. Default is False.
+    show_orthants
+        Whether to show orthants.
     size_func
         Function to determine the size of the dots. Default is a lambda function that returns an array of 10.0.
     sharey
@@ -145,6 +148,7 @@ def loadings_state(
         cmap=cmap,
         show_corr=show_corr,
         show_diff=show_diff,
+        show_orthants=show_orthants,
         sharey=sharey,
         sharex=sharex,
         ncols=ncols,
@@ -176,6 +180,7 @@ def _loadings_state(
     fontsize: int,
     show_corr: bool,
     show_diff: bool,
+    show_orthants: bool,
     text_kwargs: Dict[str, Any],
     ax: Axes = None,
 ) -> Axes:
@@ -244,5 +249,9 @@ def _loadings_state(
     if show_corr:
         correlation = np.corrcoef(x, y)[0, 1]
         ax.text(0.95, 0.95, f"Correlation: {correlation:.2f}", ha="right", va="top", transform=ax.transAxes)
+
+    if show_orthants:
+        ax.axvline(0, ls="--", color="k", lw=0.5)
+        ax.axhline(0, ls="--", color="k", lw=0.5)
 
     return ax
