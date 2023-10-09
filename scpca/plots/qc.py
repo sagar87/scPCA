@@ -13,7 +13,7 @@ from sklearn.metrics import mean_squared_error  # type: ignore
 from ..utils.data import _get_rna_counts
 
 
-def qc_hist(
+def true_pred(
     adata: AnnData,
     model_key: str,
     layers_key: Union[str, None] = None,
