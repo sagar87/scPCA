@@ -115,8 +115,8 @@ def mean_var(
         model_dict = adata.uns[model_key]
         params = model_dict["model"]
         # prior_mean = params["β_rna_mean"]
-        β_rna_mean = params["β_rna_mean"]
-        β_rna_sd = params["β_rna_sd"]
+        β_rna_mean = params.get("β_rna_mean", 3.0)
+        β_rna_sd = params.get("β_rna_sd", 0.01)
 
     a = β_rna_mean**2 / β_rna_sd**2
     b = β_rna_mean / β_rna_sd**2
