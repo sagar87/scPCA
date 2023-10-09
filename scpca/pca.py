@@ -232,10 +232,16 @@ class scPCA(FactorModel):
         adata = self.adata
         if self.handler is not None:
             for var in variables:
+                z = self.handler.predict_local_variable("z", num_samples=num_samples, num_split=num_split).mean(0)
+                idx = np.argsort(z.var(0))[::-1]
+
+                if var == "Z":
+                    adata.obsm[f"X_{model_key}"] = z[..., idx]
+
                 if var == "W":
-                    adata.varm[f"W_{model_key}"] = (
-                        self.handler.predict_global_variable("W_lin", num_samples=num_samples).mean(0).T
-                    )
+                    W = self.handler.predict_global_variable("W_lin", num_samples=num_samples).mean(0).T
+                    adata.varm[f"W_{model_key}"] = W[:, idx, :]
+
                 if var == "V":
                     adata.varm[f"V_{model_key}"] = (
                         self.handler.predict_global_variable("W_add", num_samples=num_samples).mean(0).T
@@ -243,10 +249,6 @@ class scPCA(FactorModel):
                 if var == "μ":
                     adata.layers[f"μ_{model_key}"] = self.handler.predict_local_variable(
                         "μ_rna", num_samples=num_samples, num_split=num_split
-                    ).mean(0)
-                if var == "Z":
-                    adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable(
-                        "z", num_samples=num_samples, num_split=num_split
                     ).mean(0)
                 if var == "α":
                     adata.varm[f"α_{model_key}"] = self.handler.predict_global_variable("α_rna").mean(0).T
