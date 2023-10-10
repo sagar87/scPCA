@@ -49,6 +49,44 @@ def triangle_overlay(
     ax: Optional[plt.Axes] = None,
     **kwargs: Any,
 ) -> plt.Axes:
+    """
+    Create a Triangle Overlay Plot.
+
+    Parameters
+    ----------
+    array
+        Data array to overlay on the triangle plot. If None, random data is generated.
+    num_rows
+        Number of rows in the triangle grid. (Default: 16)
+    num_cols
+        Number of columns in the triangle grid. (Default: 4)
+    rot
+        Rotation angle of the triangles in degrees. (Default: 0)
+    num_states
+        Number of states or categories. (Default: 2)
+    cmap
+        List of colormaps to use for different states. (Default: ["Blues", "Greens"])
+    color
+        Common color for all triangles if provided. (Default: None)
+    vmin
+        Minimum value for color mapping. (Default: None)
+    vmax
+        Maximum value for color mapping. (Default: None)
+    ax
+        Existing matplotlib axes to plot on. If None, a new figure is created.
+    **kwargs
+        Additional keyword arguments to pass to the PolyCollection.
+
+    Returns
+    -------
+        Matplotlib axes containing the triangle overlay plot.
+
+    Notes
+    -----
+    This function creates a triangle overlay plot with optional data values represented by colors.
+    Triangles are arranged in a grid with specified rows and columns.
+    """
+
     # segs = []
     if ax is None:
         ax = plt.gca()
@@ -97,23 +135,58 @@ def data_matrix(
     ax: plt.Axes = None,
 ) -> plt.Axes:
     """
-    Visualizes a data matrix with multiple colormaps.
-
+    Create a Data Matrix Visualization with Multiple Colormaps.
 
     Parameters
     ----------
-    size : tuple
-        Size of the data matrix. If array is not None, size is ignored.
-    array : np.ndarray
-        Data matrix. If None, a random matrix is generated.
-    right_add : int
-        Number of columns to padd to the right of the data matrix. May be
-        useful to add annotations on the right side of the matrix.
-    num_states : int or list
-        Number of categories to split the data matrix into. Must divide the
-        array.shape[0] evenly.
-    cmaps : list
-        List of colormaps to use. If None, a default colormap is used.
+    array
+        Data array to visualize as a matrix. If None, random data is generated.
+    num_rows
+        Number of rows in the data matrix. (Default: 16)
+    num_cols
+        Number of columns in the data matrix. (Default: 4)
+    num_states
+        Number of categories to split the data matrix into. Must divide the array.shape[0] evenly.
+        (Default: 2)
+    right_add
+        Number of columns to add to the right of the data matrix. (Default: 0)
+    cmaps
+        List of colormaps to use for different data categories. (Default: None)
+    vmin
+        Minimum value for color mapping. (Default: None)
+    vmax
+        Maximum value for color mapping. (Default: None)
+    remove_ticklabels
+        Whether to remove tick labels. (Default: False)
+    xlabel
+        Label for the x-axis. (Default: None)
+    ylabel
+        Label for the y-axis. (Default: None)
+    ylabel_pos
+        Position coordinates for the y-axis label. (Default: None)
+    xlabel_pos
+        Position coordinates for the x-axis label. (Default: None)
+    hlinewidth
+        Line width for horizontal grid lines. (Default: None)
+    vlinewidth
+        Line width for vertical grid lines. (Default: None)
+    ax
+        Existing matplotlib axes to plot on. If None, a new figure is created.
+
+    Returns
+    -------
+        Matplotlib axes containing the data matrix visualization.
+
+    Notes
+    -----
+    This function creates a data matrix visualization with the option to use multiple colormaps
+    for different data categories. It can be useful for visualizing structured data.
+
+    Example
+    -------
+    >>> import matplotlib.pyplot as plt
+    >>> data_matrix(num_rows=12, num_cols=4, num_states=[2, 3, 1])
+    >>> plt.show()
     """
     # ax = ax or plt.gca()
     if ax is None:
@@ -227,6 +300,47 @@ def design_matrix(
     col: Optional[int] = None,
     ax: plt.Axes = None,
 ) -> plt.Axes:
+    """
+    Create a Design Matrix Visualization.
+
+    Parameters
+    ----------
+    adata
+        Anndata object containing data for the design matrix.
+    formula
+        Formula for creating the design matrix.
+    repeats
+        Number of repeats for each category. (Default: 4)
+    cat_repeats
+        Number of category repeats. (Default: None)
+    xticklabels
+        Labels for the x-axis. (Default: [])
+    title
+        Title for the plot. (Default: "D")
+    xlabel
+        Label for the x-axis. (Default: None)
+    ylabel
+        Label for the y-axis. (Default: None)
+    ylabel_pos
+        Position coordinates for the y-axis label. (Default: None)
+    xlabel_pos
+        Position coordinates for the x-axis label. (Default: None)
+    rotation
+        Rotation angle for x-axis tick labels. (Default: 90)
+    col
+        Specify the column to visualize from the design matrix. (Default: None)
+    ax
+        Existing matplotlib axes to plot on. If None, a new figure is created.
+
+    Returns
+    -------
+        Matplotlib axes containing the design matrix visualization.
+
+    Notes
+    -----
+    This function creates a design matrix visualization based on the provided formula and input data.
+    """
+
     if ax is None:
         plt.figure(figsize=(0.8, 3))
         ax = plt.gca()
