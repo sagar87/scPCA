@@ -291,6 +291,17 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.plots.data">Data plots</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.data_matrix"><code class="docutils literal notranslate"><span class="pre">data_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.design_matrix"><code class="docutils literal notranslate"><span class="pre">design_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.triangle_overlay"><code class="docutils literal notranslate"><span class="pre">triangle_overlay()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.plots.qc">Fitting plots</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.qc.mean_var"><code class="docutils literal notranslate"><span class="pre">mean_var()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.qc.true_pred"><code class="docutils literal notranslate"><span class="pre">true_pred()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.plots.factor_embedding">Factor Embedding</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.factor_embedding.factor_embedding"><code class="docutils literal notranslate"><span class="pre">factor_embedding()</span></code></a></li>
 </ul>
@@ -313,6 +324,181 @@ document.write(`
                   
   <section id="plotting">
 <h1>Plotting<a class="headerlink" href="#plotting" title="Permalink to this heading">#</a></h1>
+<section id="module-scpca.plots.data">
+<span id="data-plots"></span><h2>Data plots<a class="headerlink" href="#module-scpca.plots.data" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="scpca.plots.data.data_matrix">
+<span class="sig-prename descclassname"><span class="pre">scpca.plots.data.</span></span><span class="sig-name descname"><span class="pre">data_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_add</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmaps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_ticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hlinewidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlinewidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.plots.data.data_matrix" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a Data Matrix Visualization with Multiple Colormaps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>]]]) – Data array to visualize as a matrix. If None, random data is generated.</p></li>
+<li><p><strong>num_rows</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of rows in the data matrix. (Default: 16)</p></li>
+<li><p><strong>num_cols</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of columns in the data matrix. (Default: 4)</p></li>
+<li><p><strong>num_states</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – Number of categories to split the data matrix into. Must divide the array.shape[0] evenly.
+(Default: 2)</p></li>
+<li><p><strong>right_add</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of columns to add to the right of the data matrix. (Default: 0)</p></li>
+<li><p><strong>cmaps</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – List of colormaps to use for different data categories. (Default: None)</p></li>
+<li><p><strong>vmin</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Minimum value for color mapping. (Default: None)</p></li>
+<li><p><strong>vmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Maximum value for color mapping. (Default: None)</p></li>
+<li><p><strong>remove_ticklabels</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to remove tick labels. (Default: False)</p></li>
+<li><p><strong>xlabel</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Label for the x-axis. (Default: None)</p></li>
+<li><p><strong>ylabel</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Label for the y-axis. (Default: None)</p></li>
+<li><p><strong>ylabel_pos</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – Position coordinates for the y-axis label. (Default: None)</p></li>
+<li><p><strong>xlabel_pos</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – Position coordinates for the x-axis label. (Default: None)</p></li>
+<li><p><strong>hlinewidth</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Line width for horizontal grid lines. (Default: None)</p></li>
+<li><p><strong>vlinewidth</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Line width for vertical grid lines. (Default: None)</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]) – Existing matplotlib axes to plot on. If None, a new figure is created.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Matplotlib axes containing the data matrix visualization.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function creates a data matrix visualization with the option to use multiple colormaps
+for different data categories. It can be useful for visualizing structured data.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_matrix</span><span class="p">(</span><span class="n">num_rows</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">num_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_states</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scpca.plots.data.design_matrix">
+<span class="sig-prename descclassname"><span class="pre">scpca.plots.data.</span></span><span class="sig-name descname"><span class="pre">design_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_repeats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">90</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.plots.data.design_matrix" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a Design Matrix Visualization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code>) – Anndata object containing data for the design matrix.</p></li>
+<li><p><strong>formula</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Formula for creating the design matrix.</p></li>
+<li><p><strong>repeats</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of repeats for each category. (Default: 4)</p></li>
+<li><p><strong>cat_repeats</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Number of category repeats. (Default: None)</p></li>
+<li><p><strong>xticklabels</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Labels for the x-axis. (Default: [])</p></li>
+<li><p><strong>title</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Title for the plot. (Default: “D”)</p></li>
+<li><p><strong>xlabel</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Label for the x-axis. (Default: None)</p></li>
+<li><p><strong>ylabel</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Label for the y-axis. (Default: None)</p></li>
+<li><p><strong>ylabel_pos</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – Position coordinates for the y-axis label. (Default: None)</p></li>
+<li><p><strong>xlabel_pos</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – Position coordinates for the x-axis label. (Default: None)</p></li>
+<li><p><strong>rotation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Rotation angle for x-axis tick labels. (Default: 90)</p></li>
+<li><p><strong>col</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Specify the column to visualize from the design matrix. (Default: None)</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]) – Existing matplotlib axes to plot on. If None, a new figure is created.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Matplotlib axes containing the design matrix visualization.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function creates a design matrix visualization based on the provided formula and input data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scpca.plots.data.triangle_overlay">
+<span class="sig-prename descclassname"><span class="pre">scpca.plots.data.</span></span><span class="sig-name descname"><span class="pre">triangle_overlay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['Blues',</span> <span class="pre">'Greens']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.plots.data.triangle_overlay" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a Triangle Overlay Plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>]]]) – Data array to overlay on the triangle plot. If None, random data is generated.</p></li>
+<li><p><strong>num_rows</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of rows in the triangle grid. (Default: 16)</p></li>
+<li><p><strong>num_cols</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of columns in the triangle grid. (Default: 4)</p></li>
+<li><p><strong>rot</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Rotation angle of the triangles in degrees. (Default: 0)</p></li>
+<li><p><strong>num_states</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of states or categories. (Default: 2)</p></li>
+<li><p><strong>cmap</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of colormaps to use for different states. (Default: [“Blues”, “Greens”])</p></li>
+<li><p><strong>color</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Common color for all triangles if provided. (Default: None)</p></li>
+<li><p><strong>vmin</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Minimum value for color mapping. (Default: None)</p></li>
+<li><p><strong>vmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Maximum value for color mapping. (Default: None)</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]) – Existing matplotlib axes to plot on. If None, a new figure is created.</p></li>
+<li><p><strong>**kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – Additional keyword arguments to pass to the PolyCollection.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Matplotlib axes containing the triangle overlay plot.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function creates a triangle overlay plot with optional data values represented by colors.
+Triangles are arranged in a grid with specified rows and columns.</p>
+</dd></dl>
+
+</section>
+<section id="module-scpca.plots.qc">
+<span id="fitting-plots"></span><h2>Fitting plots<a class="headerlink" href="#module-scpca.plots.qc" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="scpca.plots.qc.mean_var">
+<span class="sig-prename descclassname"><span class="pre">scpca.plots.qc.</span></span><span class="sig-name descname"><span class="pre">mean_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">β_rna_mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">β_rna_sd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.plots.qc.mean_var" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a Scatter Plot of Mean vs. Variance in Single-Cell RNA-seq Data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code>) – Anndata object containing single-cell RNA-seq data.</p></li>
+<li><p><strong>model_key</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Key for the fitted model within the AnnData object. (Default: None)</p></li>
+<li><p><strong>layers_key</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Key to extract counts from adata.layers. If None, raw counts are extracted from adata.X.</p></li>
+<li><p><strong>β_rna_mean</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Prior mean for RNA expression. (Default: 3.0)</p></li>
+<li><p><strong>β_rna_sd</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Prior standard deviation for RNA expression. (Default: 1.0)</p></li>
+<li><p><strong>alpha</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Transparency of data points in the scatter plot. (Default: 1.0)</p></li>
+<li><p><strong>margin</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Margin for the variance plot. (Default: 0.01)</p></li>
+<li><p><strong>cmap</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Colormap for the scatterplot. (Default: “viridis”)</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]) – Existing matplotlib axes to plot on. If None, a new figure is created.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Matplotlib axes containing the scatter plot.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function creates a scatter plot of the mean expression values against the variance
+for genes in single-cell RNA-seq data. It also visualizes a prior distribution for variance.
+The plot may include labeled genes with the highest deviations from the expected variance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scpca.plots.qc.true_pred">
+<span class="sig-prename descclassname"><span class="pre">scpca.plots.qc.</span></span><span class="sig-name descname"><span class="pre">true_pred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'right'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'3%'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.plots.qc.true_pred" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a 2D histogram plot of predicted vs. true counts of a scPCA model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code>) – Anndata object containing single-cell RNA-seq data.</p></li>
+<li><p><strong>model_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Key for the fitted model within the AnnData object.</p></li>
+<li><p><strong>layers_key</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Key to extract counts from adata.layers. If None, raw counts are extracted from adata.X.</p></li>
+<li><p><strong>cmap</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Colormap for the scatterplot. Default is “viridis”.</p></li>
+<li><p><strong>colorbar_pos</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Position of the colorbar (e.g., “right” or “left”). Default is “right”.</p></li>
+<li><p><strong>colorbar_width</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Width of the colorbar as a percentage of the figure. Default is “3%”.</p></li>
+<li><p><strong>orientation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Orientation of the colorbar (“vertical” or “horizontal”). Default is “vertical”.</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]) – Existing matplotlib axes to plot on. If None, a new figure is created.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Matplotlib axes containing the 2D scatter plot.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function generates a 2D-histogram plot comparing predicted counts (from a fitted model)
+against true counts in single-cell RNA-seq data.</p>
+</dd></dl>
+
+</section>
 <section id="module-scpca.plots.factor_embedding">
 <span id="factor-embedding"></span><h2>Factor Embedding<a class="headerlink" href="#module-scpca.plots.factor_embedding" title="Permalink to this heading">#</a></h2>
 <dl class="py function">
@@ -355,7 +541,7 @@ if one factor is plotted.</p></li>
 <span id="loadings-states"></span><h2>Loadings states<a class="headerlink" href="#module-scpca.plots.loadings_state" title="Permalink to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="scpca.plots.loadings_state.loadings_state">
-<span class="sig-prename descclassname"><span class="pre">scpca.plots.loadings_state.</span></span><span class="sig-name descname"><span class="pre">loadings_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_names=[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable='W'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highest=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowest=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign=1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlight=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap='RdBu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_pos='right'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_width='3%'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation='vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize=10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad=0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_corr=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_diff=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sharey=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sharex=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncols=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height=3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_kwargs={}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.plots.loadings_state.loadings_state" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">scpca.plots.loadings_state.</span></span><span class="sig-name descname"><span class="pre">loadings_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_names=[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable='W'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highest=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowest=0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign=1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlight=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap='RdBu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_pos='right'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_width='3%'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation='vertical'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize=10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad=0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_corr=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_diff=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_orthants=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sharey=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sharex=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncols=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height=3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_kwargs={}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.plots.loadings_state.loadings_state" title="Permalink to this definition">#</a></dt>
 <dd><p>Plot the loadings of two states.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -378,7 +564,8 @@ Default is True.</p></li>
 <li><p><strong>fontsize</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Font size for annotations. Default is 10.</p></li>
 <li><p><strong>pad</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Padding for the colorbar. Default is 0.1.</p></li>
 <li><p><strong>show_corr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to show correlation. Default is False.</p></li>
-<li><p><strong>show_diff</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to show difference. Default is False.</p></li>
+<li><p><strong>show_diff</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to show log differences. Default is False.</p></li>
+<li><p><strong>show_orthants</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to show orthants.</p></li>
 <li><p><strong>size_func</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Function to determine the size of the dots. Default is a lambda function that returns an array of 10.0.</p></li>
 <li><p><strong>sharey</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to share the y-axis across subplots. Default is False.</p></li>
 <li><p><strong>sharex</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to share the x-axis across subplots. Default is False.</p></li>
@@ -496,6 +683,17 @@ loadings_scatter(adata, ‘m0’, [‘state1’, ‘state2’], factor=0)</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.plots.data">Data plots</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.data_matrix"><code class="docutils literal notranslate"><span class="pre">data_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.design_matrix"><code class="docutils literal notranslate"><span class="pre">design_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.triangle_overlay"><code class="docutils literal notranslate"><span class="pre">triangle_overlay()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.plots.qc">Fitting plots</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.qc.mean_var"><code class="docutils literal notranslate"><span class="pre">mean_var()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.qc.true_pred"><code class="docutils literal notranslate"><span class="pre">true_pred()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.plots.factor_embedding">Factor Embedding</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.factor_embedding.factor_embedding"><code class="docutils literal notranslate"><span class="pre">factor_embedding()</span></code></a></li>
 </ul>
