@@ -1,8 +1,7 @@
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 import matplotlib.pyplot as plt  # type: ignore
 import numpy as np
-from adjustText import adjust_text  # type: ignore
 from anndata import AnnData  # type: ignore
 from matplotlib.colors import LogNorm  # type: ignore
 from mpl_toolkits.axes_grid1 import make_axes_locatable  # type: ignore
@@ -21,7 +20,7 @@ def _var(concentration: Union[float, NDArray[np.float32]], mean: Union[float, ND
 def true_pred(
     adata: AnnData,
     model_key: str,
-    layers_key: Union[str, None] = None,
+    layers_key: Optional[str] = None,
     cmap: str = "viridis",
     colorbar_pos: str = "right",
     colorbar_width: str = "3%",
@@ -102,9 +101,8 @@ def true_pred(
 
 def mean_var(
     adata: AnnData,
-    model_key: Union[str, None] = None,
-    layers_key: Union[str, None] = None,
-    highest: Union[int, None] = None,
+    model_key: Optional[str] = None,
+    layers_key: Optional[str] = None,
     β_rna_mean: float = 3,
     β_rna_sd: float = 1,
     alpha: float = 1.0,
@@ -123,8 +121,6 @@ def mean_var(
         Key for the fitted model within the AnnData object. (Default: None)
     layers_key :
         Key to extract counts from adata.layers. If None, raw counts are extracted from adata.X.
-    highest :
-        Number of highest-deviating genes to label on the plot. (Default: None)
     β_rna_mean :
         Prior mean for RNA expression. (Default: 3.0)
     β_rna_sd :
@@ -171,7 +167,7 @@ def mean_var(
     true_mean = np.mean(counts, axis=0)
     true_var = np.var(counts, axis=0)
     theoretical = _var(β_rna_mean, np.logspace(-4, 3, 1000))
-    expectation = _var(β_rna_mean, true_mean)
+    # expectation = _var(β_rna_mean, true_mean)
 
     ax.fill_between(
         np.logspace(-4, 3, 1000),
@@ -200,20 +196,14 @@ def mean_var(
     )
 
     ax.legend()
-    ax.set_yscale("log")
-    ax.set_xscale("log")
     ax.set_ylabel("Variance")
     ax.set_xlabel("Mean")
 
-    cax = plt.colorbar(im)
-    cax.set_label("α")
+    if model_key is not None:
+        cax = plt.colorbar(im)
+        cax.set_label("α")
 
-    if highest is not None:
-        deviation = np.abs((true_var - expectation) / expectation)
-        highest_genes = np.argsort(deviation)[-highest:]
-        # genes = adata.var_names[highest_genes]
-
-        texts = [ax.text(true_mean[h], true_var[h], adata.var_names[h], fontsize=10) for h in highest_genes]
-        adjust_text(texts, arrowprops=dict(arrowstyle="-", color="k", lw=0.5))
+    ax.set_yscale("log")
+    ax.set_xscale("log")
 
     return ax
