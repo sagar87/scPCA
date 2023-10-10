@@ -21,7 +21,7 @@ def _get_hsvcmap(i: int, N: int, rot: float = 0.0) -> LinearSegmentedColormap:
     return LinearSegmentedColormap.from_list("", rgb)
 
 
-def triatpos(pos: Tuple[Union[float, int], Union[float, int]] = (0, 0), rot: float = 0) -> NDArray[np.float32]:
+def _triatpos(pos: Tuple[Union[float, int], Union[float, int]] = (0, 0), rot: float = 0) -> NDArray[np.float32]:
     r = np.array([[-1, -1], [1, -1], [1, 1], [-1, -1]]) * 0.5
     rm = [
         [np.cos(np.deg2rad(rot)), -np.sin(np.deg2rad(rot))],
@@ -61,7 +61,7 @@ def triangle_overlay(
     for i in range(num_rows):
         for j in range(num_cols):
             k = row_mapping[i]
-            segs_dict[k].append(triatpos((j, i), rot=rot))
+            segs_dict[k].append(_triatpos((j, i), rot=rot))
 
     for k, v in segs_dict.items():
         if color:
