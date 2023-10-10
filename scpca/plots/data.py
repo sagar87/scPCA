@@ -13,6 +13,8 @@ from numpy.typing import NDArray
 from patsy import dmatrix  # type: ignore
 from patsy.design_info import DesignMatrix  # type: ignore
 
+from ..utils.design import _get_states
+
 
 def _get_hsvcmap(i: int, N: int, rot: float = 0.0) -> LinearSegmentedColormap:
     nsc = 24
@@ -342,11 +344,16 @@ def design_matrix(
     """
 
     if ax is None:
-        plt.figure(figsize=(0.8, 3))
+        # plt.figure(figsize=(0.8, 3))
         ax = plt.gca()
 
     design_matrix = dmatrix(formula, adata.obs)
-    M = _get_design_matrix(design_matrix, repeats=repeats, cat_repeats=cat_repeats)
+    # M = _get_design_matrix(design_matrix, repeats=repeats, cat_repeats=cat_repeats)
+    state_mapping = _get_states(design_matrix)
+    # import pdb;pdb.set_trace()
+
+    M = np.repeat(state_mapping.encoding, repeats=repeats, axis=0)
+
     if col is None:
         g = ax.imshow(M, cmap="Greys", vmin=0, vmax=1)
     else:
@@ -369,7 +376,10 @@ def design_matrix(
     ax.vlines(ygrid, xgrid[0], xgrid[-1], color="k")
 
     if len(xticklabels) == 0:
-        _ = g.axes.set_xticks([])
+        _ = g.axes.set_xticks([i for i in range(M.shape[1])])
+        _ = g.axes.set_xticklabels(
+            [v for k, v in sorted(state_mapping.columns.items(), key=lambda x: x[0])], rotation=rotation
+        )
     else:
         _ = g.axes.set_xticks([i for i in range(M.shape[1])])
         _ = g.axes.set_xticklabels(xticklabels, rotation=rotation)
