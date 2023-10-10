@@ -197,7 +197,7 @@ def data_matrix(
     return ax
 
 
-def get_design_matrix(dm: DesignMatrix, repeats: int = 4, cat_repeats: Optional[int] = None) -> NDArray[np.float32]:
+def _get_design_matrix(dm: DesignMatrix, repeats: int = 4, cat_repeats: Optional[int] = None) -> NDArray[np.float32]:
     if isinstance(dm, DesignMatrix):
         m = np.asmatrix(dm)
     else:
@@ -232,7 +232,7 @@ def design_matrix(
         ax = plt.gca()
 
     design_matrix = dmatrix(formula, adata.obs)
-    M = get_design_matrix(design_matrix, repeats=repeats, cat_repeats=cat_repeats)
+    M = _get_design_matrix(design_matrix, repeats=repeats, cat_repeats=cat_repeats)
     if col is None:
         g = ax.imshow(M, cmap="Greys", vmin=0, vmax=1)
     else:
