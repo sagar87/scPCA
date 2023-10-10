@@ -32,21 +32,21 @@ def true_pred(
 
     Parameters
     ----------
-    adata :
+    adata
         Anndata object containing single-cell RNA-seq data.
-    model_key :
+    model_key
         Key for the fitted model within the AnnData object.
-    layers_key :
+    layers_key
         Key to extract counts from adata.layers. If None, raw counts are extracted from adata.X.
-    cmap :
+    cmap
         Colormap for the scatterplot. Default is "viridis".
-    colorbar_pos :
+    colorbar_pos
         Position of the colorbar (e.g., "right" or "left"). Default is "right".
-    colorbar_width :
+    colorbar_width
         Width of the colorbar as a percentage of the figure. Default is "3%".
-    orientation :
+    orientation
         Orientation of the colorbar ("vertical" or "horizontal"). Default is "vertical".
-    ax :
+    ax
         Existing matplotlib axes to plot on. If None, a new figure is created.
 
     Returns
@@ -115,23 +115,23 @@ def mean_var(
 
     Parameters
     ----------
-    adata :
+    adata
         Anndata object containing single-cell RNA-seq data.
-    model_key :
+    model_key
         Key for the fitted model within the AnnData object. (Default: None)
-    layers_key :
+    layers_key
         Key to extract counts from adata.layers. If None, raw counts are extracted from adata.X.
-    β_rna_mean :
+    β_rna_mean
         Prior mean for RNA expression. (Default: 3.0)
-    β_rna_sd :
+    β_rna_sd
         Prior standard deviation for RNA expression. (Default: 1.0)
-    alpha :
+    alpha
         Transparency of data points in the scatter plot. (Default: 1.0)
-    margin :
+    margin
         Margin for the variance plot. (Default: 0.01)
-    cmap :
+    cmap
         Colormap for the scatterplot. (Default: "viridis")
-    ax :
+    ax
         Existing matplotlib axes to plot on. If None, a new figure is created.
 
     Returns
