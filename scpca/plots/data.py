@@ -128,6 +128,7 @@ def data_matrix(
     vmin: Optional[float] = None,
     vmax: Optional[float] = None,
     remove_ticklabels: bool = False,
+    title: Optional[str] = "D",
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
     ylabel_pos: Optional[Tuple[float, float]] = None,
@@ -160,6 +161,8 @@ def data_matrix(
         Maximum value for color mapping. (Default: None)
     remove_ticklabels
         Whether to remove tick labels. (Default: False)
+    title
+        Title of the plot
     xlabel
         Label for the x-axis. (Default: None)
     ylabel
@@ -261,6 +264,9 @@ def data_matrix(
         ax.set_yticklabels([])
         ax.set_xticklabels([])
 
+    if title is not None:
+        ax.set_title(f"{title}")
+
     if xlabel is not None:
         ax.set_xlabel(f"{xlabel}")
         if xlabel_pos is not None:
@@ -291,15 +297,14 @@ def design_matrix(
     adata: AnnData,
     formula: str,
     repeats: int = 4,
-    cat_repeats: Optional[int] = None,
     xticklabels: List[str] = [],
-    title: str = "D",
+    title: Optional[str] = "D",
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
     ylabel_pos: Optional[Tuple[float, float]] = None,
     xlabel_pos: Optional[Tuple[float, float]] = None,
     rotation: int = 90,
-    col: Optional[int] = None,
+    columns: Optional[Union[int, List[int]]] = None,
     ax: plt.Axes = None,
 ) -> plt.Axes:
     """
@@ -313,8 +318,6 @@ def design_matrix(
         Formula for creating the design matrix.
     repeats
         Number of repeats for each category. (Default: 4)
-    cat_repeats
-        Number of category repeats. (Default: None)
     xticklabels
         Labels for the x-axis. (Default: [])
     title
@@ -329,8 +332,8 @@ def design_matrix(
         Position coordinates for the x-axis label. (Default: None)
     rotation
         Rotation angle for x-axis tick labels. (Default: 90)
-    col
-        Specify the column to visualize from the design matrix. (Default: None)
+    columns
+        Specify the columns to visualize from the design matrix. (Default: None)
     ax
         Existing matplotlib axes to plot on. If None, a new figure is created.
 
@@ -354,16 +357,16 @@ def design_matrix(
 
     M = np.repeat(state_mapping.encoding, repeats=repeats, axis=0)
 
-    if col is None:
+    if columns is None:
         g = ax.imshow(M, cmap="Greys", vmin=0, vmax=1)
     else:
-        M = M[:, [col]]
+        if isinstance(columns, int):
+            columns = [columns]
+        M = M[:, columns]
         g = ax.imshow(M, cmap="Greys", vmin=0, vmax=1)
     _ = g.axes.set_xticks([i + 0.5 for i in range(M.shape[1])])
 
     _ = g.axes.set_yticks([])
-    if title is not None:
-        g.axes.set_title(f"{title}")
 
     ax.spines["top"].set_visible(False)
     ax.spines["left"].set_visible(False)
@@ -384,12 +387,15 @@ def design_matrix(
         _ = g.axes.set_xticks([i for i in range(M.shape[1])])
         _ = g.axes.set_xticklabels(xticklabels, rotation=rotation)
 
+    if title is not None:
+        g.axes.set_title(f"{title}")
+
     if xlabel is not None:
-        ax.set_xlabel("$%s$" % xlabel)
+        ax.set_xlabel(f"{xlabel}")
         if xlabel_pos is not None:
             ax.xaxis.set_label_coords(xlabel_pos[0], xlabel_pos[1])
     if ylabel is not None:
-        ax.set_ylabel("$%s$" % ylabel)
+        ax.set_ylabel(f"{ylabel}")
         if ylabel_pos is not None:
             ax.yaxis.set_label_coords(ylabel_pos[0], ylabel_pos[1])
 
