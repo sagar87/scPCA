@@ -11,6 +11,12 @@ Data plots
 .. automodule:: scpca.plots.data
    :members:
 
+Fitting plots
+-------------
+
+.. automodule:: scpca.plots.qc
+   :members:
+
 
 Factor Embedding
 ----------------
