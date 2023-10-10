@@ -4,6 +4,14 @@
 Plotting
 ========
 
+
+Data plots
+----------
+
+.. automodule:: scpca.plots.data
+   :members:
+
+
 Factor Embedding
 ----------------
 

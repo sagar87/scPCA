@@ -1,4 +1,4 @@
-from .data import data_matrix, triangle_overlay
+from .data import data_matrix, design_matrix, triangle_overlay
 from .factor_embedding import factor_embedding
 from .loadings_scatter import loadings_scatter
 from .loadings_state import loadings_state
@@ -11,5 +11,6 @@ __all__ = [
     "true_pred",
     "mean_var",
     "data_matrix",
+    "design_matrix",
     "triangle_overlay",
 ]
