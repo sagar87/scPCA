@@ -1,9 +1,12 @@
 from typing import List, Union
 
 import matplotlib.pyplot as plt  # type: ignore
+import pandas as pd  # type: ignore
+import seaborn as sns  # type: ignore
 from anndata import AnnData  # type: ignore
 from matplotlib.axes import Axes  # type: ignore
 from mpl_toolkits.axes_grid1 import make_axes_locatable  # type: ignore
+from scanpy.plotting._tools.scatterplots import _get_palette  # type: ignore
 
 from ..utils.data import _validate_sign
 from .helper import _set_up_cmap, _set_up_plot
@@ -136,5 +139,85 @@ def _factor_embedding(
     ax.set_ylabel(f"{basis}")
     ax.set_xticks([])
     ax.set_yticks([])
+
+    return ax
+
+
+def factor_density(
+    adata: AnnData,
+    model_key: str,
+    cluster_key: str,
+    factor: Union[int, List[int], None] = None,
+    groups: Union[str, List[str]] = [],
+    fill: bool = True,
+    lw: float = 0.5,
+    legend: bool = True,
+    ax: Axes = None,
+    size: float = 1,
+    ncols: int = 4,
+    width: int = 4,
+    height: int = 3,
+) -> Axes:
+    # do validation here
+
+    ax = _set_up_plot(
+        adata,
+        model_key,
+        factor,
+        _factor_density,
+        cluster_key=cluster_key,
+        groups=groups,
+        ncols=ncols,
+        width=width,
+        height=height,
+        ax=ax,
+    )
+    return ax
+
+
+def _factor_density(
+    adata: AnnData,
+    model_key: str,
+    factor: int,
+    cluster_key: str,
+    groups: Union[str, List[str]] = [],
+    fill: bool = True,
+    lw: float = 0.5,
+    legend: bool = True,
+    ax: Axes = None,
+) -> Axes:
+    if ax is None:
+        ax = plt.gca()
+
+    if isinstance(groups, str):
+        groups = [groups]
+
+    df = pd.DataFrame(
+        {
+            cluster_key: [c if c in groups else "_" + c for c in adata.obs[cluster_key].values]
+            if len(groups) > 0
+            else adata.obs[cluster_key].values,
+            "factor": adata.obsm[f"X_{model_key}"][..., factor],
+        }
+    )
+
+    color_key = f"{cluster_key}_colors"
+    if color_key not in adata.uns:
+        color_dict = _get_palette(adata, cluster_key)
+        adata.uns[color_key] = [color_dict[k] for k in adata.obs[cluster_key].cat.categories]
+
+    if len(groups) > 0:
+        palette = {
+            t if t in groups else "_" + t: c if t in groups else "lightgrey"
+            for t, c in zip(adata.obs[cluster_key].cat.categories, adata.uns[color_key])
+        }
+    else:
+        palette = {t: c for t, c in zip(adata.obs[cluster_key].cat.categories, adata.uns[color_key])}
+
+    ax = sns.kdeplot(x="factor", hue=cluster_key, data=df, palette=palette, fill=fill, lw=lw, legend=legend, ax=ax)
+
+    ax.set_xlabel("Factor weight")
+    ax.set_title(f"Factor {factor}")
+    ax.axvline(0, color="k", ls="--")
 
     return ax
