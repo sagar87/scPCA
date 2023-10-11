@@ -233,7 +233,9 @@ class scPCA(FactorModel):
         if self.handler is not None:
             # sort factors
             if "Z" in variables or "W" in variables:
-                z = self.handler.predict_local_variable("z", num_samples=num_samples, num_split=num_split).mean(0)
+                z = self.handler.predict_local_variable(
+                    "z", num_samples=num_samples, num_split=num_split, return_mean=True
+                )
                 idx = np.argsort(z.var(0))[::-1]
 
             for var in variables:
@@ -241,28 +243,32 @@ class scPCA(FactorModel):
                     adata.obsm[f"X_{model_key}"] = z[..., idx]
 
                 if var == "W":
-                    W = self.handler.predict_global_variable("W_lin", num_samples=num_samples).mean(0).T
+                    W = self.handler.predict_global_variable("W_lin", num_samples=num_samples, return_mean=True).T
                     adata.varm[f"W_{model_key}"] = W[:, idx, :]
 
                 if var == "V":
-                    adata.varm[f"V_{model_key}"] = (
-                        self.handler.predict_global_variable("W_add", num_samples=num_samples).mean(0).T
-                    )
+                    adata.varm[f"V_{model_key}"] = self.handler.predict_global_variable(
+                        "W_add", num_samples=num_samples, return_mean=True
+                    ).T
                 if var == "μ":
                     adata.layers[f"μ_{model_key}"] = self.handler.predict_local_variable(
-                        "μ_rna", num_samples=num_samples, num_split=num_split
-                    ).mean(0)
+                        "μ_rna", num_samples=num_samples, num_split=num_split, return_mean=True
+                    )
 
                 if var == "α":
-                    adata.varm[f"α_{model_key}"] = self.handler.predict_global_variable("α_rna").mean(0).T
+                    adata.varm[f"α_{model_key}"] = self.handler.predict_global_variable(
+                        "α_rna", num_samples=num_samples, return_mean=True
+                    ).T
 
                 if var == "σ":
-                    adata.varm[f"σ_{model_key}"] = self.handler.predict_global_variable("σ_rna").mean(0).T
+                    adata.varm[f"σ_{model_key}"] = self.handler.predict_global_variable(
+                        "σ_rna", num_samples=num_samples, return_mean=True
+                    ).T
 
                 if var == "offset":
                     adata.layers[f"offset_{model_key}"] = self.handler.predict_local_variable(
-                        "offset_rna", num_samples=num_samples, num_split=num_split
-                    ).mean(0)
+                        "offset_rna", num_samples=num_samples, num_split=num_split, return_mean=True
+                    )
 
 
 class dPCA(FactorModel):
@@ -481,26 +487,22 @@ class dPCA(FactorModel):
         if self.handler is not None:
             for var in variables:
                 if var == "W":
-                    adata.varm[f"W_{model_key}"] = (
-                        self.handler.predict_global_variable("W_lin", num_samples=num_samples).mean(0).T
-                    )
+                    adata.varm[f"W_{model_key}"] = self.handler.predict_global_variable(
+                        "W_lin", num_samples=num_samples, return_mean=True
+                    ).T
                 if var == "V":
-                    adata.varm[f"V_{model_key}"] = (
-                        self.handler.predict_global_variable("W_add", num_samples=num_samples).mean(0).T
-                    )
+                    adata.varm[f"V_{model_key}"] = self.handler.predict_global_variable(
+                        "W_add", num_samples=num_samples, return_mean=True
+                    ).T
                 if var == "μ":
                     adata.layers[f"μ_{model_key}"] = self.handler.predict_local_variable(
-                        "μ_rna", num_samples=num_samples, num_split=num_split
-                    ).mean(0)
+                        "μ_rna", num_samples=num_samples, num_split=num_split, return_mean=True
+                    )
                 if var == "Z":
                     adata.obsm[f"X_{model_key}"] = self.handler.predict_local_variable(
-                        "z", num_samples=num_samples, num_split=num_split
-                    ).mean(0)
-                if var == "α":
-                    adata.varm[f"α_{model_key}"] = self.handler.predict_global_variable("α_rna").mean(0).T
+                        "z", num_samples=num_samples, num_split=num_split, return_mean=True
+                    )
                 if var == "σ":
-                    adata.varm[f"σ_{model_key}"] = self.handler.predict_global_variable("σ_rna").mean(0).T
-                if var == "offset":
-                    adata.layers[f"offset_{model_key}"] = self.handler.predict_local_variable(
-                        "offset_rna", num_samples=num_samples, num_split=num_split
-                    ).mean(0)
+                    adata.varm[f"σ_{model_key}"] = self.handler.predict_global_variable(
+                        "σ", num_samples=num_samples, return_mean=True
+                    ).T

@@ -72,7 +72,7 @@ class SVILocalHandler(SVIBaseHandler):
 
         return posterior_predictive
 
-    def predict_global_variable(self, var: str, num_samples: int = 25) -> NDArray[np.float32]:
+    def predict_global_variable(self, var: str, num_samples: int = 25, return_mean: bool = False) -> Any:
         """
         Sample global variables from the posterior.
 
@@ -82,11 +82,12 @@ class SVILocalHandler(SVIBaseHandler):
             Name of the variable to sample.
         num_samples
             Number of samples to draw.
+        return_mean
+            If true posterior samples are averaged directly after sampling.
         """
 
         posterior_predictive = self.predict([var], num_samples=num_samples, idx=self.idx[0:1])
-
-        return posterior_predictive[var]
+        return posterior_predictive[var].mean(0) if return_mean else posterior_predictive[var]
 
     def predict_local_variable(
         self, var: str, num_samples: int = 25, num_split: int = 2048, obs_dim: int = 1, return_mean: bool = False
