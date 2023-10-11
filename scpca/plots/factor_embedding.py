@@ -158,7 +158,39 @@ def factor_density(
     width: int = 4,
     height: int = 3,
 ) -> Axes:
-    # do validation here
+    """
+    Plot Factor Density for Clusters in Single-Cell Analysis.
+
+    Parameters
+    ----------
+    adata
+        Anndata object containing single-cell data.
+    model_key
+        Key for the fitted model.
+    factor
+        Index of the factor to visualize.
+    cluster_key
+        Key for the cluster annotations in adata.obs.
+    groups
+        Specific cluster groups to highlight in the plot. If empty, all clusters are used. (Default: [])
+    fill
+        Whether to fill the density plot. (Default: True)
+    lw
+        Line width for the density plot. (Default: 0.5)
+    legend
+        Whether to display the legend. (Default: True)
+    ax
+        Matplotlib axes to plot on. If None, a new figure is created.
+
+    Returns
+    -------
+        Matplotlib axes containing the factor density plot.
+
+    Notes
+    -----
+    This function plots the density of a specific factor's weights across clusters in single-cell analysis.
+    The density plot shows the distribution of the factor weights for each cluster group.
+    """
 
     ax = _set_up_plot(
         adata,
