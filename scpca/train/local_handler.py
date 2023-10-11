@@ -78,9 +78,9 @@ class SVILocalHandler(SVIBaseHandler):
 
         Parameters
         ----------
-        var : str
+        var
             Name of the variable to sample.
-        num_samples : int
+        num_samples
             Number of samples to draw.
         """
 
@@ -89,11 +89,7 @@ class SVILocalHandler(SVIBaseHandler):
         return posterior_predictive[var]
 
     def predict_local_variable(
-        self,
-        var: str,
-        num_samples: int = 25,
-        num_split: int = 2048,
-        obs_dim: int = 1,
+        self, var: str, num_samples: int = 25, num_split: int = 2048, obs_dim: int = 1, return_mean: bool = False
     ) -> NDArray[np.float32]:
         """
         Sample local variables from the posterior. In order to
@@ -101,26 +97,29 @@ class SVILocalHandler(SVIBaseHandler):
 
         Parameters
         ----------
-        var : str
+        var
             Name of the variable to sample.
-        num_samples : int
+        num_samples
             Number of samples to draw.
-        num_split : int
+        num_split
             The parameter determines the size of the batches. The actual
             batch size is total number of observations divided by num_split.
-        obs_dim : int
+        obs_dim
             The dimension of the observations. After sampling, the output
             is concatenated along this dimension.
+        return_mean
+            If true posterior samples are averaged directly after sampling.
         """
         split_obs = torch.split(self.idx, num_split)
-
+        obs_dim = 0 if return_mean else obs_dim
         # create status bar
         pbar = tqdm(range(len(split_obs)))
 
         results = []
         for i in pbar:
             posterior_predictive = self.predict([var], num_samples=num_samples, idx=split_obs[i])
-            results.append(posterior_predictive[var])
+            post_pred = posterior_predictive[var].mean(0) if return_mean else posterior_predictive[var]
+            results.append(post_pred)
             # update status bar
             pbar.set_description(f"Predicting {var} for obs {split_obs[i].min()}-{split_obs[i].max()}.")
 
