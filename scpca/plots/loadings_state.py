@@ -255,3 +255,60 @@ def _loadings_state(
         ax.axhline(0, ls="--", color="k", lw=0.5)
 
     return ax
+
+
+def loading_rank_diff(
+    adata: AnnData,
+    model_key: str,
+    states: Union[List[str], Tuple[str, str], str],
+    factor: Union[int, List[int]],
+    fontsize: int = 8,
+    width: float = 1.0,
+    height: float = 5,
+    highest: int = 0,
+    lowest: int = 0,
+    magnitude: Optional[float] = None,
+) -> Axes:
+    num_genes = adata.shape[1]
+    if isinstance(factor, int):
+        factor = [factor]
+
+    fig = plt.figure(figsize=(len(factor) * width, height))
+    gs = fig.add_gridspec(1, len(factor), hspace=0, wspace=0)
+    axes = gs.subplots(sharex="col", sharey="row")
+
+    if isinstance(axes, plt.Axes):
+        axes = np.array([axes])
+
+    for i, f in enumerate(factor):
+        df = state_diff(adata, model_key, states, f, highest=num_genes).assign(idx=np.arange(num_genes)[::-1])
+
+        axes[i].scatter(df.idx.values, df["difference"].values, s=1)
+
+        texts = []
+
+        if magnitude is None and highest > 0:
+            for idx, row in df.head(highest).iterrows():
+                text = axes[i].text(row["idx"], row["difference"], row["gene"], fontsize=fontsize)
+                texts.append(text)
+        elif magnitude is None and lowest > 0:
+            for idx, row in df.tail(lowest).iterrows():
+                text = axes[i].text(row["idx"], row["difference"], row["gene"], fontsize=fontsize)
+                texts.append(text)
+        elif magnitude:
+            for idx, row in df[df.magnitude > magnitude].iterrows():
+                text = axes[i].text(row["idx"], row["difference"], row["gene"], fontsize=fontsize)
+                texts.append(text)
+
+        if len(texts) > 0:
+            adjust_text(texts, arrowprops=dict(arrowstyle="-", color="k", lw=0.5), ax=axes[i])
+        axes[i].margins(x=0.1)
+        axes[i].set_xticks([])
+        axes[i].set_title(f"F{f}")
+
+        if i % 2 == 0:
+            axes[i].set_facecolor("lightgrey")
+
+    axes[0].set_ylabel("Difference")
+
+    return axes
