@@ -411,9 +411,10 @@ def heatmap(
     factor: int,
     state_key: Union[str, List[str]],
     cluster_key: str,
-    cluster_groups: Union[str, List[str]],
+    cluster_groups: Optional[Union[str, List[str]]] = None,
     dot: bool = False,
     sign: Union[int, float] = 1,
+    var_names: Optional[List[str]] = None,
     highest: int = 0,
     lowest: int = 0,
     magnitude: float = 1.96,
@@ -446,10 +447,8 @@ def heatmap(
         Number of highest differential genes to retrieve, by default 0.
     lowest
         Number of lowest differential genes to retrieve, by default 0.
-    threshold
+    magnitude
         Threshold for significance, by default 1.96.
-    return_var_names
-        If True, returns variable names. Otherwise, returns the plot axes. Default is False.
     **kwargs
         Additional keyword arguments passed to the plotting function.
 
@@ -468,37 +467,45 @@ def heatmap(
 
     if isinstance(cluster_groups, str):
         cluster_groups = [cluster_groups]
+    elif cluster_groups is None:
+        cluster_groups = adata.obs[cluster_key].unique().tolist()
     if isinstance(state_key, str):
         state_key = [state_key]
 
     df = state_diff(adata, model_key, states, factor, sign=sign, highest=adata.shape[1])
 
-    if highest > 0 or lowest > 0:
-        var_names = {
+    if var_names:
+        df = df[df.gene.isin(var_names)]
+        var_dict = {
+            f"Up in {states[1]}": df[df["difference"] > 0].gene.tolist(),
+            f"Down in {states[1]}": df[df["difference"] < 0].gene.tolist(),
+        }
+    elif highest > 0 or lowest > 0:
+        var_dict = {
             f"Up in {states[1]}": df.head(highest).gene.tolist(),
             f"Down in {states[1]}": df.tail(lowest).gene.tolist(),
         }
     else:
         df = df[df.magnitude > magnitude]
-        var_names = {
+        var_dict = {
             f"Up in {states[1]}": df[df["difference"] > 0].gene.tolist(),
             f"Down in {states[1]}": df[df["difference"] < 0].gene.tolist(),
         }
 
-    for k, v in var_names.copy().items():
+    for k, v in var_dict.copy().items():
         if len(v) == 0:
-            del var_names[k]
+            del var_dict[k]
 
     if dot:
         axes = sc.pl.dotplot(
             adata[adata.obs[cluster_key].isin(cluster_groups)],
             groupby=[cluster_key, *state_key],
-            var_names=var_names,
+            var_names=var_dict,
             show=False,
             **kwargs,
         )
         labels = [
-            item.get_text() + f" ({df[df.gene==item.get_text()]['diff'].item():.2f})"
+            item.get_text() + f" ({df[df.gene==item.get_text()]['difference'].item():.2f})"
             for item in axes["mainplot_ax"].get_xticklabels()
         ]
         axes["mainplot_ax"].set_xticklabels(labels)
@@ -506,12 +513,12 @@ def heatmap(
         axes = sc.pl.heatmap(
             adata[adata.obs[cluster_key].isin(cluster_groups)],
             groupby=[cluster_key, *state_key],
-            var_names=var_names,
+            var_names=var_dict,
             show=False,
             **kwargs,
         )
         labels = [
-            item.get_text() + f" ({df[df.gene==item.get_text()]['diff'].item():.2f})"
+            item.get_text() + f" ({df[df.gene==item.get_text()]['difference'].item():.2f})"
             for item in axes["heatmap_ax"].get_xticklabels()
         ]
         axes["heatmap_ax"].set_xticklabels(labels)
