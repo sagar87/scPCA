@@ -67,7 +67,7 @@ class scPCA(FactorModel):
             adata=adata,
             num_factors=num_factors,
             layers_key=layers_key,
-            design_formula=loadings_formula,
+            loadings_formula=loadings_formula,
             intercept_formula=intercept_formula,
             subsampling=subsampling,
             device=device,
@@ -101,8 +101,8 @@ class scPCA(FactorModel):
         else:
             X_size = np.log(X.sum(axis=1, keepdims=True))
 
-        design: NDArray[np.float32] = np.asarray(self.design_states.encoding).astype(np.float32)
-        design_idx = self.design_states.idx
+        design: NDArray[np.float32] = np.asarray(self.loadings_states.encoding).astype(np.float32)
+        design_idx = self.loadings_states.idx
 
         intercept: NDArray[np.float32] = np.asarray(self.intercept_states.encoding).astype(np.float32)
         intercept_idx = self.intercept_states.idx
@@ -319,7 +319,7 @@ class dPCA(FactorModel):
             adata=adata,
             num_factors=num_factors,
             layers_key=layers_key,
-            design_formula=loadings_formula,
+            loadings_formula=loadings_formula,
             intercept_formula=intercept_formula,
             subsampling=subsampling,
             device=device,
@@ -337,8 +337,8 @@ class dPCA(FactorModel):
         Sets up the data.
         """
         X = _get_rna_counts(self.adata, self.layers_key)
-        loading_design: NDArray[np.float32] = np.asarray(self.design_states.encoding).astype(np.float32)
-        loading_idx = self.design_states.idx
+        loading_design: NDArray[np.float32] = np.asarray(self.loadings_states.encoding).astype(np.float32)
+        loading_idx = self.loadings_states.idx
         intercept_design: NDArray[np.float32] = np.asarray(self.intercept_states.encoding).astype(np.float32)
         intercept_idx = self.intercept_states.idx
 

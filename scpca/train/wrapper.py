@@ -17,7 +17,7 @@ class FactorModel:
         adata: AnnData,
         num_factors: int,
         layers_key: Union[str, None] = None,
-        design_formula: str = "1",
+        loadings_formula: str = "1",
         intercept_formula: str = "1",
         subsampling: int = 4096,
         device: Optional[Literal["cuda", "cpu"]] = None,
@@ -28,7 +28,7 @@ class FactorModel:
         self.adata = adata
         self.num_factors = num_factors
         self.layers_key = layers_key
-        self.design_formula = design_formula
+        self.loadings_formula = loadings_formula
         self.intercept_formula = intercept_formula
         self.subsampling = min([subsampling, adata.shape[0]])
         self.device = self._set_device(device)
@@ -36,8 +36,8 @@ class FactorModel:
         self._set_seed(seed)
 
         # prepare design and batch matrix
-        self.design_matrix = dmatrix(design_formula, self.adata.obs)
-        self.design_states = _get_states(self.design_matrix)
+        self.loadings_matrix = dmatrix(loadings_formula, self.adata.obs)
+        self.loadings_states = _get_states(self.loadings_matrix)
         self.intercept_matrix = dmatrix(intercept_formula, self.adata.obs)
         self.intercept_states = _get_states(self.intercept_matrix)
         #
@@ -88,11 +88,15 @@ class FactorModel:
             Key to store the model in the AnnData object.
         """
         res: Dict[str, Any] = {}
-        res["design"] = self.design_states.sparse
-        res["intercept"] = self.intercept_states.sparse
+        res["loadings_states"] = self.loadings_states.sparse
+        res["intercept_states"] = self.intercept_states.sparse
 
-        res["design_index"] = self.design_states.idx
+        res["loadings_index"] = self.loadings_states.idx
         res["intercept_index"] = self.intercept_states.idx
+
+        res["loadings_formula"] = self.loadings_formula
+        res["intercept_formula"] = self.intercept_formula
+
         res["model"] = {"num_factors": self.num_factors, "seed": self.seed, **self.model_kwargs}
 
         if self.handler is not None:
