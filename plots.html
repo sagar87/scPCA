@@ -294,6 +294,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.plots.data">Data plots</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.data_matrix"><code class="docutils literal notranslate"><span class="pre">data_matrix()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.design_matrix"><code class="docutils literal notranslate"><span class="pre">design_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.heatmap"><code class="docutils literal notranslate"><span class="pre">heatmap()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.triangle_overlay"><code class="docutils literal notranslate"><span class="pre">triangle_overlay()</span></code></a></li>
 </ul>
 </li>
@@ -402,6 +403,41 @@ for different data categories. It can be useful for visualizing structured data.
 </dl>
 <p class="rubric">Notes</p>
 <p>This function creates a design matrix visualization based on the provided formula and input data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scpca.plots.data.heatmap">
+<span class="sig-prename descclassname"><span class="pre">scpca.plots.data.</span></span><span class="sig-name descname"><span class="pre">heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.96</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scpca.plots.data.heatmap" title="Permalink to this definition">#</a></dt>
+<dd><p>Enrichment analysis of clusters based on differential gene expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>adata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AnnData</span></code>) – Anndata object.</p></li>
+<li><p><strong>model_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Key to access the model in the adata object.</p></li>
+<li><p><strong>states</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – States for comparison. If not pair of states is provided, “Intercept” is assumed to be the base state.</p></li>
+<li><p><strong>factor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Factor index to consider for the differential calculation.</p></li>
+<li><p><strong>state_key</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – Key for state in adata.</p></li>
+<li><p><strong>cluster_key</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Key for cluster in adata.</p></li>
+<li><p><strong>cluster_groups</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – Groups to consider for enrichment.</p></li>
+<li><p><strong>dot</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If True, a dot plot is generated. Otherwise, a heatmap is generated. Default is False.</p></li>
+<li><p><strong>sign</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Sign to adjust the difference, by default 1.</p></li>
+<li><p><strong>highest</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of highest differential genes to retrieve, by default 0.</p></li>
+<li><p><strong>lowest</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of lowest differential genes to retrieve, by default 0.</p></li>
+<li><p><strong>magnitude</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Threshold for significance, by default 1.96.</p></li>
+<li><p><strong>**kwargs</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – Additional keyword arguments passed to the plotting function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>If <cite>return_var_names</cite> is True, returns a dictionary of variable names. Otherwise, returns the plot axes.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function performs enrichment analysis of clusters based on differential gene expression.
+It first validates the sign and retrieves differential genes. Depending on the <cite>dot</cite> parameter, either a
+dot plot or a heatmap is generated to visualize the enrichment.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -717,6 +753,7 @@ loadings_scatter(adata, ‘m0’, [‘state1’, ‘state2’], factor=0)</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-scpca.plots.data">Data plots</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.data_matrix"><code class="docutils literal notranslate"><span class="pre">data_matrix()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.design_matrix"><code class="docutils literal notranslate"><span class="pre">design_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.heatmap"><code class="docutils literal notranslate"><span class="pre">heatmap()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scpca.plots.data.triangle_overlay"><code class="docutils literal notranslate"><span class="pre">triangle_overlay()</span></code></a></li>
 </ul>
 </li>
