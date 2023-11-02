@@ -3,6 +3,7 @@ from scipy.spatial.distance import cosine
 
 from scpca.pca import dPCA, scPCA
 from scpca.train import DEFAULT, TEST
+from scpca.utils.data import _get_model_design
 
 
 def is_aligned(a, b, atol=0.001):
@@ -35,7 +36,7 @@ def test_dpca_two_states(one_factorial_two_state_normal_data):
     m.fit(lr=0.01)
     m.fit(lr=0.001)
     m.mean_to_anndata("m", variables=["W", "V", "Z"])
-    design = adata.uns["m"]["design"]
+    design = _get_model_design(adata, "m")
 
     W = adata.varm["W_m"]
     assert is_aligned(adata.uns["true_axes"]["A"], W[..., design["Intercept"]])
@@ -49,7 +50,7 @@ def test_dpca_two_states_with_offset(one_factorial_two_state_normal_data_with_of
     m.fit(lr=0.01)
     m.fit(lr=0.001)
     m.mean_to_anndata("m", variables=["W", "V", "Z"])
-    design = adata.uns["m"]["design"]
+    design = _get_model_design(adata, "m")
 
     W = adata.varm["W_m"]
     assert is_aligned(adata.uns["true_axes"]["A"], W[..., design["Intercept"]])
@@ -64,7 +65,7 @@ def test_dpca_four_state(one_factorial_four_state_normal_data):
     m.fit(lr=0.01)
     m.fit(lr=0.001)
     m.mean_to_anndata("m", variables=["W", "V", "Z"])
-    design = adata.uns["m"]["design"]
+    design = _get_model_design(adata, "m")
 
     W = adata.varm["W_m"]
     assert is_aligned(adata.uns["true_axes"]["A"], W[..., design["Intercept"]])
@@ -83,7 +84,7 @@ def test_scpca_two_states(one_factorial_two_state_poisson_data):
     m.fit(lr=0.01)
     m.fit(lr=0.001)
     m.mean_to_anndata("m", variables=["W", "V", "Z"])
-    design = adata.uns["m"]["design"]
+    design = _get_model_design(adata, "m")
 
     W = adata.varm["W_m"]
     assert is_aligned(adata.uns["true_axes"]["A"], W[..., design["Intercept"]])
@@ -105,7 +106,7 @@ def test_scpca_two_states_with_offset(one_factorial_two_state_poisson_data_with_
     m.fit(lr=0.01, num_epochs=500)
     m.fit(lr=0.001, num_epochs=500)
     m.mean_to_anndata("m", variables=["W", "V", "Z"])
-    design = adata.uns["m"]["design"]
+    design = _get_model_design(adata, "m")
 
     W = adata.varm["W_m"]
     assert is_aligned(adata.uns["true_axes"]["A"], W[..., design["Intercept"]])
@@ -122,7 +123,7 @@ def test_scpca_four_state(one_factorial_four_state_poisson_data):
     m.fit(lr=0.01)
     m.fit(lr=0.001)
     m.mean_to_anndata("m", variables=["W", "V", "Z"])
-    design = adata.uns["m"]["design"]
+    design = _get_model_design(adata, "m")
 
     W = adata.varm["W_m"]
     assert is_aligned(adata.uns["true_axes"]["A"], W[..., design["Intercept"]])
@@ -145,7 +146,7 @@ def test_dpca_two_states_3_dims(one_factorial_two_state_normal_three_dim_data):
     m.fit(lr=0.01)
     m.fit(lr=0.001)
     m.mean_to_anndata("m", variables=["W", "V", "Z"])
-    design = adata.uns["m"]["design"]
+    design = _get_model_design(adata, "m")
 
     W = adata.varm["W_m"]
     # import pdb; pdb.set_trace()
@@ -163,7 +164,7 @@ def test_dpca_two_states_3_dims_with_offset(one_factorial_two_state_normal_three
     m.fit(lr=0.01)
     m.fit(lr=0.001)
     m.mean_to_anndata("m", variables=["W", "V", "Z"])
-    design = adata.uns["m"]["design"]
+    design = _get_model_design(adata, "m")
 
     W = adata.varm["W_m"]
     # import pdb; pdb.set_trace()
@@ -182,7 +183,7 @@ def test_dpca_two_states_3_dims_poisson(one_factorial_two_state_poisson_three_di
     m.fit(lr=0.01)
     m.fit(lr=0.001)
     m.mean_to_anndata("m", variables=["W", "V", "Z"])
-    design = adata.uns["m"]["design"]
+    design = _get_model_design(adata, "m")
 
     W = adata.varm["W_m"]
     # import pdb; pdb.set_trace()

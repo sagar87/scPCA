@@ -106,7 +106,7 @@ def test_get_gene_idx():
 )
 def test_get_ordered_genes(model_key, state, factor, highest, lowest, vector, sign, ascending, test_anndata):
     # test that the right order of genes is returned
-
+    # import pdb; pdb.set_trace()
     df = state_loadings(
         test_anndata,
         model_key=model_key,
@@ -119,7 +119,7 @@ def test_get_ordered_genes(model_key, state, factor, highest, lowest, vector, si
         ascending=ascending,
     )
 
-    state_index = test_anndata.uns[model_key]["design"][state]
+    state_index = test_anndata.uns[model_key]["loadings_states"][state]
     factor_weights = sign * test_anndata.varm[f"{vector}_{model_key}"][..., factor, state_index]
     gene_idx = _get_gene_idx(factor_weights, highest, lowest)
     # import pdb; pdb.set_trace()
@@ -161,7 +161,7 @@ def test_state_diff(model_key, state, factor, highest, lowest, vector, sign, asc
         ascending=ascending,
     )
     model_dict = test_anndata.uns[model_key]
-    model_design = model_dict["design"]
+    model_design = model_dict["loadings_states"]
     state_a, state_b = model_design[state[0]], model_design[state[1]]
     diff = sign * (
         test_anndata.varm[f"{vector}_{model_key}"][..., factor, state_b]
@@ -182,7 +182,7 @@ def test_get_model_design_existing_key():
     adata = AnnData()
     model_key = "my_model"
     design_mapping = {"Intercept": 0, "stim": 1}
-    adata.uns[model_key] = {"design": design_mapping}
+    adata.uns[model_key] = {"loadings_states": design_mapping}
 
     result = _get_model_design(adata, model_key)
 
