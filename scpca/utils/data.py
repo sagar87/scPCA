@@ -9,7 +9,7 @@ from scipy.sparse import issparse  # type: ignore
 
 from ..logger import logger
 
-DESIGN_KEY = "design"
+DESIGN_KEY = "loadings_states"
 
 
 def _get_rna_counts(adata: AnnData, layers_key: Optional[str] = None) -> NDArray[np.float32]:
