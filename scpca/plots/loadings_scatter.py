@@ -25,6 +25,8 @@ def loadings_scatter(
     fontsize: int = 10,
     show_labels: Union[List[int], int] = 0,
     annotation_linewidth: float = 0.5,
+    connection_linewidth: float = 0.5,
+    connection_alpha: float = 1.0,
     cmap: str = "RdBu",
     ncols: int = 4,
     width: int = 4,
@@ -111,6 +113,8 @@ def loadings_scatter(
         size_func=size_func,
         show_labels=show_labels,
         annotation_linewidth=annotation_linewidth,
+        connection_linewidth=connection_linewidth,
+        connection_alpha=connection_alpha,
         cmap=cmap,
         ncols=ncols,
         width=width,
@@ -134,6 +138,8 @@ def _loadings_scatter(
     fontsize: int,
     show_labels: List[int],
     annotation_linewidth: float,
+    connection_linewidth: float,
+    connection_alpha: float,
     cmap: str,
     ax: Axes = None,
 ) -> Axes:
@@ -188,10 +194,10 @@ def _loadings_scatter(
                 ax.plot(
                     [coords[j, g, 0], coords[j + 1, g, 0]],
                     [coords[j, g, 1], coords[j + 1, g, 1]],
-                    alpha=0.5,
+                    alpha=connection_alpha,
                     color="k",
                     linestyle="--",
-                    lw=0.1,
+                    lw=connection_linewidth,
                 )
 
     ax.set_xticks([i for i in range(len(states))])
