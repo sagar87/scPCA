@@ -148,6 +148,7 @@ def factor_density(
     cluster_key: str,
     factor: Union[int, List[int], None] = None,
     groups: Union[str, List[str]] = [],
+    sign: Union[float, int] = 1.0,
     fill: bool = True,
     lw: float = 0.5,
     legend: bool = True,
@@ -199,6 +200,7 @@ def factor_density(
         cluster_key=cluster_key,
         groups=groups,
         legend=legend,
+        sign=sign,
         lw=lw,
         fill=fill,
         ncols=ncols,
@@ -215,6 +217,7 @@ def _factor_density(
     factor: int,
     cluster_key: str,
     groups: Union[str, List[str]] = [],
+    sign: Union[float, int] = 1.0,
     fill: bool = True,
     lw: float = 0.5,
     legend: bool = True,
@@ -231,7 +234,7 @@ def _factor_density(
             cluster_key: [c if c in groups else "_" + c for c in adata.obs[cluster_key].values]
             if len(groups) > 0
             else adata.obs[cluster_key].values,
-            "factor": adata.obsm[f"X_{model_key}"][..., factor],
+            "factor": sign * adata.obsm[f"X_{model_key}"][..., factor],
         }
     )
 
