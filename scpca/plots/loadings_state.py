@@ -287,7 +287,14 @@ def loading_rank_diff(
 
         texts = []
 
-        if magnitude is None and highest > 0:
+        if magnitude is None and lowest > 0 and highest > 0:
+            for idx, row in df.head(highest).iterrows():
+                text = axes[i].text(row["idx"], row["difference"], row["gene"], fontsize=fontsize)
+                texts.append(text)
+            for idx, row in df.tail(lowest).iterrows():
+                text = axes[i].text(row["idx"], row["difference"], row["gene"], fontsize=fontsize)
+                texts.append(text)
+        elif magnitude is None and highest > 0:
             for idx, row in df.head(highest).iterrows():
                 text = axes[i].text(row["idx"], row["difference"], row["gene"], fontsize=fontsize)
                 texts.append(text)
