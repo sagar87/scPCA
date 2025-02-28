@@ -11,6 +11,13 @@ scPCA is a versatile matrix factorisation framework designed to analyze single-c
 
 *scPCA is a young project and breaking changes are to be expected.*
 
+## scPCA in a nutshell
+
+scPCA enables the analysis of single-cell RNA-seq data across condtions. In simple words, it enables the incorporation of a design (model) matrix that encodes the experimental design of the dataset and infers how the gene loading weight vectors change from a specified reference condition to the treated condtion. 
+
+[![scPCA in a nutshell](https://img.youtube.com/vi/Frv_keRJIZc/maxresdefault.jpg)](https://youtu.be/Frv_keRJIZc)
+
+
 ## Quick install
 
 scPCA makes use `torch`, `pyro` and `anndata`. We highly recommend to run scPCA on a GPU device.
