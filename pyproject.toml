@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "scpca"
-version = "0.3.1"
+version = "0.3.2"
 description = "Single-cell PCA."
 authors = ["Harald Vohringer <harald.voeh@gmail.com>"]
 readme = "README.md"
