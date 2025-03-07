@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "scpca"
-version = "0.3.2"
+version = "0.3.3"
 description = "Single-cell PCA."
 authors = ["Harald Vohringer <harald.voeh@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.8.1,<3.11"
+python = ">=3.8.1,<3.12"
 scanpy = ">=1.8.2"
 pyro-ppl = "<1.8.4"
 torch = "<2.0.0"

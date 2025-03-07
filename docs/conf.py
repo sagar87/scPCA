@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.abspath(".."))
 project = "scPCA"
 copyright = "2023, Harald Vohringer"
 author = "Harald Vohringer"
-release = "0.1.0"
+release = "0.3.3"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
