@@ -11,7 +11,6 @@ scanpy = ">=1.8.2"
 pyro-ppl = "<1.8.4"
 torch = "<2.0.0"
 adjusttext = "^0.7.3"
-gseapy = "^1.0.4"
 Sphinx = { version = "<7.0.0", optional = true }
 sphinxcontrib-napoleon = { version = "0.7", optional = true }
 nbsphinx = { version = "0.8.9", optional = true }
