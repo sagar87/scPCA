@@ -293,6 +293,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Data-preprocessing">Data preprocessing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Factor-analysis">Factor analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Factor-0">Factor 0</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Factor-1">Factor 1</a></li>
 </ul>
 </li>
@@ -786,7 +787,7 @@ AnnData object with n_obs × n_vars = 14745 × 20908
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/tmp/ipykernel_4487/1517723426.py:1: ImplicitModificationWarning: Setting element `.layers[&#39;counts&#39;]` of view, initializing view as actual.
+/tmp/ipykernel_657/1517723426.py:1: ImplicitModificationWarning: Setting element `.layers[&#39;counts&#39;]` of view, initializing view as actual.
   adata.layers[&#34;counts&#34;] = adata.X.copy()
 </pre></div></div>
 </div>
@@ -838,7 +839,7 @@ AnnData object with n_obs × n_vars = 14745 × 20908
 <div class="highlight"><pre>
   0%|          | 0/5000 [00:00&lt;?, ?it/s]/g/huber/users/voehring/conda/scpca_dev/lib/python3.12/site-packages/scpca/models/scpca.py:68: UserWarning: The use of `x.T` on tensors of dimension other than 2 to reverse their shape is deprecated and it will throw an error in a future release. Consider `x.mT` to transpose batches of matrices or `x.permute(*torch.arange(x.ndim - 1, -1, -1))` to reverse the dimensions of a tensor. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:4413.)
   α_rna = deterministic(&#34;α_rna&#34;, (1 / α_rna_inv).T)
-Epoch: 4990 | lr: 1.00E-02 | ELBO: 2913242 | Δ_10: 43149.50 | Best: 2838556: 100%|██████████| 5000/5000 [02:09&lt;00:00, 38.48it/s]
+Epoch: 4990 | lr: 1.00E-02 | ELBO: 2913242 | Δ_10: 43149.50 | Best: 2838556: 100%|██████████| 5000/5000 [02:12&lt;00:00, 37.65it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -854,7 +855,7 @@ Epoch: 4990 | lr: 1.00E-02 | ELBO: 2913242 | Δ_10: 43149.50 | Best: 2838556: 10
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Epoch: 14990 | lr: 1.00E-03 | ELBO: 2876858 | Δ_10: 37865.50 | Best: 2809824: 100%|██████████| 10000/10000 [04:04&lt;00:00, 40.91it/s]
+Epoch: 14990 | lr: 1.00E-03 | ELBO: 2876858 | Δ_10: 37865.50 | Best: 2809824: 100%|██████████| 10000/10000 [04:08&lt;00:00, 40.29it/s]
 </pre></div></div>
 </div>
 <p>Let’s store the result in the <code class="docutils literal notranslate"><span class="pre">adata</span></code> object.</p>
@@ -871,7 +872,7 @@ Epoch: 14990 | lr: 1.00E-03 | ELBO: 2876858 | Δ_10: 37865.50 | Best: 2809824: 1
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Predicting z for obs 13824-14065.: 100%|██████████| 28/28 [00:01&lt;00:00, 16.65it/s]
+Predicting z for obs 13824-14065.: 100%|██████████| 28/28 [00:02&lt;00:00, 13.78it/s]
 </pre></div></div>
 </div>
 <p>If we now take a close look at the adata object we will find that the factors and loadings were added to the <code class="docutils literal notranslate"><span class="pre">obsm</span></code> and <code class="docutils literal notranslate"><span class="pre">varm</span></code> fields respectively. Meta data related to the model field are stored under <code class="docutils literal notranslate"><span class="pre">adata.uns[{model_key}]</span></code>.</p>
@@ -924,7 +925,7 @@ AnnData object with n_obs × n_vars = 14066 × 2000
 </div>
 <p>We now try to assess the main factors of the decomposition.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>scp.pl.factor_embedding(adata, model_key=&#39;m0&#39;, factor=[0, 1, 2, 3], basis=&#39;X_m0_umap&#39;, ncols=2)
@@ -939,9 +940,325 @@ plt.tight_layout()
 <img alt="../_images/notebooks_angelidis_28_0.png" src="../_images/notebooks_angelidis_28_0.png" />
 </div>
 </div>
+<section id="Factor-0">
+<h3>Factor 0<a class="headerlink" href="#Factor-0" title="Permalink to this heading">#</a></h3>
+<p>We begin by examining factor 0 more closely. This factor displays notably negative weights in myeloid cells, including alveolar macrophages and monocytes, and positive weights in club and goblet cells.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>scp.pl.factor_strip(adata, model_key=&#39;m0&#39;, factor=[0], cluster_key=&#39;cell_type&#39;, highlight=[&#39;Alveolar_macrophage&#39;, &#39;Club_cells&#39;], s=2)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Axes: title={&#39;center&#39;: &#39;Factor 0&#39;}, xlabel=&#39;cluster&#39;, ylabel=&#39;Factor weight&#39;&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_angelidis_30_1.png" src="../_images/notebooks_angelidis_30_1.png" />
+</div>
+</div>
+<p>Next we take a close look at the <em>negative</em> loading weights of factor 0 to learn more about the expression patterns in the myeloid cells of this dataset. We can extract those from the <code class="docutils literal notranslate"><span class="pre">adata</span></code> object using the <code class="docutils literal notranslate"><span class="pre">state_loadings</span></code> function. We use the argument <code class="docutils literal notranslate"><span class="pre">lowest=20</span></code> and <code class="docutils literal notranslate"><span class="pre">highest=0</span></code> to extract the genes with the largest negative weights.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>top_weights_fac0 = scp.tl.state_loadings(adata, &#39;m0&#39;, &#39;Intercept&#39;, 0, highest=0, lowest=20)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>top_weights_fac0
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>gene</th>
+      <th>magnitude</th>
+      <th>weight</th>
+      <th>type</th>
+      <th>state</th>
+      <th>factor</th>
+      <th>index</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Abcg1</td>
+      <td>8.844831</td>
+      <td>-8.844831</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>73</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Bcl2a1a</td>
+      <td>8.854088</td>
+      <td>-8.854088</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>162</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Mpeg1</td>
+      <td>9.212790</td>
+      <td>-9.212790</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1053</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Marco</td>
+      <td>9.213015</td>
+      <td>-9.213015</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1020</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1100001G20Rik</td>
+      <td>9.315811</td>
+      <td>-9.315811</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Atp6v0d2</td>
+      <td>9.373060</td>
+      <td>-9.373060</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>144</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Ltc4s</td>
+      <td>9.418015</td>
+      <td>-9.418015</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>994</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Fabp1</td>
+      <td>9.497688</td>
+      <td>-9.497688</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>542</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Clec4n</td>
+      <td>9.505602</td>
+      <td>-9.505602</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>368</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Mrc1</td>
+      <td>9.583654</td>
+      <td>-9.583654</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1055</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Ear1</td>
+      <td>9.637006</td>
+      <td>-9.637006</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>496</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Bcl2a1d</td>
+      <td>9.889424</td>
+      <td>-9.889424</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>164</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Clec4a3</td>
+      <td>10.041142</td>
+      <td>-10.041142</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>363</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>Fcer1g</td>
+      <td>10.077384</td>
+      <td>-10.077384</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>573</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>Tyrobp</td>
+      <td>10.141203</td>
+      <td>-10.141203</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1513</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>Cybb</td>
+      <td>10.273161</td>
+      <td>-10.273161</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>435</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>Ccl6</td>
+      <td>10.514906</td>
+      <td>-10.514906</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>252</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>Chi3l3</td>
+      <td>10.604345</td>
+      <td>-10.604345</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>340</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>Ear2</td>
+      <td>10.699730</td>
+      <td>-10.699730</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>498</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>Ctss</td>
+      <td>10.881914</td>
+      <td>-10.881914</td>
+      <td>lowest</td>
+      <td>0</td>
+      <td>0</td>
+      <td>420</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>As expected the genes are largely associated with myeloid cells, particularly macrophages, and more specifically, alveolar macrophages or monocyte-derived macrophages:</p>
+<ul class="simple">
+<li><p>Strong indicators of macrophages / myeloid lineage: Mpeg1, Clec4a3, Clec4n, Fcer1g, Tyrobp, Cybb, Ctss – general myeloid/macrophage markers.</p></li>
+<li><p>Marco, Mrc1 (CD206) – alveolar macrophage markers; Marco is specific to tissue-resident macrophages like alveolar macrophages.</p></li>
+<li><p>Chi3l3 (Ym1), Ear1, Ear2, Ccl6 – often upregulated in alternatively activated (M2-like) macrophages in mice.</p></li>
+<li><p>Bcl2a1a, Bcl2a1d – anti-apoptotic genes, enriched in immune cells including myeloid cells.</p></li>
+<li><p>Atp6v0d2 – involved in osteoclast/macrophage function.</p></li>
+<li><p>Ltc4s – leukotriene pathway, expressed in myeloid-derived cells.</p></li>
+<li><p>Abcg1 – involved in lipid homeostasis, enriched in alveolar macrophages.</p></li>
+<li><p>Tyrobp – adapter protein for many immune receptors, common in microglia/macrophages.</p></li>
+</ul>
+<p>We next ask the question how the factor 0 changed across conditions. To this end we can compute the loading differences between factor 0 loading weigths from the 24m and 3m condition.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>_ = scp.pl.loadings_state(adata, &#39;m0&#39;, [&#39;Intercept&#39;, &#39;age[T.24m]&#39;], 0, sign=-1, highest=10, lowest=10, width=4, height=3.5)
+plt.tight_layout()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_angelidis_36_0.png" src="../_images/notebooks_angelidis_36_0.png" />
+</div>
+</div>
+<p>Interestingly we can see here see the downregulation of Ltc4s, Ear1, Ear2 – These are typically expressed in tissue-resident lung macrophages. Their downregulation suggests a shift in macrophage state (e.g., toward a more pro-inflammatory phenotype or loss of identity).</p>
+<p>The set of upregulated genes appears to reflect a shift in macrophage state—potentially toward a more inflammatory, monocyte-derived, or activated phenotype, possibly related to aging or stress in the lung environment. This is especially supported by the upregulation of:</p>
+<ul class="simple">
+<li><p>Nr4a1: Transcription factor critical for the development of non-classical monocytes; also involved in anti-inflammatory responses and macrophage self-renewal. Upregulation may indicate a monocyte-to-macrophage transition or stress adaptation.</p></li>
+<li><p>Apoe, Apoc2: Apolipoproteins associated with lipid metabolism and foam-cell–like macrophage states; commonly upregulated in aging, inflammation, or lipid-rich environments (e.g., alveolar space). These are known markers of activated macrophages in chronic inflammation and neurodegeneration, too.</p></li>
+</ul>
+</section>
 <section id="Factor-1">
 <h3>Factor 1<a class="headerlink" href="#Factor-1" title="Permalink to this heading">#</a></h3>
-<p>Here we can see, that factor 1 for example, exhibits high weights in Ciliated Cells. Let’s also have a look factor 1s corresponding loading weights.</p>
+<p>Next we look at factor 1. Factor 1 exhibits high factor values in Ciliated Cells. Let’s also have a look factor 1s corresponding loading weights.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
@@ -1058,7 +1375,7 @@ ax.tick_params(axis=&#39;x&#39;, rotation=90)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_angelidis_32_0.png" src="../_images/notebooks_angelidis_32_0.png" />
+<img alt="../_images/notebooks_angelidis_41_0.png" src="../_images/notebooks_angelidis_41_0.png" />
 </div>
 </div>
 <p>These genes—like <em>CCDC39</em>, <em>Drc1</em>, <em>Dynlrb2</em>, plus several coiled‑coil domain proteins (<em>CCDC113</em>, <em>CCDC153</em>, etc.)—are classic markers of motile cilia structures: they play key roles in axonemal assembly, dynein arm formation, and ciliary motility. For example, <em>CCDC39</em> is essential for the dynein regulatory complex and inner dynein arms, and <em>DRC1</em> also has a similar role in ciliary beat regulation.</p>
@@ -1077,7 +1394,7 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_angelidis_35_0.png" src="../_images/notebooks_angelidis_35_0.png" />
+<img alt="../_images/notebooks_angelidis_44_0.png" src="../_images/notebooks_angelidis_44_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -1135,6 +1452,7 @@ plt.tight_layout()
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Data-preprocessing">Data preprocessing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Factor-analysis">Factor analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Factor-0">Factor 0</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Factor-1">Factor 1</a></li>
 </ul>
 </li>
