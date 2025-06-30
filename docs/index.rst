@@ -52,6 +52,8 @@ Credits
 
    notebooks/kang
    notebooks/pancreas
+   notebooks/angelidis
+   notebooks/hrvatin
 
 
 Indices and tables
