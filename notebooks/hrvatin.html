@@ -583,7 +583,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Download the Kang et. al. dataset
-!wget https://www.huber.embl.de/users/harald/sc/kang.h5ad /content/kang.h5ad
+!wget https://www.huber.embl.de/users/harald/scpca/hrvatin.h5ad /content/hrvatin.h5ad
 </pre></div>
 </div>
 </div>
@@ -610,7 +610,7 @@ import seaborn as sns
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>data_path = &#39;/home/voehring/voehring/projects/2022-11-23_constantin/hrvatin.h5ad&#39;
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>data_path = &#39;/content/hrvatin.h5ad&#39;
 adata = sc.read_h5ad(data_path)
 </pre></div>
 </div>
@@ -1235,7 +1235,7 @@ plt.tight_layout()
 </table>
 </div></div>
 </div>
-<p>Expectedly, ee find that these these loadings indicate excitatory neurons.</p>
+<p>Expectedly, we find that these these loadings indicate excitatory neurons.</p>
 <table class="table">
 <colgroup>
 <col style="width: 33%" />
